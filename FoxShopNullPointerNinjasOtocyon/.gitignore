@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Log file
+*.log
+
+# Compiled class file
+*.class
