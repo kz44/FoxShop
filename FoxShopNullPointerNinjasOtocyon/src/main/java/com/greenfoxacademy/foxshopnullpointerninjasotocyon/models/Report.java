@@ -20,11 +20,11 @@ public class Report {
 
     @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "user_id")
     private User sender;
 
     @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "advertisement_id")
     private Advertisement receiver;
 }
