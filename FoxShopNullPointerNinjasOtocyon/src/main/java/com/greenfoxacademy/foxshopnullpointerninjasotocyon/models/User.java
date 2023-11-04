@@ -49,7 +49,7 @@ public class User {
     private Set<Advertisement> advertisements;
 
     @OneToMany(mappedBy = "sender")
-    private Set<Message> sendedMessages;
+    private Set<Message> sentMessages;
 
     @OneToMany(mappedBy = "receiver")
     private Set<Message> receivedMessages;
