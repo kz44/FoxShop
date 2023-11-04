@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -56,4 +58,12 @@ public class Advertisement {
             joinColumns = @JoinColumn(name = "advertisement_id"),
             inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
     private Set<ImagePaths> imagePaths;
+
+    @Column(nullable = false)
+    @OneToMany(mappedBy = "")
+    private Set<Report> reports;
+
+    @Column(nullable = false)
+    @OneToOne
+    private Set<Rate> rating;
 }
