@@ -42,34 +42,19 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime registrationDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime lastLogin;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "user")
     private Set<Advertisement> advertisements;
 
-    @OneToMany
+    @OneToMany(mappedBy = "sender")
     private Set<Message> messages;
 
-    @OneToMany
+    @OneToMany(mappedBy = "sender")
     private Set<Rate> rates;
 
-    @OneToMany
+    @OneToMany(mappedBy = "sender")
     private Set<Report> reports;
-
-    public User(String username, String firstName, String lastName, LocalDate dateOfBirth, String email, String password, LocalDateTime registrationDate, LocalDateTime lastLogin, Set<Advertisement> advertisements, Set<Message> messages, Set<Rate> rates, Set<Report> reports) {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.password = password;
-        this.registrationDate = registrationDate;
-        this.lastLogin = lastLogin;
-        this.advertisements = advertisements;
-        this.messages = messages;
-        this.rates = rates;
-        this.reports = reports;
-    }
 }
 
