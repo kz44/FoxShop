@@ -21,9 +21,20 @@ public class Rate {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User sender;
 
-    @ManyToOne
-    private User receiver;
+    @Column(nullable = false)
+    @OneToOne
+    private Advertisement advertisement;
+
+    public void setRating(int rating) {
+        if (rating == 1 || rating == 0 || rating == -1) {
+            this.rating = rating;
+        } else {
+            throw new IllegalArgumentException("Rating must be 1, 0, or -1.");
+        }
+    }
 }
