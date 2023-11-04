@@ -18,9 +18,13 @@ public class Report {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     @ManyToOne
+    @JoinColumn(name = "sender_id")
     private User sender;
 
+    @Column(nullable = false)
     @ManyToOne
-    private User receiver;
+    @JoinColumn(name = "receiver_id")
+    private Advertisement receiver;
 }
