@@ -16,11 +16,18 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "parentCategory")
     private Set<Category> subCategories;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_category_id")
     private Category parentCategory;
-    @OneToMany(mappedBy = "advertisement")
+
+    @OneToMany(mappedBy = "category")
     private Set<Advertisement> advertisements;
 }
