@@ -19,12 +19,6 @@ public class UserController {
         if (registerDto.getUsername() == null) {
             missingProperties.add("username");
         }
-        if (registerDto.getFirstName() == null) {
-            missingProperties.add("first name");
-        }
-        if (registerDto.getLastName() == null) {
-            missingProperties.add("last name");
-        }
         if (registerDto.getEmail() == null) {
             missingProperties.add("email");
         }

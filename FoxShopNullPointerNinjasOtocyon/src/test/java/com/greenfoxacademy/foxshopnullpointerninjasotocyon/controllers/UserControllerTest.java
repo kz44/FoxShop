@@ -48,7 +48,7 @@ class UserControllerTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: username, first name, last name, email, password, date of birth.", errorMessageDTO.getError());
+        assertEquals("There are missing some data in your request: username, email, password, date of birth.", errorMessageDTO.getError());
     }
 
 
