@@ -51,5 +51,12 @@ class UserControllerTest {
         assertEquals("There are missing some data in your request: username, email, password, date of birth.", errorMessageDTO.getError());
     }
 
+    @Test
+    public void registrationNullCheckResponseIsOKWithoutFirstNameAndUsername() {
+        RegisterDto registerDto = new RegisterDto("JohnSmith", null, null, "john.smith@test.com", "password", LocalDate.of(1980, 11, 1));
+        ResponseEntity<?> response = userController.registrationNullCheck(registerDto);
+        assertEquals(ResponseEntity.ok().build(), response);
+    }
+
 
 }
