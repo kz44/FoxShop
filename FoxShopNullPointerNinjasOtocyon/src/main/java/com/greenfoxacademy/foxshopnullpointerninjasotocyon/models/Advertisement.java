@@ -60,7 +60,7 @@ public class Advertisement {
     private Set<ImagePaths> imagePaths;
 
     @Column(nullable = false)
-    @OneToMany(mappedBy = "")
+    @OneToMany(mappedBy = "receiver")
     private Set<Report> reports;
 
     @Column(nullable = false)
