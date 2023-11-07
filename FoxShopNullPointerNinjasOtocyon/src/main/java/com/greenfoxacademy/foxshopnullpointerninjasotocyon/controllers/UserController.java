@@ -34,6 +34,9 @@ public class UserController {
         if (loginDTO.getEmail() == null && loginDTO.getUsername() == null) {
             errors.add("Please, provide username or email for your authentication.");
         }
+        if (loginDTO.getEmail() != null && loginDTO.getUsername() != null) {
+            errors.add("Please, choose only one identification data - email or username.  ");
+        }
         if (loginDTO.getPassword() == null) {
             errors.add("There is missing password in your login request.");
         }
