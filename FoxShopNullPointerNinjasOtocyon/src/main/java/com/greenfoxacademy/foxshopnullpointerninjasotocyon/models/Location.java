@@ -1,4 +1,4 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers.models;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Condition {
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,6 @@ public class Condition {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "condition")
+    @OneToMany(mappedBy = "location")
     private Set<Advertisement> advertisements;
 }
