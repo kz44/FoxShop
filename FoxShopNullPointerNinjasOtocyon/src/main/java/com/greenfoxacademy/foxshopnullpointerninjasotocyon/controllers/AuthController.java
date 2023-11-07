@@ -5,13 +5,12 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/auth")
+public class AuthController {
 
 
     ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
