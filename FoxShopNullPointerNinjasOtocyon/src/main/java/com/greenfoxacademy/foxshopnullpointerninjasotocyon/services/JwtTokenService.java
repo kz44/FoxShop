@@ -29,10 +29,17 @@ public class JwtTokenService {
 
     private final JwtConfigProperties jwtConfigProperties;
 
+    /**
+     * Generates a JWT token based on UserDetails
+     *
+     * @param userDetails containing user information
+     * @return String of generated JWT token
+     */
     public String generateToken(final UserDetails userDetails) {
 
         final var now = Instant.now();
 
+        // Stores the information for token playload
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userDetails.getUsername());
         claims.put("firstName", ((User) userDetails).getFirstName());
@@ -49,7 +56,13 @@ public class JwtTokenService {
                 .compact();
     }
 
-    public Date getExpirationDateFromToken(String token){
+    /**
+     * Get the expiration date from the token
+     *
+     * @param token containing the expiration date to be retrieved
+     * @return a Date object of expiration time of token
+     */
+    public Date getExpirationDateFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
                 .build()
@@ -58,10 +71,23 @@ public class JwtTokenService {
                 .getExpiration();
     }
 
+    /**
+     * Checks if the given token has expired
+     *
+     * @param token to verify the expiration
+     * @return true if the token has expired, otherwise false
+     */
     public boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
+
+    /**
+     * Get username if the token is valid
+     * @param token extract the username
+     * @return username if the token is valid else write in a log some error message
+     */
+
     public String parseJwt(final String token) {
         String username = null;
 
@@ -78,8 +104,15 @@ public class JwtTokenService {
         return username;
     }
 
+    /**
+     * Extracts the token from the 'Authorization' header in the HTTP request
+     *
+     * @param request HTTP request containing 'Authorization'
+     * @return the extracted token from the request header
+     * @throws Exception if some problem with 'Authorization' header
+     */
     public String resolveToken(final HttpServletRequest request) throws Exception {
-        final var bearer = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
+        final var bearer = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION)); //
 
         final var parts = bearer.split(" ");
         if (parts.length != 2 || !"Bearer".equals(parts[0])) {
@@ -89,6 +122,12 @@ public class JwtTokenService {
         return parts[1];
     }
 
+    /**
+     * Validates the signature of the JWT token
+     *
+     * @param token to verify
+     * @return true if the token's signature is valid, otherwise false
+     */
     public boolean validateTokenSignature(String token) {
         try {
             Jwts.parserBuilder()
@@ -102,6 +141,13 @@ public class JwtTokenService {
         }
     }
 
+    /**
+     * Generates a SecretKey for use in creating and validating JWT tokens
+     *
+     * This method get the secret key from the application configuration using JwtConfigProperties java class .getSecret method
+     *
+     * @return a SecretKey for signing and validating JWT tokens
+     */
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(jwtConfigProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
