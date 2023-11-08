@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/auth")
+public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody(required = false) LoginDTO loginDTO) {
