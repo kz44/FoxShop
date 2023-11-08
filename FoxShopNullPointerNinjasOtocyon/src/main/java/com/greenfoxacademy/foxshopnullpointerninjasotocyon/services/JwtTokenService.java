@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.JwtConfigProperties;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -17,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -31,11 +34,15 @@ public class JwtTokenService {
 
         final var now = Instant.now();
 
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("username", userDetails.getUsername());
+        claims.put("firstName", ((User) userDetails).getFirstName());
+        claims.put("lastName", ((User) userDetails).getLastName());
+        claims.put("email", ((User) userDetails).getEmail());
+
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .toList())
+                .setClaims(claims)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(Duration.ofMinutes(jwtConfigProperties.getExpirationTimeMinutes()))))
                 .signWith(getKey())
@@ -43,7 +50,19 @@ public class JwtTokenService {
                 .compact();
     }
 
-    //Todo: fix the log.warn
+    public Date getExpirationDateFromToken(String token){
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
+    public boolean isTokenExpired(String token) {
+        final Date expiration = getExpirationDateFromToken(token);
+        return expiration.before(new Date());
+    }
     public String parseJwt(final String token) {
         String username = null;
 
