@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 import jakarta.persistence.*;
+import jdk.jfr.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
