@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,11 +20,10 @@ import java.util.Date;
 import java.util.Objects;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtTokenService {
-
-    //Todo: fix dependency
 
     private final JwtConfigProperties jwtConfigProperties;
 
