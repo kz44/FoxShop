@@ -9,4 +9,8 @@ variable: `jdbc:mysql://localhost/foxshop?serverTimezone=UTC`)
 
 `DB_PASSWORD` for the password.
 
+`expiration-time-minutes` for the expiration time in minutes
+
+`JWT_SECRET` for the secret code
+
 You need to set up these environment variables.
