@@ -84,6 +84,7 @@ public class JwtTokenService {
 
     /**
      * Get username if the token is valid
+     *
      * @param token extract the username
      * @return username if the token is valid else write in a log some error message
      */
