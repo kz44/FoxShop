@@ -83,7 +83,7 @@ public class JwtTokenService {
     }
 
     /**
-     * Get username if the token is valid
+     * Get username from CLAIMS if the token is valid
      *
      * @param token extract the username
      * @return username if the token is valid else write in a log some error message
@@ -93,12 +93,13 @@ public class JwtTokenService {
         String username = null;
 
         try {
-            final var subj = Jwts.parserBuilder()
+            final var claims = Jwts.parserBuilder()
                     .setSigningKey(getKey())
                     .build()
-                    .parseClaimsJwt(token);
+                    .parseClaimsJwt(token)
+                    .getBody();
 
-            username = subj.getBody().getIssuer();
+            username = (String) claims.get("username");
         } catch (JwtException e) {
             log.warn("JWT token validation error", e);
         }

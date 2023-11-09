@@ -11,6 +11,6 @@ variable: `jdbc:mysql://localhost/foxshop?serverTimezone=UTC`)
 
 `expiration-time-minutes` for the expiration time in minutes
 
-`JWT_SECRET` for the secret code
+`JWT_SECRET` for the secret code, minimum length is 64 characters
 
 You need to set up these environment variables.
