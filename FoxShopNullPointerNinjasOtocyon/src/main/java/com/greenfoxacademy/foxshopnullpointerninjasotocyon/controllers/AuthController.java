@@ -50,10 +50,10 @@ public class AuthController {
         if (!userService.checkPassword(user, loginDTO.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("Wrong credentials."));
         }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), loginDTO.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails authDetails = new FoxUserDetails(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail() );
+//        Authentication authentication = authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(user.getUsername(), loginDTO.getPassword()));
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+        FoxUserDetails authDetails = new FoxUserDetails(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail() );
         String token = jwtTokenService.generateToken(authDetails);
         return ResponseEntity.ok().body(new TokenResponseDTO(token));
     }
@@ -75,5 +75,4 @@ public class AuthController {
         }
         return ResponseEntity.ok().build();
     }
-
 }

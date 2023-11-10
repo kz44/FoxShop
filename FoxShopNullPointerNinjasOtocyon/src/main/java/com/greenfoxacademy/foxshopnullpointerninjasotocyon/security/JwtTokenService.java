@@ -35,16 +35,16 @@ public class JwtTokenService {
      * @param userDetails containing user information
      * @return String of generated JWT token
      */
-    public String generateToken(final UserDetails userDetails) {
+    public String generateToken(final FoxUserDetails userDetails) {
 
         final var now = Instant.now();
 
         // Stores the information for token playload
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", userDetails.getUsername());
-        claims.put("firstName", ((User) userDetails).getFirstName());
-        claims.put("lastName", ((User) userDetails).getLastName());
-        claims.put("email", ((User) userDetails).getEmail());
+        claims.put("firstName",  userDetails.getFirstName());
+        claims.put("lastName", userDetails.getLastName());
+        claims.put("email",  userDetails.getEmail());
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

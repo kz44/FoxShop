@@ -2,19 +2,16 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,21 +22,17 @@ import java.util.Optional;
 
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-@Autowired
+    @Autowired
     private JwtTokenService jwtTokenService;
-@Autowired
+    @Autowired
     private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = null;
-        try {
-            token = jwtTokenService.resolveToken(request);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)) { //TODO add check if not expired
+        String token = getJWTFromRequest(request);
+
+        if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)  && !jwtTokenService.isTokenExpired(token)) {
 
             String username = jwtTokenService.parseJwt(token);
             Optional<User> userOpt = userService.findByUsername(username);
@@ -52,7 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (AuthenticationException e) {
                 throw new RuntimeException(e);
             }
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
+    }
+
+    private String getJWTFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
