@@ -4,7 +4,8 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.TokenResponseDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.FoxUserDetails;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
-//    private final JwtTokenService jwtTokenService;
+    private final JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody(required = false) LoginDTO loginDTO) {
@@ -53,8 +54,8 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(user.getUsername(), loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails authDetails = new FoxUserDetails(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail() );
-//        String token = jwtTokenService.generateToken(authDetails);
-        return ResponseEntity.ok().body(new TokenResponseDTO()); //TODO add token
+        String token = jwtTokenService.generateToken(authDetails);
+        return ResponseEntity.ok().body(new TokenResponseDTO(token));
     }
 
     public ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO) {

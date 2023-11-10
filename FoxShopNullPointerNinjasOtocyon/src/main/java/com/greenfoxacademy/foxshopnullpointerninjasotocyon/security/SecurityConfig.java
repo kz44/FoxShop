@@ -1,5 +1,7 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.config;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
 
@@ -29,10 +32,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -42,5 +41,10 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
     }
 }

@@ -1,4 +1,4 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.JwtConfigProperties;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;

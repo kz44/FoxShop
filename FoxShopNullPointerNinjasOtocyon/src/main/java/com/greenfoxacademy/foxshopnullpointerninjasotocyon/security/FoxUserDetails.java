@@ -1,11 +1,10 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
