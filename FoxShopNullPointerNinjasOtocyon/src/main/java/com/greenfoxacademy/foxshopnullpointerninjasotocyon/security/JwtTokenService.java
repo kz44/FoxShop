@@ -96,7 +96,7 @@ public class JwtTokenService {
             final var claims = Jwts.parserBuilder()
                     .setSigningKey(getKey())
                     .build()
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getBody();
 
             username = (String) claims.get("username");

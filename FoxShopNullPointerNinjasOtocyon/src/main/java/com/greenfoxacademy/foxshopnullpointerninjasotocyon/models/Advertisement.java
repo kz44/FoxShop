@@ -34,27 +34,26 @@ public class Advertisement {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "delivery_method_id", nullable = false)
-//    private DeliveryMethod deliveryMethod;
+    @ManyToOne
+    @JoinColumn(name = "delivery_method_id", nullable = false)
+    private DeliveryMethod deliveryMethod;
 
-//
-//    @ManyToOne
-//    @JoinColumn(name = "category_id", nullable = false)
-//    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "condition_id", nullable = false)
     private Condition condition;
 
 
-//    @ManyToMany
-//    @JoinTable(
-//              nullable = false
-//            name = "advertisement_image",
-//            joinColumns = @JoinColumn(name = "advertisement_id"),
-//            inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
-//    private Set<ImagePaths> imagePaths;
+    @ManyToMany
+    @JoinTable(
+            name = "advertisement_image",
+            joinColumns = @JoinColumn(name = "advertisement_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
+    private Set<ImagePaths> imagePaths;
 
 
     @OneToMany(mappedBy = "receiver")
