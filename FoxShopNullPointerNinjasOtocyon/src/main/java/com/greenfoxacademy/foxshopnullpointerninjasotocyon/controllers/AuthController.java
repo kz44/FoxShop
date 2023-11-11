@@ -59,16 +59,19 @@ public class AuthController {
         if (registerDto == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Registration data missing"));
         }
+
+        ResponseEntity<?> nullChecksResult = userService.registrationNullCheck(registerDto);
+        if (nullChecksResult.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+            return nullChecksResult;
+        }
+
         if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This username is already being used."));
         }
         if (userService.doesEmailAlreadyExist(registerDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This email is already being used."));
         }
-        ResponseEntity<?> nullChecksResult = userService.registrationNullCheck(registerDto);
-        if (nullChecksResult.getStatusCode().equals(HttpStatus.BAD_REQUEST))
-        {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nullChecksResult.getBody());
-        }
+
         userService.constructAndSaveUser(registerDto);
         return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
     }
