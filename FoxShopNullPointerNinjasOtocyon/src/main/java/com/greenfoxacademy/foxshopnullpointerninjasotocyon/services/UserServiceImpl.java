@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok().build();
     }
 
-    ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
+    public ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
         List<String> missingProperties = new ArrayList<>();
         if (registerDto.getUsername() == null) {
             missingProperties.add("username");
