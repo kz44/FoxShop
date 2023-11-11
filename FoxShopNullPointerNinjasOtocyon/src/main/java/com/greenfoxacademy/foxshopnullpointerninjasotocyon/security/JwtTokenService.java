@@ -1,7 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.JwtConfigProperties;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -19,8 +17,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
 
 @Slf4j
 @Service
@@ -113,14 +109,15 @@ public class JwtTokenService {
      * @return the extracted token from the request header
      * @throws Exception if some problem with 'Authorization' header
      */
-    public String resolveToken(final HttpServletRequest request) throws Exception {
-        final var bearer = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION)); //
-
+    public String resolveToken(final HttpServletRequest request) {
+        final var bearer = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (bearer == null) {
+            return null;
+        }
         final var parts = bearer.split(" ");
         if (parts.length != 2 || !"Bearer".equals(parts[0])) {
-            throw new Exception("Incorrect authorization");
+            return null;
         }
-
         return parts[1];
     }
 

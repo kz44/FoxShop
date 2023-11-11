@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = getJWTFromRequest(request);
+        String token = jwtTokenService.resolveToken(request);
 
         if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)  && !jwtTokenService.isTokenExpired(token)) {
 
@@ -46,14 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new RuntimeException(e);
             }
         }
-        filterChain.doFilter(request, response);
-    }
+        filterChain.doFilter(request, response);    }
 
-    private String getJWTFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
+
 }
