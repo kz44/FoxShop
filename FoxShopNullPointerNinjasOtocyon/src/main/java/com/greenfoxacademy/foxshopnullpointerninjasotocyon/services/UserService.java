@@ -22,9 +22,13 @@ public interface UserService {
 
     ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO);
 
-    public boolean doesUsernameAlreadyExist(String username);
+    boolean doesUsernameAlreadyExist(String username);
 
-    public boolean doesEmailAlreadyExist(String email);
+    boolean doesEmailAlreadyExist(String email);
 
-    public void constructAndSaveUser(RegisterDto registerDto);
+    void constructAndSaveUser(RegisterDto registerDto);
+
+    ResponseEntity<?> registrationNullCheck(RegisterDto registerDto);
+
+    void handleSecurityContextAndBlacklistToken();
 }
