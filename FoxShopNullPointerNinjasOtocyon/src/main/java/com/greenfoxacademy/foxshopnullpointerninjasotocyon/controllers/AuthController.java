@@ -33,7 +33,6 @@ import java.util.Optional;
 public class AuthController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenService jwtTokenService;
 
     @PostMapping("/login")
