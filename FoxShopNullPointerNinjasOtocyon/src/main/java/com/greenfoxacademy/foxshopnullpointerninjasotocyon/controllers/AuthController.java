@@ -56,6 +56,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody(required = false) RegisterDto registerDto) {
+        if (registerDto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Registration data missing"));
+        }
         if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This username is already being used."));
         }
