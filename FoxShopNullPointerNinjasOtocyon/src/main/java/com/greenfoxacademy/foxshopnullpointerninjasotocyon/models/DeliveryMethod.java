@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Entity
 @Setter
 @Getter
@@ -20,6 +22,6 @@ public class DeliveryMethod {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "deliveryMethod")
     private Set<Advertisement> advertisements;
 }

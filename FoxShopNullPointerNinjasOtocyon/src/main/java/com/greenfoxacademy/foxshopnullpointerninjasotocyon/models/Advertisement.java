@@ -38,7 +38,6 @@ public class Advertisement {
     @JoinColumn(name = "delivery_method_id", nullable = false)
     private DeliveryMethod deliveryMethod;
 
-
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
