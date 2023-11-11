@@ -57,4 +57,17 @@ public class AuthController {
         return ResponseEntity.ok().body(new TokenResponseDTO(token));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(RegisterDto registerDto) {
+        if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This username is already being used.");
+        }
+        if (userService.doesEmailAlreadyExist(registerDto.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This email is already being used.");
+        }
+
+        userService.constructAndSaveUser(registerDto);
+        return ResponseEntity.ok("Successfully registered!");
+    }
+
 }
