@@ -7,7 +7,10 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok().build();
     }
 
-    ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
+   public ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
         List<String> missingProperties = new ArrayList<>();
         if (registerDto.getUsername() == null) {
             missingProperties.add("username");
@@ -103,4 +106,5 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
 }

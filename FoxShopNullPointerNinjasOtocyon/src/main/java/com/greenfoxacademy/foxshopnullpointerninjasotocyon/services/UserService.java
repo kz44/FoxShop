@@ -21,10 +21,11 @@ public interface UserService {
     boolean checkPassword(User user, String password);
 
     ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO);
+    boolean doesUsernameAlreadyExist(String username);
 
-    public boolean doesUsernameAlreadyExist(String username);
+    boolean doesEmailAlreadyExist(String email);
 
-    public boolean doesEmailAlreadyExist(String email);
+     void constructAndSaveUser(RegisterDto registerDto);
 
-    public void constructAndSaveUser(RegisterDto registerDto);
+     ResponseEntity<?> registrationNullCheck(RegisterDto registerDto);
 }
