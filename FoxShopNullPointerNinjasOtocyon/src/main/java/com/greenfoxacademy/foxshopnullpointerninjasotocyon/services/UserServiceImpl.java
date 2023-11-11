@@ -78,4 +78,29 @@ public class UserServiceImpl implements UserService {
         }
         return ResponseEntity.ok().build();
     }
+    public boolean doesUsernameAlreadyExist(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean doesEmailAlreadyExist(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public void constructAndSaveUser(RegisterDto registerDto) {
+        User user = new User();
+        user.setUsername(registerDto.getUsername());
+        if (registerDto.getFirstName() != null) {
+            user.setFirstName(registerDto.getFirstName());
+        }
+        if (registerDto.getLastName() != null) {
+            user.setLastName(registerDto.getLastName());
+        }
+        user.setDateOfBirth(registerDto.getDateOfBirth());
+        user.setDateOfBirth(registerDto.getDateOfBirth());
+        user.setEmail(registerDto.getEmail());
+        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setDateOfBirth(registerDto.getDateOfBirth());
+
+        userRepository.save(user);
+    }
 }

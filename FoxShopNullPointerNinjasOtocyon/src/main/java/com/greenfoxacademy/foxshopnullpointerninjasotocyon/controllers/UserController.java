@@ -1,7 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,21 +21,16 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(RegisterDto registerDto) {
         if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This username already exists.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This username is already being used.");
+        }
+        if (userService.doesEmailAlreadyExist(registerDto.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This email is already being used.");
         }
 
-        User user = new User();
-        user.setUsername(registerDto.getUsername());
-        user.setFirstName(registerDto.getFirstName());
-        user.setLastName(registerDto.getLastName());
-        user.setDateOfBirth(registerDto.getDateOfBirth());
-        user.setDateOfBirth(registerDto.getDateOfBirth());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setDateOfBirth(registerDto.getDateOfBirth());
-
-        userService.saveUser(user);
+        userService.constructAndSaveUser(registerDto);
         return ResponseEntity.ok("Successfully registered!");
     }
+
+
 }
 
