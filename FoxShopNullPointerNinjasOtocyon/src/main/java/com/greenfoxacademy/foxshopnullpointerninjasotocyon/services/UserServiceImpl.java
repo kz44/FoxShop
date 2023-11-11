@@ -7,12 +7,10 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +37,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkPassword(User user, String password) {
-        return passwordEncoder.matches(password, user.getPassword());
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok().build();
     }
 
-   public ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
+    public ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
         List<String> missingProperties = new ArrayList<>();
         if (registerDto.getUsername() == null) {
             missingProperties.add("username");
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
         }
         return ResponseEntity.ok().build();
     }
+
     public boolean doesUsernameAlreadyExist(String username) {
         return userRepository.existsByUsername(username);
     }
