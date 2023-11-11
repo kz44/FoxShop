@@ -18,7 +18,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @Component
 @RequiredArgsConstructor
 public class DeleteExpiredToken {
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final TokenBlacklistRepository tokenBlacklistRepository;
 
     //implementation within buld.gradle -> dependencies:   implementation 'com.auth0:java-jwt:4.4.0'
