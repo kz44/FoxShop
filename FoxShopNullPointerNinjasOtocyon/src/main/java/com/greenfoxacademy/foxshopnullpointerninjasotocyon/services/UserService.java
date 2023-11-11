@@ -2,6 +2,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -20,4 +21,6 @@ public interface UserService {
     boolean checkPassword(User user, String password);
 
     ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO);
+
+    ResponseEntity<?> registrationNullCheck(RegisterDto registerDto);
 }
