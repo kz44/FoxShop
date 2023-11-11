@@ -2,7 +2,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.service.UserService;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
