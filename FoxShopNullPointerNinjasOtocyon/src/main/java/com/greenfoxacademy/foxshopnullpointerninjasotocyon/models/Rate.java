@@ -21,12 +21,10 @@ public class Rate {
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User sender;
 
-    @Column(nullable = false)
     @OneToOne
     private Advertisement advertisement;
 

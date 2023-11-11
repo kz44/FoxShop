@@ -13,6 +13,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "Condition_Fox")
 public class Condition {
 
     @Id
