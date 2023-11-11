@@ -106,8 +106,7 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setDateOfBirth(registerDto.getDateOfBirth());
-
+        
         userRepository.save(user);
     }
 
