@@ -9,12 +9,11 @@ import lombok.Setter;
 import java.util.Set;
 
 @Entity
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Condition_Fox")
-public class Condition {
+public class DeliveryMethod {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +22,6 @@ public class Condition {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "condition")
+    @OneToMany(mappedBy = "deliveryMethod")
     private Set<Advertisement> advertisements;
 }

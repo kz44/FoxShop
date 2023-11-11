@@ -21,13 +21,11 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime sent;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "sender_id")
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "receiver_id")
+    @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 }
