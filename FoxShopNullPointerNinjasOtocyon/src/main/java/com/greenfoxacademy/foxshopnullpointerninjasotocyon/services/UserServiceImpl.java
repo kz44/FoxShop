@@ -1,13 +1,19 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -31,5 +37,45 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean checkPassword(User user, String password) {
         return passwordEncoder.matches(password, user.getPassword());
+    }
+
+    @Override
+    public ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO) {
+        List<String> errors = new ArrayList<>();
+        if (loginDTO.getEmail() == null && loginDTO.getUsername() == null) {
+            errors.add("Please, provide username or email for your authentication.");
+        }
+        if (loginDTO.getEmail() != null && loginDTO.getUsername() != null) {
+            errors.add("Please, choose only one identification data - email or username.  ");
+        }
+        if (loginDTO.getPassword() == null) {
+            errors.add("There is missing password in your login request.");
+        }
+        if (!errors.isEmpty()) {
+            String message = String.join(" ", errors);
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    ResponseEntity<?> registrationNullCheck(RegisterDto registerDto) {
+        List<String> missingProperties = new ArrayList<>();
+        if (registerDto.getUsername() == null) {
+            missingProperties.add("username");
+        }
+        if (registerDto.getEmail() == null) {
+            missingProperties.add("email");
+        }
+        if (registerDto.getPassword() == null) {
+            missingProperties.add("password");
+        }
+        if (registerDto.getDateOfBirth() == null) {
+            missingProperties.add("date of birth");
+        }
+        if (!missingProperties.isEmpty()) {
+            String message = "There are missing some data in your request: ".concat(String.join(", ", missingProperties)).concat(".");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
+        }
+        return ResponseEntity.ok().build();
     }
 }

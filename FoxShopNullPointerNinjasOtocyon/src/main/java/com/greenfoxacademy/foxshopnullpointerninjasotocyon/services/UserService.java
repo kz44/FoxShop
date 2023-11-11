@@ -5,6 +5,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,4 +18,6 @@ public interface UserService {
     Optional<User> findByLoginDTO(LoginDTO loginDTO);
 
     boolean checkPassword(User user, String password);
+
+    ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO);
 }
