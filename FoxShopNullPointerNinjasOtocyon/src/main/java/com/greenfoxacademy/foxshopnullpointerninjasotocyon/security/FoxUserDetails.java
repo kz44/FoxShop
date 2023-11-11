@@ -16,7 +16,6 @@ import java.util.Collection;
 @Setter
 public class FoxUserDetails implements UserDetails {
 
-    private Long id;
     private String username;
     private String firstName;
     private String lastName;
@@ -24,7 +23,7 @@ public class FoxUserDetails implements UserDetails {
 
 
     public static FoxUserDetails fromUser(User user){
-        return new FoxUserDetails(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
+        return new FoxUserDetails(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
     }
 
     @Override

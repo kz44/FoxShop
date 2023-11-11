@@ -52,7 +52,7 @@ public class AuthController {
         if (!userService.checkPassword(user, loginDTO.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("Wrong credentials."));
         }
-        FoxUserDetails authDetails = new FoxUserDetails(user.getId(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
+        FoxUserDetails authDetails = new FoxUserDetails(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
         String token = jwtTokenService.generateToken(authDetails);
         return ResponseEntity.ok().body(new TokenResponseDTO(token));
     }
