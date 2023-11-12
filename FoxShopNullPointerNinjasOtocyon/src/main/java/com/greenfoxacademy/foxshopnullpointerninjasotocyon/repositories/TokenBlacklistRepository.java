@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.token.Token;
 
 public interface TokenBlacklistRepository extends JpaRepository<BlacklistedJWTToken, Long> {
-    Token findByTokenEquals(String token);
+    BlacklistedJWTToken findByTokenEquals(String token);
     boolean existsByToken (String token);
 }
