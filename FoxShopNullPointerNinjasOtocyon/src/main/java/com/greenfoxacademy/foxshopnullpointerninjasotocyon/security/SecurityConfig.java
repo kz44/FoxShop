@@ -25,11 +25,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x -> x.requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .logout((logout) -> logout
-                        .logoutUrl("/api/auth/logout") //customized logout endpoint in Spring MVC, contains token blacklist logic and a SecurityContextLogoutHandler
-                        .permitAll()) //customized logout endpoints need manual permission in security chain
-        ;
+                        .anyRequest().authenticated());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

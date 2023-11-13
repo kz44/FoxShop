@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,13 +27,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtTokenService jwtTokenService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TokenBlacklistRepository tokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String token = jwtTokenService.resolveToken(request);
 
-        if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)  && !jwtTokenService.isTokenExpired(token)) {
+        if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)
+                && !jwtTokenService.isTokenExpired(token)
+                && !tokenBlacklistRepository.existsByToken(token)
+        ) {
 
             String username = jwtTokenService.parseJwt(token);
             Optional<User> userOpt = userService.findByUsername(username);
