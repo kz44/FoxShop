@@ -1,8 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.TokenResponseDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
@@ -10,20 +8,11 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -76,10 +65,9 @@ public class AuthController {
 
         userService.constructAndSaveUser(registerDto);
         return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
-        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
     }
 
-//  using custom logout endpoint instead of the pre-defined one from the security filter chain:
+    //  using custom logout endpoint instead of the pre-defined one from the security filter chain:
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         userService.handleSecurityContextAndBlacklistToken();

@@ -3,13 +3,20 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +30,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenService jwtTokenService;
+    private final HttpServletRequest httpServletRequest;
+    private final HttpServletResponse httpServletResponse;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
+    private final DeleteExpiredToken deleteExpiredToken;
 
     @Override
     public Optional<User> findByUsername(String name) {
@@ -86,6 +98,7 @@ public class UserServiceImpl implements UserService {
         }
         return ResponseEntity.ok().build();
     }
+
     public boolean doesUsernameAlreadyExist(String username) {
         return userRepository.existsByUsername(username);
     }

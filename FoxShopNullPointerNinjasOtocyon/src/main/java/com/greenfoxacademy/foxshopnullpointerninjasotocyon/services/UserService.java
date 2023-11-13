@@ -22,7 +22,6 @@ public interface UserService {
 
     ResponseEntity<?> nullCheckLogin(LoginDTO loginDTO);
 
-<<<<<<<<< Temporary merge branch 1
     public boolean doesUsernameAlreadyExist(String username);
 
     boolean doesEmailAlreadyExist(String email);
