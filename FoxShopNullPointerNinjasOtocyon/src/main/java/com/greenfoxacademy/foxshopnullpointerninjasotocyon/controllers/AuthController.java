@@ -1,6 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.TokenResponseDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
@@ -73,6 +75,7 @@ public class AuthController {
         }
 
         userService.constructAndSaveUser(registerDto);
+        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
         return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
     }
 
