@@ -32,8 +32,11 @@ public class DeleteExpiredToken {
         final Runnable runDeleteMethod = new Runnable() {
             @Override
             public void run() {
-                tokenBlacklistRepository.delete(new BlacklistedJWTToken(token));
-            }
+
+                BlacklistedJWTToken blacklistedToken = tokenBlacklistRepository.findDistinctByToken(token);
+                if (token != null) {
+                    tokenBlacklistRepository.delete(blacklistedToken);
+                }   }
         };
         final ScheduledFuture<?> deleteTimer = scheduler.schedule(runDeleteMethod, expiresWithinSeconds(token) + (60 * 5), SECONDS);
     }
