@@ -59,12 +59,12 @@ public class AuthController {
         if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This username is already being used."));
         }
-        if (userService.doesEmailAlreadyExist(registerDto.getUsername())) {
+        if (userService.doesEmailAlreadyExist(registerDto.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This email is already being used."));
         }
 
         userService.constructAndSaveUser(registerDto);
-        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getPassword()));
+        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getEmail()));
     }
 
 }
