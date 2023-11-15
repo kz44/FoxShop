@@ -52,7 +52,7 @@ public class Advertisement {
             name = "advertisement_image",
             joinColumns = @JoinColumn(name = "advertisement_id"),
             inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
-    private Set<ImagePaths> imagePaths;
+    private Set<ImagePath> imagePaths;
 
 
     @OneToMany(mappedBy = "receiver")
