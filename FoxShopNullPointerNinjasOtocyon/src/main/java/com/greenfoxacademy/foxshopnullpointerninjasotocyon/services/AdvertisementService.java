@@ -5,4 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface AdvertisementService {
     ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto);
+
+    ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 }
