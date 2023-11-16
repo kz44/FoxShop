@@ -19,8 +19,9 @@ public class ImagePath {
 
     private String url;
 
-    @ManyToMany(mappedBy = "imagePaths")
-    private Set<Advertisement> advertisements;
+    @ManyToOne
+    @JoinColumn(name = "advertisement_id", nullable = false)
+    private Advertisement advertisement;
 
     public ImagePath(String url){
         this.url = url;
