@@ -77,7 +77,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Optional<DeliveryMethod> deliveryMethod = deliveryMethodRepository.findById(newAdvertisementDto.getDeliveryMethodId());
         deliveryMethod.ifPresentOrElse(advertisement::setDeliveryMethod, () -> errors.add("Wrong delivery method id."));
         if (!errors.isEmpty()) {
-            String message = "There are errors in your request: ".concat(String.join(" ", errors));
+            String message = "There are some errors in your request: ".concat(String.join(" ", errors));
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
         }
         advertisementRepository.save(advertisement);
