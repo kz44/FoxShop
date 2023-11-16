@@ -57,5 +57,9 @@ public class User {
 
     @OneToMany(mappedBy = "sender")
     private Set<Report> reports;
+
+    @ManyToOne()
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 }
 
