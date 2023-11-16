@@ -67,4 +67,11 @@ public class AuthController {
         return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getEmail()));
     }
 
+    //  using custom logout endpoint instead of the pre-defined one from the security filter chain:
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        userService.handleSecurityContextAndBlacklistToken();
+        return ResponseEntity.ok("Logout successful");
+    }
+
 }
