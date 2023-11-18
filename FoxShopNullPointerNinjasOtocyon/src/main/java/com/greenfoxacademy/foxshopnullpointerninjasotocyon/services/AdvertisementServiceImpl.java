@@ -1,8 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementResponseDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
@@ -11,7 +9,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,4 +86,48 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisementRepository.save(advertisement);
         return ResponseEntity.ok().body(new NewAdvertisementResponseDto(advertisement.getId()));
     }
+
+    @Override
+    public ResponseEntity<?> nullCheckImageDto(PostImageDTO postImageDTO) {
+        List<String> missingData = new ArrayList<>();
+        if (postImageDTO.getImageBase64Encoded() == null) {
+            missingData.add("image");
+        }
+        if (postImageDTO.getAdvertisementId() == null) {
+            missingData.add("advertisement id");
+        }
+
+        if (!missingData.isEmpty()) {
+            String message = "There are missing some data in your request: ".concat(String.join(", ", missingData)).concat(".");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<?> addImage(String decodedImage, Long id) throws RuntimeException {
+        Optional<Advertisement> advertisement = advertisementRepository.findById(id);
+        if (!advertisement.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));}
+        int imagesCount = advertisement.get().getImagePaths().size();
+        byte[] decodedImageBytes = Base64.getDecoder().decode(decodedImage); //decode String back to binary content:
+        String imageFileName = String.valueOf(id) + imagesCount+".jpg";
+        String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + imageFileName; //create output file:
+        File imageFileObject = new File(pathForSaving);
+        try (FileOutputStream stream = new FileOutputStream(imageFileObject)) {//write decodedImageBytes to outputFile:
+            stream.write(decodedImageBytes);
+        } catch (FileNotFoundException e) {
+            System.out.println("File could not be constructed under the path specified.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        } catch (IOException e) {
+            System.out.println("Writing bytes into file failed.");
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        }
+        ImagePath image = new ImagePath(imgUrl, advertisementId);
+        advertisement.get().getImagePaths().add(image);
+        advertisementRepository.save(advertisement);
+        imageRepository.save(image);
+        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
+    }
+
 }
