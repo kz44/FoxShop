@@ -26,6 +26,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
 
+    /**
+     * This method check all required fields in newAdvertisementDto.
+     * It returns Response Entity OK if everything is ok,
+     * or it returns EntityResponse bad and in the body is new ErrorMessageDto with message
+     * which field are missing.
+     *
+     * @param newAdvertisementDto
+     * @return ResponseEntity
+     */
     @Override
     public ResponseEntity<?> nullCheckNewAdvertisement(NewAdvertisementDto newAdvertisementDto) {
         List<String> missingData = new ArrayList<>();
@@ -56,6 +65,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * This method checks if all ids (of category, location, delivery method, condition) are valid.
+     * If ids are valid, new entity of Advertisement is created and saved in database. Response is OK with id in body.
+     * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.
+     * The username is get from Security Context Holder.
+     *
+     * @param newAdvertisementDto
+     * @return
+     */
 
     @Override
     public ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto) {
