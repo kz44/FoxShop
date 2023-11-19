@@ -15,10 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 @AllArgsConstructor
 @RestController
@@ -39,47 +36,21 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(newAdvertisementDto);
     }
 
-    @PostMapping(value = "/classicHtmlFormUpload/image/{advertisementId}", consumes = {"image/png", "image/jpeg"})
-    public ResponseEntity<?> uploadImageFromFormToAdvertisement(@RequestParam("file") MultipartFile mutlipartFile, @PathVariable Long advertisementId) {
-        String filename = "testFileName.jpg";
-        String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + filename;
-        File javaFileObject = new File(pathForSaving);
-        try {
-            byte[] imageBytes = mutlipartFile.getBytes();
-            try (FileOutputStream stream = new FileOutputStream(javaFileObject)) {//write decodedImageBytes to outputFile:
-                stream.write(imageBytes);
-            } catch (FileNotFoundException e) {
-                System.out.println("File could not be constructed under the path specified.");
-                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-            }
-        } catch (IOException e) {
-            System.out.println("Writing bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-        }
-        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
-    }
+    /**
+     * InputStream is the spring-automatically-created alternative in parameters, instead of: HttpServletRequest httpServletRequest
+     * From HttpServletRequest, we would otherwise manually create InputStream in our code:
+     * try {
+     * InputStream inputStream = httpServletRequest.getInputStream();
+     * } catch (IOException e) {
+     * System.out.println("Writing bytes into file failed.");
+     * }
+     */
 
     @PostMapping(value = "binaryDataUpload/image/{advertisementId}")
-    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest, @PathVariable Long advertisementId) throws Exception {
-        if (advertisementId == null){
+    public ResponseEntity<?> uploadImageFromBinary(InputStream inputStream, @PathVariable Long advertisementId) {
+        if (advertisementId == null || inputStream.equals(InputStream.nullInputStream())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id missing in path."));
         }
-        String filename = "testFileName.jpg";
-        String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + filename;
-        File javaFileObject = new File(pathForSaving);
-        try {
-            byte[] imageBytes = IOUtils.toByteArray(httpServletRequest.getInputStream());
-            try (FileOutputStream stream = new FileOutputStream(javaFileObject)) {//write decodedImageBytes to outputFile:
-                stream.write(imageBytes);
-            } catch (FileNotFoundException e) {
-                System.out.println("File could not be constructed under the path specified.");
-                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-            }
-        } catch (IOException e) {
-            System.out.println("Writing bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-        }
-
-        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
+        return advertisementService.addImageBinaryData(inputStream, advertisementId);
     }
 }

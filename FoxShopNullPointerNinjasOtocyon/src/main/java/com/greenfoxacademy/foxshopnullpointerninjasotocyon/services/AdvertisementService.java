@@ -4,12 +4,16 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisement
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
 import org.springframework.http.ResponseEntity;
 
+import java.io.InputStream;
+
 public interface AdvertisementService {
     ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto);
 
     ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 
-    ResponseEntity<?> addImage(String decodedImage, Long id);
+    ResponseEntity<?> addImageBase64(String decodedImage, Long id);
 
     ResponseEntity<?> nullCheckImageDto(PostImageDTO postImageDTO);
+
+    ResponseEntity<?> addImageBinaryData(InputStream inputStream, Long advertisementId);
 }

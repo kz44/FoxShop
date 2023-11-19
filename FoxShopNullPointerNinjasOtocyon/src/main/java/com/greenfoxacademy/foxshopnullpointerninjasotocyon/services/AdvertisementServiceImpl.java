@@ -4,15 +4,13 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -130,7 +128,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
 
+@Override
+    public ResponseEntity<?> addImageBinaryData(InputStream inputStream, Long advertisementId){
+    String filename = "testFileName.jpg";
+    String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + filename;
+    File javaFileObject = new File(pathForSaving);
+    try {
+        byte[] imageBytes = IOUtils.toByteArray(inputStream);
+        try (FileOutputStream stream = new FileOutputStream(javaFileObject)) {//write decodedImageBytes to outputFile:
+            stream.write(imageBytes);
+        } catch (FileNotFoundException e) {
+            System.out.println("File could not be constructed under the path specified.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        }
+    } catch (IOException e) {
+        System.out.println("Writing bytes into file failed.");
+        ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+    }
+    return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
 
+}
 
 
 }
