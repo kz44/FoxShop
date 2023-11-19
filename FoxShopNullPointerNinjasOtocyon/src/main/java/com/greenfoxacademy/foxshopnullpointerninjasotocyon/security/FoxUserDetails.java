@@ -26,7 +26,12 @@ public class FoxUserDetails implements UserDetails {
 
 
     public static FoxUserDetails fromUser(User user){
-        return new FoxUserDetails(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole().getRoleName());
+        return new FoxUserDetails(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole().getRoleName());
     }
 
     @Override
