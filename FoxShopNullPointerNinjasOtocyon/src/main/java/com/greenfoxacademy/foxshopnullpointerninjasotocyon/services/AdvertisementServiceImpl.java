@@ -1,8 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
@@ -32,31 +32,31 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * or it returns EntityResponse bad and in the body is new ErrorMessageDto with message
      * which field are missing.
      *
-     * @param newAdvertisementDto
+     * @param advertisementDto
      * @return ResponseEntity
      */
     @Override
-    public ResponseEntity<?> nullCheckNewAdvertisement(NewAdvertisementDto newAdvertisementDto) {
+    public ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto) {
         List<String> missingData = new ArrayList<>();
-        if (newAdvertisementDto.getTitle() == null) {
+        if (advertisementDto.getTitle() == null) {
             missingData.add("title");
         }
-        if (newAdvertisementDto.getDescription() == null) {
+        if (advertisementDto.getDescription() == null) {
             missingData.add("description");
         }
-        if (newAdvertisementDto.getPrice() == null) {
+        if (advertisementDto.getPrice() == null) {
             missingData.add("price");
         }
-        if (newAdvertisementDto.getCategoryId() == null) {
+        if (advertisementDto.getCategoryId() == null) {
             missingData.add("category id");
         }
-        if (newAdvertisementDto.getConditionId() == null) {
+        if (advertisementDto.getConditionId() == null) {
             missingData.add("condition id");
         }
-        if (newAdvertisementDto.getLocationId() == null) {
+        if (advertisementDto.getLocationId() == null) {
             missingData.add("location id");
         }
-        if (newAdvertisementDto.getDeliveryMethodId() == null) {
+        if (advertisementDto.getDeliveryMethodId() == null) {
             missingData.add("delivery method id");
         }
         if (!missingData.isEmpty()) {
@@ -72,34 +72,34 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.
      * The username is get from Security Context Holder.
      *
-     * @param newAdvertisementDto
+     * @param advertisementDto
      * @return
      */
 
     @Override
-    public ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto) {
+    public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
         List<String> errors = new ArrayList<>();
         Advertisement advertisement = new Advertisement();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).get();
         advertisement.setUser(user);
-        advertisement.setTitle(newAdvertisementDto.getTitle());
-        advertisement.setDescription(newAdvertisementDto.getDescription());
-        advertisement.setPrice(newAdvertisementDto.getPrice());
-        Optional<Category> category = categoryRepository.findById(newAdvertisementDto.getCategoryId());
+        advertisement.setTitle(advertisementDto.getTitle());
+        advertisement.setDescription(advertisementDto.getDescription());
+        advertisement.setPrice(advertisementDto.getPrice());
+        Optional<Category> category = categoryRepository.findById(advertisementDto.getCategoryId());
         category.ifPresentOrElse(advertisement::setCategory, () -> errors.add("Wrong category id."));
-        Optional<Condition> condition = conditionRepository.findById(newAdvertisementDto.getConditionId());
+        Optional<Condition> condition = conditionRepository.findById(advertisementDto.getConditionId());
         condition.ifPresentOrElse(advertisement::setCondition, () -> errors.add("Wrong condition id."));
-        Optional<Location> location = locationRepository.findById(newAdvertisementDto.getLocationId());
+        Optional<Location> location = locationRepository.findById(advertisementDto.getLocationId());
         location.ifPresentOrElse(advertisement::setLocation, () -> errors.add("Wrong location id."));
-        Optional<DeliveryMethod> deliveryMethod = deliveryMethodRepository.findById(newAdvertisementDto.getDeliveryMethodId());
+        Optional<DeliveryMethod> deliveryMethod = deliveryMethodRepository.findById(advertisementDto.getDeliveryMethodId());
         deliveryMethod.ifPresentOrElse(advertisement::setDeliveryMethod, () -> errors.add("Wrong delivery method id."));
         if (!errors.isEmpty()) {
             String message = "There are some errors in your request: ".concat(String.join(" ", errors));
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
         }
         advertisementRepository.save(advertisement);
-        return ResponseEntity.ok().body(new NewAdvertisementResponseDto(advertisement.getId()));
+        return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
     }
 }

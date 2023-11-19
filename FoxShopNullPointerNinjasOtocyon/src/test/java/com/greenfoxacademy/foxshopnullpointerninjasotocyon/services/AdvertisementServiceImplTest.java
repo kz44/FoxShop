@@ -1,8 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import org.junit.jupiter.api.Test;
@@ -40,15 +40,15 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementIsOk() {
-        NewAdvertisementDto newAdvertisementDto = new NewAdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckNewAdvertisement(newAdvertisementDto);
+        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
         assertEquals(ResponseEntity.ok().build(), response);
     }
 
     @Test
     void nullCheckNewAdvertisementWithoutTitle() {
-        NewAdvertisementDto newAdvertisementDto = new NewAdvertisementDto(null, "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckNewAdvertisement(newAdvertisementDto);
+        AdvertisementDto advertisementDto = new AdvertisementDto(null, "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -57,8 +57,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutPriceAndLocationId() {
-        NewAdvertisementDto newAdvertisementDto = new NewAdvertisementDto("title", "description", null, null, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckNewAdvertisement(newAdvertisementDto);
+        AdvertisementDto advertisementDto = new AdvertisementDto("title", "description", null, null, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -67,8 +67,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutAnyData() {
-        NewAdvertisementDto newAdvertisementDto = new NewAdvertisementDto(null, null, null, null, null, null, null);
-        ResponseEntity<?> response = advertisementService.nullCheckNewAdvertisement(newAdvertisementDto);
+        AdvertisementDto advertisementDto = new AdvertisementDto(null, null, null, null, null, null, null);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -94,10 +94,10 @@ class AdvertisementServiceImplTest {
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
 
-        NewAdvertisementDto newAdvertisementDto = new NewAdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(newAdvertisementDto);
-        assertInstanceOf(NewAdvertisementResponseDto.class, response.getBody());
-        NewAdvertisementResponseDto newAdvertisementResponseDto = (NewAdvertisementResponseDto) response.getBody();
-        assertNotNull(newAdvertisementResponseDto);
+        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        assertInstanceOf(AdvertisementResponseDto.class, response.getBody());
+        AdvertisementResponseDto advertisementResponseDto = (AdvertisementResponseDto) response.getBody();
+        assertNotNull(advertisementResponseDto);
     }
 }

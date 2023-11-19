@@ -1,10 +1,10 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import org.springframework.http.ResponseEntity;
 
 public interface AdvertisementService {
-    ResponseEntity<?> nullCheckNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
+    ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto);
 
-    ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
+    ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 }
