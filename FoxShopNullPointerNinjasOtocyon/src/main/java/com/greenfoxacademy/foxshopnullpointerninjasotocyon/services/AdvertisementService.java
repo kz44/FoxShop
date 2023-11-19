@@ -4,7 +4,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisement
 import org.springframework.http.ResponseEntity;
 
 public interface AdvertisementService {
-    ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto);
+    ResponseEntity<?> nullCheckNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 
     ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 }

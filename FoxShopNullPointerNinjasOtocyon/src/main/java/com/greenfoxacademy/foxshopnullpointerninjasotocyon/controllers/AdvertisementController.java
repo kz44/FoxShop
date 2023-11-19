@@ -22,7 +22,7 @@ public class AdvertisementController {
         if (newAdvertisementDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for new advertisement."));
         }
-        ResponseEntity<?> responseNullCheck = advertisementService.nullCheckNewAvertisement(newAdvertisementDto);
+        ResponseEntity<?> responseNullCheck = advertisementService.nullCheckNewAdvertisement(newAdvertisementDto);
         if (!responseNullCheck.getStatusCode().is2xxSuccessful()) {
             return responseNullCheck;
         }

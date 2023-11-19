@@ -27,7 +27,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto) {
+    public ResponseEntity<?> nullCheckNewAdvertisement(NewAdvertisementDto newAdvertisementDto) {
         List<String> missingData = new ArrayList<>();
         if (newAdvertisementDto.getTitle() == null) {
             missingData.add("title");
