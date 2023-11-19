@@ -105,7 +105,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
-    public ResponseEntity<?> addImage(String decodedImage, Long id) throws RuntimeException {
+    public ResponseEntity<?> addImageBase64(String decodedImage, Long id) {
         Optional<Advertisement> advertisement = advertisementRepository.findById(id);
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));}
@@ -129,5 +129,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         imageRepository.save(image);
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
+
+
+
 
 }
