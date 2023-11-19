@@ -41,6 +41,7 @@ public class JwtTokenService {
         claims.put("firstName",  userDetails.getFirstName());
         claims.put("lastName", userDetails.getLastName());
         claims.put("email",  userDetails.getEmail());
+        claims.put("roleName", userDetails.getRoleName());
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -48,7 +49,6 @@ public class JwtTokenService {
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(now.plus(Duration.ofMinutes(jwtConfigProperties.getExpirationTimeMinutes()))))
                 .signWith(getKey())
-
                 .compact();
     }
 
