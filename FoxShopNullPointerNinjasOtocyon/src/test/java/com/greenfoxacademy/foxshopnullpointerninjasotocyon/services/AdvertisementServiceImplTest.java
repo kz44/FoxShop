@@ -16,8 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +52,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: title.", errorMessageDTO.getError());
+        assertEquals("There are missing some data in your request: title.", errorMessageDTO.getMessage());
     }
 
     @Test
@@ -64,7 +62,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: price, location id.", errorMessageDTO.getError());
+        assertEquals("There are missing some data in your request: price, location id.", errorMessageDTO.getMessage());
     }
 
     @Test
@@ -74,16 +72,13 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: title, description, price, category id, condition id, location id, delivery method id.", errorMessageDTO.getError());
+        assertEquals("There are missing some data in your request: title, description, price, category id, condition id, location id, delivery method id.", errorMessageDTO.getMessage());
     }
 
     @Test
     void createNewAdvertisementEverythingOk() {
-        User user = new User(1L, "testUsername", "testFirstName", "testLastName",
-                LocalDate.of(1980, 1, 1),
-                "test@email.com", "password",
-                LocalDateTime.of(2022, 1, 1, 12, 13, 11),
-                null, null, null, null, null, null);
+        User user = new User();
+        user.setUsername("testUsername");
         FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -103,11 +98,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void createNewAdvertisementWrongCategoryId() {
-        User user = new User(1L, "testUsername", "testFirstName", "testLastName",
-                LocalDate.of(1980, 1, 1),
-                "test@email.com", "password",
-                LocalDateTime.of(2022, 1, 1, 12, 13, 11),
-                null, null, null, null, null, null);
+        User user = new User();
+        user.setUsername("testUsername");
         FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -123,16 +115,13 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Wrong category id.", errorMessageDTO.getError());
+        assertEquals("There are some errors in your request: Wrong category id.", errorMessageDTO.getMessage());
     }
 
     @Test
     void createNewAdvertisementWrongAllIds() {
-        User user = new User(1L, "testUsername", "testFirstName", "testLastName",
-                LocalDate.of(1980, 1, 1),
-                "test@email.com", "password",
-                LocalDateTime.of(2022, 1, 1, 12, 13, 11),
-                null, null, null, null, null, null);
+        User user = new User();
+        user.setUsername("testUsername");
         FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
         SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -148,6 +137,6 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Wrong category id. Wrong condition id. Wrong location id. Wrong delivery method id.", errorMessageDTO.getError());
+        assertEquals("There are some errors in your request: Wrong category id. Wrong condition id. Wrong location id. Wrong delivery method id.", errorMessageDTO.getMessage());
     }
 }
