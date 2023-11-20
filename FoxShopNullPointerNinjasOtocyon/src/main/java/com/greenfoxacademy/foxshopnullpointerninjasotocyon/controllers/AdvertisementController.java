@@ -29,12 +29,12 @@ public class AdvertisementController {
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateAdvertisement(@PathVariable Long id, @RequestBody(required = false) AdvertisementDto advertisementDto) {
         if (advertisementDto == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for new advertisement."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for update advertisement."));
         }
         ResponseEntity<?> responseNullCheck = advertisementService.nullCheckAdvertisement(advertisementDto);
         if (!responseNullCheck.getStatusCode().is2xxSuccessful()) {
             return responseNullCheck;
         }
-        return advertisementService.updateAdvertisementAllData(id, advertisementDto);
+        return advertisementService.updateAdvertisement(id, advertisementDto);
     }
 }

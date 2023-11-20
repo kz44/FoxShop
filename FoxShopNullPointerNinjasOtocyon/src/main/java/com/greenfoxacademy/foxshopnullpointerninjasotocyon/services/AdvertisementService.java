@@ -8,5 +8,5 @@ public interface AdvertisementService {
 
     ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 
-    ResponseEntity<?> updateAdvertisementAllData(Long id, AdvertisementDto advertisementDto);
+    ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto);
 }

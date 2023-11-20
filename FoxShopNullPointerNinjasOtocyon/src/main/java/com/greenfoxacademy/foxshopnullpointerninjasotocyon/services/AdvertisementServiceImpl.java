@@ -83,11 +83,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).get();
         advertisement.setUser(user);
-        return checkIdsAndSaveAdvertisement(advertisementDto, advertisement);
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
     @Override
-    public ResponseEntity<?> updateAdvertisementAllData(Long id, AdvertisementDto advertisementDto) {
+    public ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).get();
@@ -99,10 +99,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
-        return checkIdsAndSaveAdvertisement(advertisementDto, advertisement);
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
-    private ResponseEntity<?> checkIdsAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
+    private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
         List<String> errors = new ArrayList<>();
         advertisement.setTitle(advertisementDto.getTitle());
         advertisement.setDescription(advertisementDto.getDescription());
