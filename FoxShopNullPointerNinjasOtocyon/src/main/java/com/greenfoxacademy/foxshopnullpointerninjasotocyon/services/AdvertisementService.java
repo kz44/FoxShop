@@ -7,4 +7,6 @@ public interface AdvertisementService {
     ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto);
 
     ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
+
+    ResponseEntity<?> updateAdvertisementAllData(Long id, AdvertisementDto advertisementDto);
 }

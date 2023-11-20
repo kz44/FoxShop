@@ -102,4 +102,37 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisementRepository.save(advertisement);
         return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
     }
+
+    @Override
+    public ResponseEntity<?> updateAdvertisementAllData(Long id, AdvertisementDto advertisementDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).get();
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+        if (advertisementOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with this id."));
+        }
+        Advertisement advertisement = advertisementOptional.get();
+        if (!advertisement.getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        List<String> errors = new ArrayList<>();
+        advertisement.setTitle(advertisementDto.getTitle());
+        advertisement.setDescription(advertisementDto.getDescription());
+        advertisement.setPrice(advertisementDto.getPrice());
+        Optional<Category> category = categoryRepository.findById(advertisementDto.getCategoryId());
+        category.ifPresentOrElse(advertisement::setCategory, () -> errors.add("Wrong category id."));
+        Optional<Condition> condition = conditionRepository.findById(advertisementDto.getConditionId());
+        condition.ifPresentOrElse(advertisement::setCondition, () -> errors.add("Wrong condition id."));
+        Optional<Location> location = locationRepository.findById(advertisementDto.getLocationId());
+        location.ifPresentOrElse(advertisement::setLocation, () -> errors.add("Wrong location id."));
+        Optional<DeliveryMethod> deliveryMethod = deliveryMethodRepository.findById(advertisementDto.getDeliveryMethodId());
+        deliveryMethod.ifPresentOrElse(advertisement::setDeliveryMethod, () -> errors.add("Wrong delivery method id."));
+        if (!errors.isEmpty()) {
+            String message = "There are some errors in your request: ".concat(String.join(" ", errors));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
+        }
+        advertisementRepository.save(advertisement);
+        return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
+    }
 }
