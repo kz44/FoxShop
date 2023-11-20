@@ -26,7 +26,7 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
-    @PutMapping("/updateAll/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateAdvertisement(@PathVariable Long id, @RequestBody(required = false) AdvertisementDto advertisementDto) {
         if (advertisementDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for new advertisement."));

@@ -78,29 +78,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
-        List<String> errors = new ArrayList<>();
         Advertisement advertisement = new Advertisement();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).get();
         advertisement.setUser(user);
-        advertisement.setTitle(advertisementDto.getTitle());
-        advertisement.setDescription(advertisementDto.getDescription());
-        advertisement.setPrice(advertisementDto.getPrice());
-        Optional<Category> category = categoryRepository.findById(advertisementDto.getCategoryId());
-        category.ifPresentOrElse(advertisement::setCategory, () -> errors.add("Wrong category id."));
-        Optional<Condition> condition = conditionRepository.findById(advertisementDto.getConditionId());
-        condition.ifPresentOrElse(advertisement::setCondition, () -> errors.add("Wrong condition id."));
-        Optional<Location> location = locationRepository.findById(advertisementDto.getLocationId());
-        location.ifPresentOrElse(advertisement::setLocation, () -> errors.add("Wrong location id."));
-        Optional<DeliveryMethod> deliveryMethod = deliveryMethodRepository.findById(advertisementDto.getDeliveryMethodId());
-        deliveryMethod.ifPresentOrElse(advertisement::setDeliveryMethod, () -> errors.add("Wrong delivery method id."));
-        if (!errors.isEmpty()) {
-            String message = "There are some errors in your request: ".concat(String.join(" ", errors));
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
-        }
-        advertisementRepository.save(advertisement);
-        return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
+        return checkIdsAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
     @Override
@@ -116,6 +99,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
+        return checkIdsAndSaveAdvertisement(advertisementDto, advertisement);
+    }
+
+    private ResponseEntity<?> checkIdsAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
         List<String> errors = new ArrayList<>();
         advertisement.setTitle(advertisementDto.getTitle());
         advertisement.setDescription(advertisementDto.getDescription());
