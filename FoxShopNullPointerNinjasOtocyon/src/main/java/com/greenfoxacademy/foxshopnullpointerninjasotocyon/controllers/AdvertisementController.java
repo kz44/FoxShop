@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImgSavedDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -37,20 +38,30 @@ public class AdvertisementController {
     }
 
     /**
-     * InputStream is the spring-automatically-created alternative in parameters, instead of: HttpServletRequest httpServletRequest
-     * From HttpServletRequest, we would otherwise manually create InputStream in our code:
-     * try {
-     * InputStream inputStream = httpServletRequest.getInputStream();
-     * } catch (IOException e) {
-     * System.out.println("Writing bytes into file failed.");
-     * }
+     * instead of method parameter HttpServletRequest in addImage endpoints,
+     * InputStream is a spring-automatically-created alternative, where the conversion
+     * into InputStream does not have to be done manually in the method body.
+     * However, as HttpServletRequest is used also to extract token -> username,
+     *  we keep HttpServletRequest in parameters:
      */
 
-    @PostMapping(value = "binaryDataUpload/image/{advertisementId}")
-    public ResponseEntity<?> uploadImageFromBinary(InputStream inputStream, @PathVariable Long advertisementId) {
-        if (advertisementId == null || inputStream.equals(InputStream.nullInputStream())) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id missing in path."));
+    @PostMapping("base64encoded/image/{imageName}/{advertisementId}")
+    public ResponseEntity<?> addImageBase64(PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
+                                            @PathVariable Long advertisementId, @PathVariable String imageName){
+        if (postImageDTO == null){return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file located."));}
+        if (advertisementId == null || imageName == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
         }
-        return advertisementService.addImageBinaryData(inputStream, advertisementId);
+        return advertisementService.addImageBase64( postImageDTO.getImageBase64Encoded(),
+                 httpServletRequest, advertisementId, imageName);
+    }
+
+    @PostMapping("binaryDataUpload/image/{imageName}/{advertisementId}")
+    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
+                                                   @PathVariable Long advertisementId, @PathVariable String imageName) {
+        if (advertisementId == null || imageName == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
+        }
+        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
     }
 }

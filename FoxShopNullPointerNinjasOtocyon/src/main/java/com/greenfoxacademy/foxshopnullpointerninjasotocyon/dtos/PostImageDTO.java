@@ -9,6 +9,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostImageDTO {
     private String imageBase64Encoded;
-    private Long advertisementId;
-
 }

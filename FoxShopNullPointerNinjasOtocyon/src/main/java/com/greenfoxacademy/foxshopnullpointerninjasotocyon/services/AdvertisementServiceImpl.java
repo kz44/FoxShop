@@ -3,12 +3,15 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -26,6 +29,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
+    private ImagePathRepository imagePathRepository;
+    private JwtTokenService jwtTokenService;
 
     @Override
     public ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto) {
@@ -85,35 +90,25 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return ResponseEntity.ok().body(new NewAdvertisementResponseDto(advertisement.getId()));
     }
 
-    @Override
-    public ResponseEntity<?> nullCheckImageDto(PostImageDTO postImageDTO) {
-        List<String> missingData = new ArrayList<>();
-        if (postImageDTO.getImageBase64Encoded() == null) {
-            missingData.add("image");
-        }
-        if (postImageDTO.getAdvertisementId() == null) {
-            missingData.add("advertisement id");
-        }
 
-        if (!missingData.isEmpty()) {
-            String message = "There are missing some data in your request: ".concat(String.join(", ", missingData)).concat(".");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
-        }
-        return ResponseEntity.ok().build();
-    }
 
     @Override
-    public ResponseEntity<?> addImageBase64(String decodedImage, Long id) {
-        Optional<Advertisement> advertisement = advertisementRepository.findById(id);
+    @Transactional
+    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
+                                            Long advertisementId, String imageName) {
+        if (encodedImage==null) {
+            System.out.println("Encoded image or advertisement ID missing in DTO");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        }
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         if (!advertisement.isPresent()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));}
-        int imagesCount = advertisement.get().getImagePaths().size();
-        byte[] decodedImageBytes = Base64.getDecoder().decode(decodedImage); //decode String back to binary content:
-        String imageFileName = String.valueOf(id) + imagesCount+".jpg";
-        String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + imageFileName; //create output file:
-        File imageFileObject = new File(pathForSaving);
-        try (FileOutputStream stream = new FileOutputStream(imageFileObject)) {//write decodedImageBytes to outputFile:
-            stream.write(decodedImageBytes);
+            System.out.println("Advertisement entity not located in the database.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        }
+        String pathForSaving = new String();
+        try {
+            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
+            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes, advertisementId, imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
@@ -121,33 +116,65 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             System.out.println("Writing bytes into file failed.");
             ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
         }
-        ImagePath image = new ImagePath(imgUrl, advertisementId);
+
+        ImagePath image = new ImagePath(pathForSaving);
+        image.setAdvertisement(advertisement.get());
         advertisement.get().getImagePaths().add(image);
-        advertisementRepository.save(advertisement);
-        imageRepository.save(image);
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.save(image);
+
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
 
-@Override
-    public ResponseEntity<?> addImageBinaryData(InputStream inputStream, Long advertisementId){
-    String filename = "testFileName.jpg";
-    String pathForSaving = "src/main/resources/assets/advertisementImages" + File.pathSeparator + filename;
-    File javaFileObject = new File(pathForSaving);
-    try {
-        byte[] imageBytes = IOUtils.toByteArray(inputStream);
-        try (FileOutputStream stream = new FileOutputStream(javaFileObject)) {//write decodedImageBytes to outputFile:
-            stream.write(imageBytes);
+    @Override
+    @Transactional
+    public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
+                                                Long advertisementId, String imageName) {
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        if (!advertisement.isPresent()) {
+            System.out.println("Advertisement entity not located in the database.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        }
+        String pathForSaving = new String();
+        try {
+            InputStream inputStream = httpServletRequest.getInputStream();
+            if (inputStream.equals(InputStream.nullInputStream())) {
+                System.out.println("Input stream in httpRequest is empty");
+            }
+            byte[] imageBytes = IOUtils.toByteArray(inputStream);
+            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes, advertisementId, imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+        } catch (IOException e) {
+            System.out.println("Writing bytes into file failed.");
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
         }
-    } catch (IOException e) {
-        System.out.println("Writing bytes into file failed.");
-        ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+
+        ImagePath image = new ImagePath(pathForSaving);
+        image.setAdvertisement(advertisement.get());
+        advertisement.get().getImagePaths().add(image);
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.save(image);
+
+        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
-    return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
 
-}
-
-
+    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+                                         Long advertisementId, String imageName)
+            throws IOException, FileNotFoundException {
+        String token = jwtTokenService.resolveToken(httpServletRequest);
+//      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
+        String username = jwtTokenService.parseJwt(token);
+//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
+        String pathForSaving = "src/main/resources/assets/advertisementImages"
+                + File.pathSeparator + username + File.pathSeparator
+                + advertisementId.toString() + File.pathSeparator
+                + imageName;
+        File javaFileObject = new File(pathForSaving);
+        FileOutputStream stream = new FileOutputStream(javaFileObject);
+//          write bytes to result file:
+        stream.write(imageBytes);
+        return pathForSaving;
+    }
 }
