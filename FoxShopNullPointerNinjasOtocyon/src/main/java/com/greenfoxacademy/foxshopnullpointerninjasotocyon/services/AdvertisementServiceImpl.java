@@ -27,13 +27,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private UserRepository userRepository;
 
     /**
-     * This method check all required fields in newAdvertisementDto.
-     * It returns Response Entity OK if everything is ok,
-     * or it returns EntityResponse bad and in the body is new ErrorMessageDto with message
-     * which field are missing.
+     * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
+     * <p>
+     * This method examines the essential fields of the AdvertisementDto, ensuring none of them are null.
+     * If any null values are found, it returns a ResponseEntity with a Bad Request status and an error message
+     * indicating the missing data. Otherwise, it returns a ResponseEntity with an OK status.
      *
-     * @param advertisementDto
-     * @return ResponseEntity
+     * @param advertisementDto The AdvertisementDto to be checked for null values.
+     * @return ResponseEntity<?> A ResponseEntity indicating the status of the null check.
+     * - If null values are found, it returns a Bad Request status with an error message.
+     * - If no null values are found, it returns an OK status.
      */
     @Override
     public ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto) {
@@ -67,13 +70,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     /**
-     * There is created new Advertisement and the user is set on it.
-     * User is get from repository find by username which is received from Security Context Holder.
-     * At the end of this method another method is calling to validate all ids (of category, location, delivery method, condition)
-     * and in case of successful validation save the entity. It returns the response from another validation method.
+     * Creates a new advertisement using the provided AdvertisementDto and associates it with the current authenticated user.
+     * <p>
+     * This method initializes a new Advertisement entity, sets the current user as its owner, and delegates to the
+     * dataValidationAndSaveAdvertisement method for data validation and saving.
      *
-     * @param advertisementDto
-     * @return ResponseEntity
+     * @param advertisementDto The AdvertisementDto containing the information for the new advertisement.
+     * @return ResponseEntity<?> A ResponseEntity containing either the saved Advertisement ID or an error message,
+     * wrapped in the appropriate HTTP status code.
      */
 
     @Override
@@ -87,12 +91,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     /**
-     * This method checks if all ids (of category, location, delivery method, condition) are valid.
-     * If ids are valid, new entity of Advertisement is saved in database. Response is OK with id in body.
-     * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.     *
+     * Performs data validation for the provided AdvertisementDto and updates the given Advertisement entity.
+     * If validation passes, the updated Advertisement is saved to the repository.
      *
-     * @param advertisementDto
-     * @return Response Entity
+     * @param advertisementDto The AdvertisementDto containing the updated information for the advertisement.
+     * @param advertisement    The Advertisement entity to be updated.
+     * @return ResponseEntity<?> A ResponseEntity containing either the saved Advertisement ID or an error message,
+     * wrapped in the appropriate HTTP status code.
      */
 
     private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
