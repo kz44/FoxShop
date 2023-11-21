@@ -1,12 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.security;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -24,10 +20,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//        "/api/auth/**"
-                .authorizeHttpRequests(x -> x.requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated())
-                ;
+                .authorizeHttpRequests(x -> x.requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
