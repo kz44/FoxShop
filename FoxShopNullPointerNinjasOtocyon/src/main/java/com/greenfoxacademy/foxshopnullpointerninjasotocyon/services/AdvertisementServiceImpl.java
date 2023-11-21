@@ -131,12 +131,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     @Transactional
     public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
-                                                Long advertisementId, String imageName) {
-        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-        if (!advertisement.isPresent()) {
-            System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-        }
+//                                                Long advertisementId,
+                                                String imageName) {
+//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+//        if (!advertisement.isPresent()) {
+//            System.out.println("Advertisement entity not located in the database.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+//        }
         String pathForSaving = new String();
         try {
             InputStream inputStream = httpServletRequest.getInputStream();
@@ -155,11 +156,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
         }
 
-        ImagePath image = new ImagePath(pathForSaving);
-        image.setAdvertisement(advertisement.get());
-        advertisement.get().getImagePaths().add(image);
-        advertisementRepository.save(advertisement.get());
-        imagePathRepository.save(image);
+//        ImagePath image = new ImagePath(pathForSaving);
+//        image.setAdvertisement(advertisement.get());
+//        advertisement.get().getImagePaths().add(image);
+//        advertisementRepository.save(advertisement.get());
+//        imagePathRepository.save(image);
 
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
@@ -182,6 +183,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
         File javaFileObject = new File(pathForSaving);
 
+        /* try creating file under the path specified - assuming directory+subdirectories exist already
+        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+        and afterwards create the file
+         */
         try {
             FileOutputStream stream = new FileOutputStream(javaFileObject);
 //          write bytes to result file:

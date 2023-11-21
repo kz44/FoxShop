@@ -50,8 +50,9 @@ public class AdvertisementController {
      *  we keep HttpServletRequest in parameters:
      */
 
-//  (For testing) base64 image online encoder gives out an encoded string needed for the PostImageDTO's field: 'imageBase64Encoded'
-//   https://codebeautify.org/image-to-base64-converter
+ /* (For testing) base64 image online encoder gives out an encoded string needed for the PostImageDTO's field: 'imageBase64Encoded'
+   https://codebeautify.org/image-to-base64-converter
+   */
     @PostMapping("/base64encoded/image/{imageName}")
 //            /{advertisementId}"
 
@@ -70,12 +71,20 @@ public class AdvertisementController {
                 imageName);
     }
 
-    @PostMapping("/binaryDataUpload/image/{imageName}/{advertisementId}")
+    @PostMapping("/binaryDataUpload/image/{imageName}")
+//            "/{advertisementId}")
     public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-                                                   @PathVariable(required = false) Long advertisementId, @PathVariable(required = false) String imageName) {
-        if (advertisementId == null || imageName == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
+//                                                   @PathVariable(required = false) Long advertisementId,
+                                                   @PathVariable(required = false) String imageName) {
+        if (
+//                advertisementId == null ||
+                        imageName == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+//                    "Advertisement id or " +
+                    "image name missing in path."));
         }
-        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
+        return advertisementService.addImageBinaryData(httpServletRequest,
+//                 advertisementId,
+                imageName);
     }
 }
