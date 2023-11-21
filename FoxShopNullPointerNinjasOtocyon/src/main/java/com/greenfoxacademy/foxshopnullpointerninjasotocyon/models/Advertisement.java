@@ -47,14 +47,12 @@ public class Advertisement {
     @JoinColumn(name = "condition_id", nullable = false)
     private Condition condition;
 
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "advertisement_image",
-//            joinColumns = @JoinColumn(name = "advertisement_id"),
-//            inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
-//    private Set<ImagePaths> imagePaths;
-
+    @ManyToMany
+    @JoinTable(
+            name = "advertisement_image",
+            joinColumns = @JoinColumn(name = "advertisement_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_paths_id"))
+    private Set<ImagePaths> imagePaths;
 
     @OneToMany(mappedBy = "receiver")
     private Set<Report> reports;
