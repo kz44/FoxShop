@@ -67,23 +67,36 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     /**
-     * This method checks if all ids (of category, location, delivery method, condition) are valid.
-     * If ids are valid, new entity of Advertisement is created and saved in database. Response is OK with id in body.
-     * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.
-     * The username is get from Security Context Holder.
+     * There is created new Advertisement and the user is set on it.
+     * User is get from repository find by username which is received from Security Context Holder.
+     * At the end of this method another method is calling to validate all ids (of category, location, delivery method, condition)
+     * and in case of successful validation save the entity. It returns the response from another validation method.
      *
      * @param advertisementDto
-     * @return
+     * @return ResponseEntity
      */
 
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
-        List<String> errors = new ArrayList<>();
         Advertisement advertisement = new Advertisement();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userRepository.findByUsername(username).get();
         advertisement.setUser(user);
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+    }
+
+    /**
+     * This method checks if all ids (of category, location, delivery method, condition) are valid.
+     * If ids are valid, new entity of Advertisement is saved in database. Response is OK with id in body.
+     * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.     *
+     *
+     * @param advertisementDto
+     * @return Response Entity
+     */
+
+    private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
+        List<String> errors = new ArrayList<>();
         advertisement.setTitle(advertisementDto.getTitle());
         advertisement.setDescription(advertisementDto.getDescription());
         advertisement.setPrice(advertisementDto.getPrice());
