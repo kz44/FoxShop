@@ -91,24 +91,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
 
-
     @Override
     @Transactional
     public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
-                                            Long advertisementId, String imageName) {
-        if (encodedImage==null) {
-            System.out.println("Encoded image or advertisement ID missing in DTO");
+//                                            Long advertisementId,
+                                            String imageName) {
+        if (encodedImage == null) {
+            System.out.println("Encoded image missing in DTO");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
         }
-        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-        if (!advertisement.isPresent()) {
-            System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
-        }
+//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+//        if (!advertisement.isPresent()) {
+//            System.out.println("Advertisement entity not located in the database.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+//        }
         String pathForSaving = new String();
         try {
             byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
-            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes, advertisementId, imageName);
+            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
+//                    advertisementId,
+                    imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
@@ -117,11 +119,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
         }
 
-        ImagePath image = new ImagePath(pathForSaving);
-        image.setAdvertisement(advertisement.get());
-        advertisement.get().getImagePaths().add(image);
-        advertisementRepository.save(advertisement.get());
-        imagePathRepository.save(image);
+//        ImagePath image = new ImagePath(pathForSaving);
+//        image.setAdvertisement(advertisement.get());
+//        advertisement.get().getImagePaths().add(image);
+//        advertisementRepository.save(advertisement.get());
+//        imagePathRepository.save(image);
 
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
@@ -142,7 +144,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 System.out.println("Input stream in httpRequest is empty");
             }
             byte[] imageBytes = IOUtils.toByteArray(inputStream);
-            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes, advertisementId, imageName);
+            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
+//                    advertisementId,
+                    imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
@@ -160,21 +164,37 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
     }
 
+
     private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-                                         Long advertisementId, String imageName)
+//                                        Long advertisementId,
+                                         String imageName)
             throws IOException, FileNotFoundException {
-        String token = jwtTokenService.resolveToken(httpServletRequest);
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
 //      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username = jwtTokenService.parseJwt(token);
+        String username =
+//                jwtTokenService.parseJwt(token)
+                "user";
 //      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
-        String pathForSaving = "src/main/resources/assets/advertisementImages"
-                + File.pathSeparator + username + File.pathSeparator
-                + advertisementId.toString() + File.pathSeparator
-                + imageName;
+        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+                + username + "/"
+//                + advertisementId.toString() + "/"
+                + imageName + ".png";
+
         File javaFileObject = new File(pathForSaving);
-        FileOutputStream stream = new FileOutputStream(javaFileObject);
+
+        try {
+            FileOutputStream stream = new FileOutputStream(javaFileObject);
 //          write bytes to result file:
-        stream.write(imageBytes);
+            stream.write(imageBytes);
+        } catch (FileNotFoundException fileNotFoundException) {
+            if (javaFileObject.getParentFile().mkdirs()) {
+                FileOutputStream stream = new FileOutputStream(javaFileObject);
+                stream.write(imageBytes);
+            } else {
+                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
+                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+            }
+        }
         return pathForSaving;
     }
 }

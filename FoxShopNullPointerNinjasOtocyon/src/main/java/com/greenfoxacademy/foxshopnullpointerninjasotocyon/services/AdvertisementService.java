@@ -12,12 +12,9 @@ public interface AdvertisementService {
 
     ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 
-    ResponseEntity<?> addImageBase64(String decodedImage, Long id);
-
-    ResponseEntity<?> nullCheckImageDto(PostImageDTO postImageDTO);
-
     ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
                                          Long advertisementId, String imageName);
     ResponseEntity<?> addImageBase64(String decodedImage, HttpServletRequest httpServletRequest,
-                                     Long advertisementId, String imageName);
+//                                     Long advertisementId,
+                                     String imageName);
 }

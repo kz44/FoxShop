@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ImgSavedDTO {
 
-    private String succesfullySaved;
+    private String success;
 
     public ImgSavedDTO(String pathForSaving) {
 
-        succesfullySaved = "File saved succesfully under: " + pathForSaving;
+        success = "File saved succesfully under: " + pathForSaving;
     }
 }

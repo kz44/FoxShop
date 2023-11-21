@@ -20,10 +20,15 @@ import java.io.*;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/advertisement")
+@RequestMapping("/api/advertisement")
 public class AdvertisementController {
 
     private AdvertisementService advertisementService;
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok("Access granted!");
+    }
 
     @PostMapping("/create")
     public ResponseEntity<?> createNewAdvertisement(@RequestBody(required = false) NewAdvertisementDto newAdvertisementDto) {
@@ -45,20 +50,29 @@ public class AdvertisementController {
      *  we keep HttpServletRequest in parameters:
      */
 
-    @PostMapping("base64encoded/image/{imageName}/{advertisementId}")
-    public ResponseEntity<?> addImageBase64(PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
-                                            @PathVariable Long advertisementId, @PathVariable String imageName){
-        if (postImageDTO == null){return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file located."));}
-        if (advertisementId == null || imageName == null) {
+//  (For testing) base64 image online encoder gives out an encoded string needed for the PostImageDTO's field: 'imageBase64Encoded'
+//   https://codebeautify.org/image-to-base64-converter
+    @PostMapping("/base64encoded/image/{imageName}")
+//            /{advertisementId}"
+
+    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
+//                                            @PathVariable(required = false) Long advertisementId,
+                                            @PathVariable(required = false) String imageName){
+        if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null){return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file located."));}
+        if (
+//                advertisementId == null ||
+                imageName == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
         }
         return advertisementService.addImageBase64( postImageDTO.getImageBase64Encoded(),
-                 httpServletRequest, advertisementId, imageName);
+                 httpServletRequest,
+//                advertisementId,
+                imageName);
     }
 
-    @PostMapping("binaryDataUpload/image/{imageName}/{advertisementId}")
+    @PostMapping("/binaryDataUpload/image/{imageName}/{advertisementId}")
     public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-                                                   @PathVariable Long advertisementId, @PathVariable String imageName) {
+                                                   @PathVariable(required = false) Long advertisementId, @PathVariable(required = false) String imageName) {
         if (advertisementId == null || imageName == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
         }
