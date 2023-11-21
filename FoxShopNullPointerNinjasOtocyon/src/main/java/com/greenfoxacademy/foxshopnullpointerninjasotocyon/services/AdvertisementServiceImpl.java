@@ -27,13 +27,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private UserRepository userRepository;
 
     /**
-     * This method check all required fields in newAdvertisementDto.
-     * It returns Response Entity OK if everything is ok,
-     * or it returns EntityResponse bad and in the body is new ErrorMessageDto with message
-     * which field are missing.
+     * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
+     * <p>
+     * This method examines the essential fields of the AdvertisementDto, ensuring none of them are null.
+     * If any null values are found, it returns a ResponseEntity with a Bad Request status and an error message
+     * indicating the missing data. Otherwise, it returns a ResponseEntity with an OK status.
      *
-     * @param advertisementDto
-     * @return ResponseEntity
+     * @param advertisementDto The AdvertisementDto to be checked for null values.
+     * @return ResponseEntity<?> A ResponseEntity indicating the status of the null check.
+     * - If null values are found, it returns a Bad Request status with an error message.
+     * - If no null values are found, it returns an OK status.
      */
     @Override
     public ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto) {
@@ -67,13 +70,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     /**
-     * This method checks if all ids (of category, location, delivery method, condition) are valid.
-     * If ids are valid, new entity of Advertisement is created and saved in database. Response is OK with id in body.
-     * If ids are not valid. Response is BAD and in body is ErrorMessage with message which id was invalid.
-     * The username is get from Security Context Holder.
+     * Creates a new advertisement using the provided AdvertisementDto and associates it with the current authenticated user.
+     * <p>
+     * This method initializes a new Advertisement entity, sets the current user as its owner, and delegates to the
+     * dataValidationAndSaveAdvertisement method for data validation and saving.
      *
-     * @param advertisementDto
-     * @return
+     * @param advertisementDto The AdvertisementDto containing the information for the new advertisement.
+     * @return ResponseEntity<?> A ResponseEntity containing either the saved Advertisement ID or an error message,
+     * wrapped in the appropriate HTTP status code.
      */
 
     @Override
@@ -86,21 +90,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
-    @Override
-    public ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
-        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
-        if (advertisementOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with this id."));
-        }
-        Advertisement advertisement = advertisementOptional.get();
-        if (!advertisement.getUser().equals(user)) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
-        }
-        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
-    }
+    /**
+     * Performs data validation for the provided AdvertisementDto and updates the given Advertisement entity.
+     * If validation passes, the updated Advertisement is saved to the repository.
+     *
+     * @param advertisementDto The AdvertisementDto containing the updated information for the advertisement.
+     * @param advertisement    The Advertisement entity to be updated.
+     * @return ResponseEntity<?> A ResponseEntity containing either the saved Advertisement ID or an error message,
+     * wrapped in the appropriate HTTP status code.
+     */
 
     private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
         List<String> errors = new ArrayList<>();
@@ -121,5 +119,33 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         advertisementRepository.save(advertisement);
         return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
+    }
+
+    /**
+     * Updates an existing advertisement with the provided AdvertisementDto.
+     * <p>
+     * This method retrieves the current user's authentication information, validates ownership of the advertisement,
+     * and then proceeds to update the advertisement based on the provided AdvertisementDto.
+     *
+     * @param id               The unique identifier of the advertisement to be updated.
+     * @param advertisementDto The AdvertisementDto containing the updated information for the advertisement.
+     * @return ResponseEntity<?> A ResponseEntity containing either the updated Advertisement or an error message,
+     * wrapped in the appropriate HTTP status code.
+     */
+
+    @Override
+    public ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).get();
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+        if (advertisementOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with this id."));
+        }
+        Advertisement advertisement = advertisementOptional.get();
+        if (!advertisement.getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 }
