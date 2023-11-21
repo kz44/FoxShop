@@ -9,7 +9,9 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.RoleRepo
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
+import com.sun.jdi.InternalException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -20,10 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -147,5 +148,12 @@ public class UserServiceImpl implements UserService {
         logoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
     }
 
-
+    public String checkUserRole() {
+        var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user != null && user instanceof FoxUserDetails) {
+            return user.getRoleName();
+        } else {
+            return null;
+        }
+    }
 }
