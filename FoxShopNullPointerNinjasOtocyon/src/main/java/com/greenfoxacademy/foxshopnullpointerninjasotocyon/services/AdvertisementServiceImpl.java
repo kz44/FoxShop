@@ -100,12 +100,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
 //                                            Long advertisementId, String imageName) {
 //        if (encodedImage == null) {
-//            System.out.println("Encoded image is missing in data transfer object.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
 //        }
 //        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
 //        if (!advertisement.isPresent()) {
-//            System.out.println("Advertisement entity not located in the database.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
 //        }
 //        String token = jwtTokenService.resolveToken(httpServletRequest);
@@ -120,10 +118,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
 //                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
-//            System.out.println("File could not be constructed under the path specified.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
 //        } catch (IOException e) {
-//            System.out.println("Conversion of bytes into file failed.");
 //            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
 //        }
 //
@@ -142,7 +138,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //                                                Long advertisementId, String imageName) {
 //        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
 //        if (!advertisement.isPresent()) {
-//            System.out.println("Advertisement entity not located in the database.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
 //        }
 //        String token = jwtTokenService.resolveToken(httpServletRequest);
@@ -155,17 +150,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        try {
 //            InputStream inputStream = httpServletRequest.getInputStream();
 //            if (inputStream.equals(InputStream.nullInputStream())) {
-//                System.out.println("Input stream in httpRequest is empty");
 //                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Input stream in httpRequest is empty"));
 //            }
 //            byte[] imageBytes = IOUtils.toByteArray(inputStream);
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
 //                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
-//            System.out.println("File could not be constructed under the path specified.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
 //        } catch (IOException e) {
-//            System.out.println("Conversion of bytes into file failed.");
 //            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
 //        }
 //
@@ -204,7 +196,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 FileOutputStream stream = new FileOutputStream(javaFileObject);
                 stream.write(imageBytes);
             } else {
-                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
                 throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
             }
         }
