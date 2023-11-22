@@ -219,14 +219,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        if (advertisement.isEmpty()) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
 //        }
-//        if (imagePath.isEmpty()) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
-//        }
 //        String token = jwtTokenService.resolveToken(httpServletRequest);
 //        //user model of the already authenticated user:
 //        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
 //        if (!advertisement.get().getUser().equals(user)) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+//        }
+//        if (imagePath.isEmpty()) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
 //        }
 //        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
