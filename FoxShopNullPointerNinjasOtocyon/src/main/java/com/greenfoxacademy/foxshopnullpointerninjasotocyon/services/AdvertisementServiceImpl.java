@@ -95,112 +95,130 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
 
+//    @Override
+//    @Transactional
+//    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
+//                                            Long advertisementId, String imageName) {
+//        if (encodedImage == null) {
+//            System.out.println("Encoded image is missing in data transfer object.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
+//        }
+//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+//        if (!advertisement.isPresent()) {
+//            System.out.println("Advertisement entity not located in the database.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
+//        }
+//        String pathForSaving = new String();
+//        try {
+//            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
+//            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
+//                    advertisementId,
+//                    imageName);
+//        } catch (FileNotFoundException e) {
+//            System.out.println("File could not be constructed under the path specified.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
+//        } catch (IOException e) {
+//            System.out.println("Conversion of bytes into file failed.");
+//            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
+//        }
+//
+//        ImagePath image = new ImagePath(pathForSaving);
+//        image.setAdvertisement(advertisement.get());
+//        advertisement.get().getImagePaths().add(image);
+//        advertisementRepository.save(advertisement.get());
+//        imagePathRepository.save(image);
+//
+//        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
+//    }
+
+//    @Override
+//    @Transactional
+//    public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
+//                                                Long advertisementId, String imageName) {
+//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+//        if (!advertisement.isPresent()) {
+//            System.out.println("Advertisement entity not located in the database.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
+//        }
+//        String pathForSaving = new String();
+//        try {
+//            InputStream inputStream = httpServletRequest.getInputStream();
+//            if (inputStream.equals(InputStream.nullInputStream())) {
+//                System.out.println("Input stream in httpRequest is empty");
+//                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Input stream in httpRequest is empty"));
+//            }
+//            byte[] imageBytes = IOUtils.toByteArray(inputStream);
+//            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
+//                    advertisementId,
+//                    imageName);
+//        } catch (FileNotFoundException e) {
+//            System.out.println("File could not be constructed under the path specified.");
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
+//        } catch (IOException e) {
+//            System.out.println("Conversion of bytes into file failed.");
+//            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
+//        }
+//
+//        ImagePath image = new ImagePath(pathForSaving);
+//        image.setAdvertisement(advertisement.get());
+//        advertisement.get().getImagePaths().add(image);
+//        advertisementRepository.save(advertisement.get());
+//        imagePathRepository.save(image);
+//
+//        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
+//    }
+//
+//
+//    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+//                                         Long advertisementId, String imageName)
+//            throws IOException, FileNotFoundException {
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
+//        String username = jwtTokenService.parseJwt(token);
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
+//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+//                + username + "/"
+//                + advertisementId.toString() + "/"
+//                + imageName + ".png";
+//        File javaFileObject = new File(pathForSaving);
+//        /* try creating file under the path specified - assuming directory+subdirectories exist already
+//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+//        and afterwards create the file
+//         */
+//        try {
+//            FileOutputStream stream = new FileOutputStream(javaFileObject);
+////          write bytes to result file:
+//            stream.write(imageBytes);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            if (javaFileObject.getParentFile().mkdirs()) {
+//                FileOutputStream stream = new FileOutputStream(javaFileObject);
+//                stream.write(imageBytes);
+//            } else {
+//                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
+//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+//            }
+//        }
+//        return pathForSaving;
+//    }
+
     @Override
     @Transactional
-    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
-                                            Long advertisementId, String imageName) {
-        if (encodedImage == null) {
-            System.out.println("Encoded image is missing in data transfer object.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
-        }
+    public ResponseEntity<?> deleteImage(String imageUrl, Long advertisementId) {
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-        if (!advertisement.isPresent()) {
-            System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
+        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
+        if (advertisement.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
         }
-        String pathForSaving = new String();
-        try {
-            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
-            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
-                    advertisementId,
-                    imageName);
-        } catch (FileNotFoundException e) {
-            System.out.println("File could not be constructed under the path specified.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
-        } catch (IOException e) {
-            System.out.println("Conversion of bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
+        if (imagePath.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
         }
-
-        ImagePath image = new ImagePath(pathForSaving);
-        image.setAdvertisement(advertisement.get());
-        advertisement.get().getImagePaths().add(image);
+        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
+        }
+        advertisement.get().getImagePaths().remove(imagePath.get());
         advertisementRepository.save(advertisement.get());
-        imagePathRepository.save(image);
-
-        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
+        imagePathRepository.delete(imagePath.get());
+        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
     }
-
-    @Override
-    @Transactional
-    public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
-                                                Long advertisementId, String imageName) {
-        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-        if (!advertisement.isPresent()) {
-            System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
-        }
-        String pathForSaving = new String();
-        try {
-            InputStream inputStream = httpServletRequest.getInputStream();
-            if (inputStream.equals(InputStream.nullInputStream())) {
-                System.out.println("Input stream in httpRequest is empty");
-                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Input stream in httpRequest is empty"));
-            }
-            byte[] imageBytes = IOUtils.toByteArray(inputStream);
-            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
-                    advertisementId,
-                    imageName);
-        } catch (FileNotFoundException e) {
-            System.out.println("File could not be constructed under the path specified.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
-        } catch (IOException e) {
-            System.out.println("Conversion of bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
-        }
-
-        ImagePath image = new ImagePath(pathForSaving);
-        image.setAdvertisement(advertisement.get());
-        advertisement.get().getImagePaths().add(image);
-        advertisementRepository.save(advertisement.get());
-        imagePathRepository.save(image);
-
-        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
-    }
-
-
-    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-                                         Long advertisementId, String imageName)
-            throws IOException, FileNotFoundException {
-        String token = jwtTokenService.resolveToken(httpServletRequest);
-//      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username = jwtTokenService.parseJwt(token);
-//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
-                + username + "/"
-                + advertisementId.toString() + "/"
-                + imageName + ".png";
-        File javaFileObject = new File(pathForSaving);
-        /* try creating file under the path specified - assuming directory+subdirectories exist already
-        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
-        and afterwards create the file
-         */
-        try {
-            FileOutputStream stream = new FileOutputStream(javaFileObject);
-//          write bytes to result file:
-            stream.write(imageBytes);
-        } catch (FileNotFoundException fileNotFoundException) {
-            if (javaFileObject.getParentFile().mkdirs()) {
-                FileOutputStream stream = new FileOutputStream(javaFileObject);
-                stream.write(imageBytes);
-            } else {
-                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
-                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
-            }
-        }
-        return pathForSaving;
-    }
-
-
 
 }

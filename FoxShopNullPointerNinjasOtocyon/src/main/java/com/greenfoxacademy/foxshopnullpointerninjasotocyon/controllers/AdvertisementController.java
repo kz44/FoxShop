@@ -39,32 +39,40 @@ public class AdvertisementController {
  /* (For testing) base64 image online encoder gives out an encoded string needed for the PostImageDTO's field: 'imageBase64Encoded'
    https://codebeautify.org/image-to-base64-converter
    */
-    @PostMapping("/base64encoded/image/{imageName}/{advertisementId}")
+//    @PostMapping("/base64encoded/image/{imageName}/{advertisementId}")
+//
+//    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
+//                                            @PathVariable(required = false) Long advertisementId,
+//                                            @PathVariable(required = false) String imageName) {
+//        if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
+//        }
+//        if (advertisementId == null || imageName == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in request path."));
+//        }
+//        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
+//                httpServletRequest, advertisementId, imageName);
+//    }
+//
+//    @PostMapping("/binaryDataUpload/image/{imageName}/{advertisementId}")
+//    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
+//                                                   @PathVariable(required = false) Long advertisementId,
+//                                                   @PathVariable(required = false) String imageName) {
+//        if (advertisementId == null || imageName == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+//                    "Advertisement id or image name missing in request path."));
+//        }
+//        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
+//    }
 
-    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
-                                            @PathVariable(required = false) Long advertisementId,
-                                            @PathVariable(required = false) String imageName) {
-        if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
-        }
-        if (advertisementId == null || imageName == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in request path."));
-        }
-        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
-                httpServletRequest, advertisementId, imageName);
-    }
-
-    @PostMapping("/binaryDataUpload/image/{imageName}/{advertisementId}")
-    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-                                                   @PathVariable(required = false) Long advertisementId,
-                                                   @PathVariable(required = false) String imageName) {
-        if (advertisementId == null || imageName == null) {
+    @GetMapping("/removeImage/{imageUrl}/{advertisementId}")
+    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable String imageUrl, @PathVariable Long advertisementId) {
+        if (imageUrl == null || advertisementId == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-                    "Advertisement id or image name missing in request path."));
+                    "Image url missing in request path."));
         }
-        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
+        return advertisementService.deleteImage(imageUrl, advertisementId);
     }
-
 
 }
 
