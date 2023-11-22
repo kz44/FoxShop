@@ -112,8 +112,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        try {
 //            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
-//                    advertisementId,
-//                    imageName);
+//                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
 //            System.out.println("File could not be constructed under the path specified.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
@@ -149,8 +148,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //            }
 //            byte[] imageBytes = IOUtils.toByteArray(inputStream);
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
-//                    advertisementId,
-//                    imageName);
+//                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
 //            System.out.println("File could not be constructed under the path specified.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
