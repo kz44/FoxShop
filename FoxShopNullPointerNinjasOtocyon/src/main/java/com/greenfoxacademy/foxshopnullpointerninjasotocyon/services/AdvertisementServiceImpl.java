@@ -83,11 +83,21 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
         Advertisement advertisement = new Advertisement();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
+        User user = getUserFromSecurityContextHolder();
         advertisement.setUser(user);
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+    }
+
+    /**
+     * Retrieves the currently authenticated user from the SecurityContextHolder.
+     *
+     * @return The User object associated with the authenticated user.
+     */
+
+    private User getUserFromSecurityContextHolder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username).get();
     }
 
     /**
