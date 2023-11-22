@@ -1,6 +1,9 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
@@ -13,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -124,7 +128,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisementRepository.save(advertisement.get());
         imagePathRepository.save(image);
 
-        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
+        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
     }
 
     @Override
@@ -161,7 +165,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisementRepository.save(advertisement.get());
         imagePathRepository.save(image);
 
-        return ResponseEntity.ok(new ImgSavedDTO(pathForSaving));
+        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
     }
 
 
@@ -170,17 +174,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             throws IOException, FileNotFoundException {
         String token = jwtTokenService.resolveToken(httpServletRequest);
 //      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username =
-                jwtTokenService.parseJwt(token);
-
+        String username = jwtTokenService.parseJwt(token);
 //      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
         String pathForSaving = "src/main/resources/assets/advertisementImages/"
                 + username + "/"
                 + advertisementId.toString() + "/"
                 + imageName + ".png";
-
         File javaFileObject = new File(pathForSaving);
-
         /* try creating file under the path specified - assuming directory+subdirectories exist already
         if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
         and afterwards create the file
@@ -200,4 +200,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         return pathForSaving;
     }
+
+
+
 }

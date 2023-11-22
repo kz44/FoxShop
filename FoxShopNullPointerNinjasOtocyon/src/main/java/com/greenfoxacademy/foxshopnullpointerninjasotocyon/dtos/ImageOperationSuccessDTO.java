@@ -5,12 +5,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ImgSavedDTO {
+public class ImageOperationSuccessDTO {
 
-    private String success;
+    private String completed;
 
-    public ImgSavedDTO(String pathForSaving) {
+    public ImageOperationSuccessDTO(String message) {
 
-        success = pathForSaving;
+        completed = message;
     }
 }

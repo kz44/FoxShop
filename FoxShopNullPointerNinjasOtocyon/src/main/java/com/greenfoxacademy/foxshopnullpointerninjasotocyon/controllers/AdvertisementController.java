@@ -64,4 +64,7 @@ public class AdvertisementController {
         }
         return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
     }
+
+
 }
+
