@@ -96,13 +96,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
                                             Long advertisementId, String imageName) {
         if (encodedImage == null) {
-            System.out.println("Encoded image missing in DTO");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            System.out.println("Encoded image is missing in data transfer object.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
         }
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         if (!advertisement.isPresent()) {
             System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
         String pathForSaving = new String();
         try {
@@ -112,10 +112,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                     imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
         } catch (IOException e) {
-            System.out.println("Writing bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            System.out.println("Conversion of bytes into file failed.");
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
         }
 
         ImagePath image = new ImagePath(pathForSaving);
@@ -134,13 +134,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         if (!advertisement.isPresent()) {
             System.out.println("Advertisement entity not located in the database.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
         String pathForSaving = new String();
         try {
             InputStream inputStream = httpServletRequest.getInputStream();
             if (inputStream.equals(InputStream.nullInputStream())) {
                 System.out.println("Input stream in httpRequest is empty");
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Input stream in httpRequest is empty"));
             }
             byte[] imageBytes = IOUtils.toByteArray(inputStream);
             pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
@@ -148,10 +149,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                     imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
         } catch (IOException e) {
-            System.out.println("Writing bytes into file failed.");
-            ResponseEntity.badRequest().body(new ErrorMessageDTO("Posting image not successful."));
+            System.out.println("Conversion of bytes into file failed.");
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
         }
 
         ImagePath image = new ImagePath(pathForSaving);

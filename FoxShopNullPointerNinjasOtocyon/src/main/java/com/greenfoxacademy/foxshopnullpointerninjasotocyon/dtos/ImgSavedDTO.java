@@ -11,6 +11,6 @@ public class ImgSavedDTO {
 
     public ImgSavedDTO(String pathForSaving) {
 
-        success = "File saved succesfully under: " + pathForSaving;
+        success = pathForSaving;
     }
 }

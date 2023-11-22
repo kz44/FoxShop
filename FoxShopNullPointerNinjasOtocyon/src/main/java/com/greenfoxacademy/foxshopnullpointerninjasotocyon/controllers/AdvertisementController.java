@@ -45,10 +45,10 @@ public class AdvertisementController {
                                             @PathVariable(required = false) Long advertisementId,
                                             @PathVariable(required = false) String imageName) {
         if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file located."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
         }
         if (advertisementId == null || imageName == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in path."));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in request path."));
         }
         return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
                 httpServletRequest, advertisementId, imageName);
@@ -58,11 +58,9 @@ public class AdvertisementController {
     public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
                                                    @PathVariable(required = false) Long advertisementId,
                                                    @PathVariable(required = false) String imageName) {
-        if (
-                advertisementId == null ||
-                        imageName == null) {
+        if (advertisementId == null || imageName == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-                    "Advertisement id or image name missing in path."));
+                    "Advertisement id or image name missing in request path."));
         }
         return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
     }
