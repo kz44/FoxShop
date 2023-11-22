@@ -39,7 +39,9 @@ public class AdvertisementController {
  /* (For testing) base64 image online encoder gives out an encoded string needed for the PostImageDTO's field: 'imageBase64Encoded'
    https://codebeautify.org/image-to-base64-converter
    */
-//    @PostMapping("/base64encoded/image/{imageName}/{advertisementId}")
+//    @PostMapping(value = {
+//            "/base64encoded/image/{imageName}","/base64encoded/image/{imageName}/",
+//            "/base64encoded/image/{imageName}/{advertisementId}"})
 //    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
 //                                            @PathVariable(required = false) Long advertisementId,
 //                                            @PathVariable(required = false) String imageName) {
@@ -53,7 +55,9 @@ public class AdvertisementController {
 //                httpServletRequest, advertisementId, imageName);
 //    }
 //
-//    @PostMapping("/binaryDataUpload/image/{imageName}/{advertisementId}")
+//    @PostMapping(value = {
+//            "/binaryDataUpload/image/{imageName}","/binaryDataUpload/image/{imageName}/",
+//            "/binaryDataUpload/image/{imageName}/{advertisementId}"})
 //    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
 //                                                   @PathVariable(required = false) Long advertisementId,
 //                                                   @PathVariable(required = false) String imageName) {
