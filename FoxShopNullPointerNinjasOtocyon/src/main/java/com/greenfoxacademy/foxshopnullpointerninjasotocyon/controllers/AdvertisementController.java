@@ -68,8 +68,9 @@ public class AdvertisementController {
 //        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
 //    }
 //
-//    @GetMapping("/removeImage/{imageUrl}/{advertisementId}")
-//    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable String imageUrl, @PathVariable Long advertisementId) {
+//    @GetMapping(value = {"/removeImage/{imageUrl}", "/removeImage/{imageUrl}/",
+//            "/removeImage/{imageUrl}/{advertisementId}"})
+//    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable(required = false) String imageUrl, @PathVariable(required = false) Long advertisementId){
 //        if (imageUrl == null || advertisementId == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
 //                    "Image url missing in request path."));
