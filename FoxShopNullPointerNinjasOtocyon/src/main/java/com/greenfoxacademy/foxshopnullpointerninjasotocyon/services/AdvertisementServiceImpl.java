@@ -83,11 +83,21 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
         Advertisement advertisement = new Advertisement();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
+        User user = getUserFromSecurityContextHolder();
         advertisement.setUser(user);
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+    }
+
+    /**
+     * Retrieves the currently authenticated user from the SecurityContextHolder.
+     *
+     * @return The User object associated with the authenticated user.
+     */
+
+    private User getUserFromSecurityContextHolder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username).get();
     }
 
     /**
@@ -135,9 +145,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
+        User user = getUserFromSecurityContextHolder();
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
         if (advertisementOptional.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with this id."));
