@@ -112,8 +112,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         try {
             byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
             pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
-                    advertisementId,
-                    imageName);
+                    advertisementId, imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
@@ -149,8 +148,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             }
             byte[] imageBytes = IOUtils.toByteArray(inputStream);
             pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
-                    advertisementId,
-                    imageName);
+                    advertisementId, imageName);
         } catch (FileNotFoundException e) {
             System.out.println("File could not be constructed under the path specified.");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
@@ -169,37 +167,37 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
 
-    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-                                         Long advertisementId, String imageName)
-            throws IOException, FileNotFoundException {
-        String token = jwtTokenService.resolveToken(httpServletRequest);
-//      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username = jwtTokenService.parseJwt(token);
-//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
-                + username + "/"
-                + advertisementId.toString() + "/"
-                + imageName + ".png";
-        File javaFileObject = new File(pathForSaving);
-        /* try creating file under the path specified - assuming directory+subdirectories exist already
-        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
-        and afterwards create the file
-         */
-        try {
-            FileOutputStream stream = new FileOutputStream(javaFileObject);
-//          write bytes to result file:
-            stream.write(imageBytes);
-        } catch (FileNotFoundException fileNotFoundException) {
-            if (javaFileObject.getParentFile().mkdirs()) {
-                FileOutputStream stream = new FileOutputStream(javaFileObject);
-                stream.write(imageBytes);
-            } else {
-                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
-                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
-            }
-        }
-        return pathForSaving;
-    }
+//    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+//                                         Long advertisementId, String imageName)
+//            throws IOException, FileNotFoundException {
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
+//        String username = jwtTokenService.parseJwt(token);
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
+//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+//                + username + "/"
+//                + advertisementId.toString() + "/"
+//                + imageName + ".png";
+//        File javaFileObject = new File(pathForSaving);
+//        /* try creating file under the path specified - assuming directory+subdirectories exist already
+//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+//        and afterwards create the file
+//         */
+//        try {
+//            FileOutputStream stream = new FileOutputStream(javaFileObject);
+////          write bytes to result file:
+//            stream.write(imageBytes);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            if (javaFileObject.getParentFile().mkdirs()) {
+//                FileOutputStream stream = new FileOutputStream(javaFileObject);
+//                stream.write(imageBytes);
+//            } else {
+//                System.out.println("Failed to create stream under directory " + javaFileObject.getParent());
+//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+//            }
+//        }
+//        return pathForSaving;
+//    }
 
 
 
