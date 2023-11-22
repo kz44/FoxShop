@@ -64,15 +64,15 @@ public class AdvertisementController {
 //        }
 //        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
 //    }
-
-    @GetMapping("/removeImage/{imageUrl}/{advertisementId}")
-    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable String imageUrl, @PathVariable Long advertisementId) {
-        if (imageUrl == null || advertisementId == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-                    "Image url missing in request path."));
-        }
-        return advertisementService.deleteImage(imageUrl, advertisementId);
-    }
+//
+//    @GetMapping("/removeImage/{imageUrl}/{advertisementId}")
+//    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable String imageUrl, @PathVariable Long advertisementId) {
+//        if (imageUrl == null || advertisementId == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+//                    "Image url missing in request path."));
+//        }
+//        return advertisementService.deleteImageEntity(imageUrl, advertisementId);
+//    }
 
 }
 

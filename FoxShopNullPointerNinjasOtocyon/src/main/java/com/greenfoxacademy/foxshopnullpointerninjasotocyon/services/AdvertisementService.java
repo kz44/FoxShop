@@ -15,5 +15,5 @@ public interface AdvertisementService {
 //    ResponseEntity<?> addImageBase64(String decodedImage, HttpServletRequest httpServletRequest,
 //                                     Long advertisementId, String imageName);
 
-    ResponseEntity<?> deleteImage(String imageUrl, Long advertisementId);
+//    ResponseEntity<?> deleteImageEntity(String imageUrl, Long advertisementId);
 }
