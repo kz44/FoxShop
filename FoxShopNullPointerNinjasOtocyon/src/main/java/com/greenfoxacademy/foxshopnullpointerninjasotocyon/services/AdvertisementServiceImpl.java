@@ -231,10 +231,23 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
         }
+//          //   remove static file from directory:
+//        try {
+//            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
+//        } catch (IOException ioException) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
+//        }
         advertisement.get().getImagePaths().remove(imagePath.get());
         advertisementRepository.save(advertisement.get());
         imagePathRepository.delete(imagePath.get());
         return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
     }
 
+//    private boolean deleteImageFile(String imageUrl) throws IOException {
+//        File imageFileToBeDeleted = new File(imageUrl);
+//        if (!imageFileToBeDeleted.exists()) {
+//            throw new IOException();
+//        }
+//        return imageFileToBeDeleted.delete();
+//    }
 }
