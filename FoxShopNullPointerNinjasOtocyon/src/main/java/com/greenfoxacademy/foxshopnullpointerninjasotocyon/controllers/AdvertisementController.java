@@ -40,7 +40,6 @@ public class AdvertisementController {
    https://codebeautify.org/image-to-base64-converter
    */
 //    @PostMapping("/base64encoded/image/{imageName}/{advertisementId}")
-//
 //    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
 //                                            @PathVariable(required = false) Long advertisementId,
 //                                            @PathVariable(required = false) String imageName) {
