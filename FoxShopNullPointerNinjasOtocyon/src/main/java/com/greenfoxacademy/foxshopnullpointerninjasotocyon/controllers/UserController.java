@@ -25,17 +25,13 @@ public class UserController {
 
     @GetMapping("/role")
     public ResponseEntity<?> getUserRoles() {
-        try {
-            Map<String, Object> response = new HashMap<>();
-            String result = userService.checkUserRole();
-            if (result != null) {
-                response.put("role", result);
-                return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication principal is not an instance of FoxUserDetails");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        String result = userService.checkUserRole();
+        if (result != null) {
+            response.put("role", result);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication principal is not an instance of FoxUserDetails");
         }
     }
 }
