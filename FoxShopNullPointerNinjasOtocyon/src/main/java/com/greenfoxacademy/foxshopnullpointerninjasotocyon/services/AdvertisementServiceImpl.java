@@ -108,6 +108,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //            System.out.println("Advertisement entity not located in the database.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
 //        }
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+//        //user model of the already authenticated user:
+//        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+//        if (!advertisement.get().getUser().equals(user)) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+//        }
 //        String pathForSaving = new String();
 //        try {
 //            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
@@ -139,6 +145,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //            System.out.println("Advertisement entity not located in the database.");
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
 //        }
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+//        //user model of the already authenticated user:
+//        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+//        if (!advertisement.get().getUser().equals(user)) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+//        }
 //        String pathForSaving = new String();
 //        try {
 //            InputStream inputStream = httpServletRequest.getInputStream();
@@ -165,8 +177,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //
 //        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
 //    }
-//
-//
+
+
 //    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
 //                                         Long advertisementId, String imageName)
 //            throws IOException, FileNotFoundException {
@@ -201,11 +213,17 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> deleteImage(String imageUrl, Long advertisementId) {
+    public ResponseEntity<?> deleteImage(HttpServletRequest httpServletRequest, String imageUrl, Long advertisementId) {
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
         if (advertisement.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
+        }
+        String token = jwtTokenService.resolveToken(httpServletRequest);
+        //user model of the already authenticated user:
+        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
         if (imagePath.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
