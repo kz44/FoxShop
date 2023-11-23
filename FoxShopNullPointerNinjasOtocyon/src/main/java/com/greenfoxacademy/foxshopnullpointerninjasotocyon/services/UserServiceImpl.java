@@ -144,7 +144,6 @@ public class UserServiceImpl implements UserService {
         logoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
     }
 
-
     /**
      * Retrieves the currently authenticated user from the SecurityContextHolder.
      *

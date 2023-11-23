@@ -58,7 +58,7 @@ public class ReportServiceImpl implements ReportService {
         advertisement.ifPresentOrElse(report::setReceiver, () -> errors.add("Wrong advertisement id."));
         if (!errors.isEmpty()) {
             String message = "There are some errors in your request: ".concat(String.join(" ", errors));
-               return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
         }
         reportRepository.save(report);
         return ResponseEntity.ok().body(new ReportResponseDTO(report.getId()));
