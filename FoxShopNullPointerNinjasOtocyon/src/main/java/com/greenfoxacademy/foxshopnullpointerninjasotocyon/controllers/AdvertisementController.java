@@ -31,8 +31,8 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
-    @GetMapping("/getAllAdvertisement")
-    public Page<Advertisement> getAllAdvertisement(@RequestParam Integer page,
+    @GetMapping("/getAdvertisements")
+    public Page<Advertisement> getAdvertisements(@RequestParam Integer page,
                                                    @RequestParam Integer size,
                                                    @RequestParam(required = false) Long categoryId,
                                                    @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
