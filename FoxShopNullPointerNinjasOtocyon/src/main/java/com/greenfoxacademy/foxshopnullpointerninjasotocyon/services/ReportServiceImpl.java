@@ -42,16 +42,12 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ResponseEntity<?> createNewReport(ReportDTO reportDTO) {
+    public Report createNewReport(ReportDTO reportDTO) {
         Report report = new Report();
         User user = userService.getUserFromSecurityContextHolder();
         report.setSender(user);
         report.setReceiver(reportDTO.getReceiver());
         report.setDescription(reportDTO.getDescription());
-        return null;
-    }
-
-    private ResponseEntity<?> dataValidationAndSaveReport(ReportDTO reportDTO, Report report) {
-
+        return reportRepository.save(report);
     }
 }
