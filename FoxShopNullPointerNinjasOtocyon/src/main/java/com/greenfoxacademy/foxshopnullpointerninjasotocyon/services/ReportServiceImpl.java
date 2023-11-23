@@ -54,7 +54,7 @@ public class ReportServiceImpl implements ReportService {
     private ResponseEntity<?> dataValidationAndSaveReport(ReportDTO reportDTO, Report report) {
         List<String> errors = new ArrayList<>();
         report.setDescription(reportDTO.getDescription());
-        Optional<Advertisement> advertisement = advertisementRepository.findById(reportDTO.getReceiver().getId());
+        Optional<Advertisement> advertisement = advertisementRepository.findById(reportDTO.getReceiver());
         advertisement.ifPresentOrElse(report::setReceiver, () -> errors.add("Wrong advertisement id."));
         if (!errors.isEmpty()) {
             String message = "There are some errors in your request: ".concat(String.join(" ", errors));

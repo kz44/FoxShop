@@ -1,7 +1,5 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +12,6 @@ import lombok.Setter;
 public class ReportDTO {
 
     private String description;
-    private User sender;
-    private Advertisement receiver;
+    private Long sender;
+    private Long receiver;
 }
