@@ -149,10 +149,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        String pathForSaving = new String();
 //        try {
 //            InputStream inputStream = httpServletRequest.getInputStream();
-//            if (inputStream.equals(InputStream.nullInputStream())) {
-//                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Input stream in httpRequest is empty"));
-//            }
 //            byte[] imageBytes = IOUtils.toByteArray(inputStream);
+//            if (imageBytes.length == 0) {
+//                return ResponseEntity.badRequest().body(new ErrorMessageDTO("The submitted http request does not contain any image binary data"));
+//            }
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
 //                    advertisement.get());
 //        } catch (FileNotFoundException e) {
