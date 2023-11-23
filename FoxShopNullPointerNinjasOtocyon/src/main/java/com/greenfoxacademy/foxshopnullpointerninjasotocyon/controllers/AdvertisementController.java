@@ -27,6 +27,15 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
+    /**
+     * This endpoint close the advertisement by id
+     * @param advertisementId id of the advertisement want to close
+     *
+     * @return
+     *      - success message: if the advertisement closed
+     *      - permission message: if the user don't have permission to close the advertisement
+     *      - warning message: if the something went wrong during the changing advertisement status
+     */
     @PostMapping("/closeAdvertisement/{advertisementId}")
     public ResponseEntity<String> closeAdvertisement(@PathVariable Long advertisementId) {
         try {
