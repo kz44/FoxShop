@@ -4,11 +4,9 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -27,5 +25,18 @@ public class AdvertisementController {
             return responseNullCheck;
         }
         return advertisementService.createNewAdvertisement(advertisementDto);
+    }
+
+    @PostMapping("/closeAdvertisement/{advertisementId}")
+    public ResponseEntity<String> closeAdvertisement(@PathVariable Long advertisementId) {
+        try {
+            if (advertisementService.closeAdvertisement(advertisementId)){
+                return ResponseEntity.ok("Advertisement closed");
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You don't have permission to close this advertisement");
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while closing an advertisement");
+        }
     }
 }
