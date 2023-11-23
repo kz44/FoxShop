@@ -139,4 +139,26 @@ class AdvertisementServiceImplTest {
         assertNotNull(errorMessageDTO);
         assertEquals("There are some errors in your request: Wrong category id. Wrong condition id. Wrong location id. Wrong delivery method id.", errorMessageDTO.getMessage());
     }
+
+    @Test
+    void createNewAdvertisementNegativePrice() {
+        User user = new User();
+        user.setUsername("testUsername");
+        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", -100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        assertInstanceOf(ErrorMessageDTO.class, response.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
+        assertNotNull(errorMessageDTO);
+        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getMessage());
+    }
 }
