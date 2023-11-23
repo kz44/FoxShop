@@ -31,6 +31,17 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
+    /**
+     * This endpoint returns paginated list of Advertisements based on provided parameters
+     *
+     * @param page  page number for pagination. Cannot be null.
+     * @param size  size of each page for pagination. Cannot be null.
+     * @param categoryId  Optional, ID of the categories to filter advertisements. Can be null.
+     * @param maxPrice  Optional, maximum price to filter advertisements. Can be null.
+     *
+     * @return  paginated list of Advertisements
+     * @throws BadAttributeValueExpException  BadAttributeValueExpException If the provided page or size is null.
+     */
     @GetMapping("/getAdvertisements")
     public Page<Advertisement> getAdvertisements(@RequestParam Integer page,
                                                    @RequestParam Integer size,
