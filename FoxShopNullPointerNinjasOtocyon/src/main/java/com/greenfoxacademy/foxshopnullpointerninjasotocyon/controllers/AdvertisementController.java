@@ -26,8 +26,11 @@ public class AdvertisementController {
         return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateAdvertisement(@PathVariable Long id, @RequestBody(required = false) AdvertisementDto advertisementDto) {
+    @PutMapping(value = {"/update/{id}", "/update/", "/update"})
+    public ResponseEntity<?> updateAdvertisement(@PathVariable(required = false) Long id, @RequestBody(required = false) AdvertisementDto advertisementDto) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("In the path there is missing the id of advertisement to be updated."));
+        }
         if (advertisementDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for update advertisement."));
         }
