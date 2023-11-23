@@ -98,7 +98,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //    @Override
 //    @Transactional
 //    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
-//                                            Long advertisementId, String imageName) {
+//                                            Long advertisementId) {
 //        if (encodedImage == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
 //        }
@@ -116,7 +116,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        try {
 //            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
 //            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
-//                    advertisementId, imageName);
+//                    advertisement.get());
 //        } catch (FileNotFoundException e) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
 //        } catch (IOException e) {
