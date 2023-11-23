@@ -40,32 +40,30 @@ public class AdvertisementController {
    https://codebeautify.org/image-to-base64-converter
    */
 //    @PostMapping(value = {
-//            "/base64encoded/image/{imageName}","/base64encoded/image/{imageName}/",
-//            "/base64encoded/image/{imageName}/{advertisementId}"})
+//            "/base64encoded/image","/base64encoded/image/",
+//            "/base64encoded/image/{advertisementId}"})
 //    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
-//                                            @PathVariable(required = false) Long advertisementId,
-//                                            @PathVariable(required = false) String imageName) {
+//                                            @PathVariable(required = false) Long advertisementId) {
 //        if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
 //        }
-//        if (advertisementId == null || imageName == null) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id or image name missing in request path."));
+//        if (advertisementId == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id missing in request path."));
 //        }
 //        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
-//                httpServletRequest, advertisementId, imageName);
+//                httpServletRequest, advertisementId);
 //    }
 //
 //    @PostMapping(value = {
-//            "/binaryDataUpload/image/{imageName}","/binaryDataUpload/image/{imageName}/",
-//            "/binaryDataUpload/image/{imageName}/{advertisementId}"})
+//            "/binaryDataUpload/image","/binaryDataUpload/image/",
+//            "/binaryDataUpload/image/{advertisementId}"})
 //    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-//                                                   @PathVariable(required = false) Long advertisementId,
-//                                                   @PathVariable(required = false) String imageName) {
-//        if (advertisementId == null || imageName == null) {
+//                                                   @PathVariable(required = false) Long advertisementId) {
+//        if (advertisementId == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "Advertisement id or image name missing in request path."));
+//                    "Advertisement id missing in request path."));
 //        }
-//        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId, imageName);
+//        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
 //    }
 //
 //    @GetMapping(value = {"/removeImage/{imageUrl}", "/removeImage/{imageUrl}/",
