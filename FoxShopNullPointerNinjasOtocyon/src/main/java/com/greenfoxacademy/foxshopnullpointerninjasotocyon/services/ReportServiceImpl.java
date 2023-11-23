@@ -25,9 +25,6 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ResponseEntity<?> nullCheckReport(ReportDTO reportDTO) {
         List<String> missingData = new ArrayList<>();
-        if (reportDTO.getId() == null) {
-            missingData.add("id");
-        }
         if (reportDTO.getDescription() == null) {
             missingData.add("description");
         }
@@ -50,8 +47,11 @@ public class ReportServiceImpl implements ReportService {
         User user = userService.getUserFromSecurityContextHolder();
         report.setSender(user);
         report.setReceiver(reportDTO.getReceiver());
+        report.setDescription(reportDTO.getDescription());
         return null;
     }
 
+    private ResponseEntity<?> dataValidationAndSaveReport(ReportDTO reportDTO, Report report) {
 
+    }
 }
