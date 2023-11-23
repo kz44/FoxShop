@@ -88,6 +88,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
+    /**
+     * Closes the specified advertisement identified by its unique identifier.
+     *
+     * @param advertisementId The unique identifier of the advertisement to be closed.
+     * @return true: if the advertisement was successfully closed by the owner
+     *          false: otherwise
+     */
     @Override
     public boolean closeAdvertisement(Long advertisementId) {
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
