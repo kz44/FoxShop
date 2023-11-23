@@ -114,7 +114,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         List<String> errors = new ArrayList<>();
         advertisement.setTitle(advertisementDto.getTitle());
         advertisement.setDescription(advertisementDto.getDescription());
-        advertisement.setPrice(advertisementDto.getPrice());
+        if (advertisementDto.getPrice() > 0) {
+            advertisement.setPrice(advertisementDto.getPrice());
+        } else {
+            errors.add("Price must be positive number.");
+        }
         Optional<Category> category = categoryRepository.findById(advertisementDto.getCategoryId());
         category.ifPresentOrElse(advertisement::setCategory, () -> errors.add("Wrong category id."));
         Optional<Condition> condition = conditionRepository.findById(advertisementDto.getConditionId());
