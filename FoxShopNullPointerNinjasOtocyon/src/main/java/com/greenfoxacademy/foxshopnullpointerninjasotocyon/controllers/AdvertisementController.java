@@ -45,7 +45,7 @@ public class AdvertisementController {
 
     public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
                                             @PathVariable(required = false) Long advertisementId) {
-        if (postImageDTO == null || postImageDTO.getImageBase64Encoded() == null) {
+        if (postImageDTO == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
         }
         if (advertisementId == null) {
