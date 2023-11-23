@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.io.*;
-import java.nio.file.DirectoryNotEmptyException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -120,12 +119,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
-//        }
-//        catch (WriteAbortedException e) {
-//            return ResponseEntity.badRequest().body(
-//                    "The image with this name already exists in the advertisement. Choose a different image name, or delete the original image and re-upload a new file under this name.");
-//        }
-//        catch (IOException e) {
+//        } catch (IOException e) {
 //            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
 //        }
 //        ImagePath image = new ImagePath(pathForSaving);
@@ -162,12 +156,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //                    advertisementId, imageName);
 //        } catch (FileNotFoundException e) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
-//        }
-//        catch (WriteAbortedException e) {
-//            return ResponseEntity.badRequest().body(
-//                    "The image with this name already exists in the advertisement. Choose a different image name, or delete the original image and re-upload a new file under this name.");
-//        }
-//        catch (IOException e) {
+//        } catch (IOException e) {
 //            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
 //        }
 //
@@ -181,40 +170,36 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //    }
 
 
-    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-                                         Long advertisementId, String imageName)
-            throws IOException, FileNotFoundException, WriteAbortedException {
-        String token = jwtTokenService.resolveToken(httpServletRequest);
-//      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username = jwtTokenService.parseJwt(token);
-//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
-                + username + "/"
-                + advertisementId.toString() + "/"
-                + imageName + ".png";
-
-        if (!imagePathRepository.findDistinctByUrl(pathForSaving).isEmpty()) {
-            throw new WriteAbortedException("The image name is already present in the database.", new UnsupportedOperationException());
-        }
-        File javaFileObject = new File(pathForSaving);
-        /* try creating file under the path specified - assuming directory+subdirectories exist already
-        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
-        and afterwards create the file
-         */
-        try {
-            FileOutputStream stream = new FileOutputStream(javaFileObject);
-//          write bytes to result file:
-            stream.write(imageBytes);
-        } catch (FileNotFoundException fileNotFoundException) {
-            if (javaFileObject.getParentFile().mkdirs()) {
-                FileOutputStream stream = new FileOutputStream(javaFileObject);
-                stream.write(imageBytes);
-            } else {
-                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
-            }
-        }
-        return pathForSaving;
-    }
+//    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+//                                         Long advertisementId, String imageName)
+//            throws IOException, FileNotFoundException {
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
+//        String username = jwtTokenService.parseJwt(token);
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
+//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+//                + username + "/"
+//                + advertisementId.toString() + "/"
+//                + imageName + ".png";
+//        File javaFileObject = new File(pathForSaving);
+//        /* try creating file under the path specified - assuming directory+subdirectories exist already
+//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+//        and afterwards create the file
+//         */
+//        try {
+//            FileOutputStream stream = new FileOutputStream(javaFileObject);
+////          write bytes to result file:
+//            stream.write(imageBytes);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            if (javaFileObject.getParentFile().mkdirs()) {
+//                FileOutputStream stream = new FileOutputStream(javaFileObject);
+//                stream.write(imageBytes);
+//            } else {
+//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+//            }
+//        }
+//        return pathForSaving;
+//    }
 
     @Override
     @Transactional
