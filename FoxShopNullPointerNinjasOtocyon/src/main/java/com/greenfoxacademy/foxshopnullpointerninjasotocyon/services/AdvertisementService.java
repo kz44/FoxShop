@@ -9,8 +9,7 @@ public interface AdvertisementService {
 
     ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
 
-    ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest, Long advertisementId,
-                                         String imageName);
+    ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest, Long advertisementId);
     ResponseEntity<?> addImageBase64(String decodedImage, HttpServletRequest httpServletRequest,
-                                     Long advertisementId, String imageName);
+                                     Long advertisementId);
 }

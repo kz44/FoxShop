@@ -98,7 +98,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     @Transactional
     public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
-                                            Long advertisementId, String imageName) {
+                                            Long advertisementId) {
         if (encodedImage == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
         }
@@ -116,7 +116,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         try {
             byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
             pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
-                    advertisementId, imageName);
+                    advertisement.get());
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
         } catch (IOException e) {
@@ -135,7 +135,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     @Transactional
     public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
-                                                Long advertisementId, String imageName) {
+                                                Long advertisementId) {
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
@@ -154,7 +154,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             }
             byte[] imageBytes = IOUtils.toByteArray(inputStream);
             pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
-                    advertisementId, imageName);
+                    advertisement.get());
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
         } catch (IOException e) {
@@ -172,16 +172,22 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
 
 //    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-//                                         Long advertisementId, String imageName)
+//                                          Advertisement advertisementEntity)
 //            throws IOException, FileNotFoundException {
 //        String token = jwtTokenService.resolveToken(httpServletRequest);
 ////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
 //        String username = jwtTokenService.parseJwt(token);
-////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image name>
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
+//        Optional<Integer> advertisementMaximumImageNumber = advertisementEntity.getImagePaths().stream()
+//                .map(x -> extractImageNumberFromUrl(x.getUrl())).max(Integer::compareTo);
+//        int numberForNewImageEntity = 0;
+//        if (advertisementMaximumImageNumber.isPresent()) {
+//            numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
+//        }
 //        String pathForSaving = "src/main/resources/assets/advertisementImages/"
 //                + username + "/"
-//                + advertisementId.toString() + "/"
-//                + imageName + ".png";
+//                + advertisementEntity.getId().toString() + "/"
+//                + numberForNewImageEntity + ".png";
 //        File javaFileObject = new File(pathForSaving);
 //        /* try creating file under the path specified - assuming directory+subdirectories exist already
 //        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
@@ -201,7 +207,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        }
 //        return pathForSaving;
 //    }
-
-
+//
+//    private Integer extractImageNumberFromUrl(String url) {
+//        int beginIndex = url.lastIndexOf("/") + 1;
+//        int endIndex = url.lastIndexOf(".");
+//        String imageNumberString = url.substring(beginIndex, endIndex);
+//       return Integer.parseInt(imageNumberString);
+//    }
 
 }
