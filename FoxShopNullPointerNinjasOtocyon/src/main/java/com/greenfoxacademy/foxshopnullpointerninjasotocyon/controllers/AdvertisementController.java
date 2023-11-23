@@ -2,13 +2,15 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.management.BadAttributeValueExpException;
 
 @AllArgsConstructor
 @RestController
@@ -27,5 +29,17 @@ public class AdvertisementController {
             return responseNullCheck;
         }
         return advertisementService.createNewAdvertisement(advertisementDto);
+    }
+
+    @GetMapping("/getAllAdvertisement")
+    public Page<Advertisement> getAllAdvertisement(@RequestParam Integer page,
+                                                   @RequestParam Integer size,
+                                                   @RequestParam(required = false) Long categoryId,
+                                                   @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
+        if (page == null || size == null) {
+            throw new BadAttributeValueExpException("The page or size value cannot be null");
+        }
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return advertisementService.getAdvertisements(pageRequest, categoryId, maxPrice);
     }
 }
