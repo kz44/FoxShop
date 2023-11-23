@@ -31,4 +31,6 @@ public interface UserService {
     ResponseEntity<?> registrationNullCheck(RegisterDto registerDto);
 
     void handleSecurityContextAndBlacklistToken();
+
+    User getUserFromSecurityContextHolder();
 }
