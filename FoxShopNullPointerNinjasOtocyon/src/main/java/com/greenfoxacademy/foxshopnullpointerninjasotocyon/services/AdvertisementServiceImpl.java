@@ -88,6 +88,26 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
 
+    @Override
+    public boolean closeAdvertisement(Long advertisementId) {
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
+
+        if (advertisementOptional.isPresent()) {
+            Advertisement advertisement = advertisementOptional.get();
+
+            User loggedUser = getUserFromSecurityContextHolder();
+
+            if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
+                advertisement.setClosed(true);
+                advertisementRepository.save(advertisement);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
     /**
      * Retrieves the currently authenticated user from the SecurityContextHolder.
      *

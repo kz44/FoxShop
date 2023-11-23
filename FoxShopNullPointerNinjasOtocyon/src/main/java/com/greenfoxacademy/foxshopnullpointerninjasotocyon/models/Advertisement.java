@@ -27,6 +27,9 @@ public class Advertisement {
     @Column(nullable = false)
     private Integer price;
 
+    @Column(nullable = false)
+    private boolean closed = false;
+
     @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
