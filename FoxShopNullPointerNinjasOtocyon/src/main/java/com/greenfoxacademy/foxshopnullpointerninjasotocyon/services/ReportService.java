@@ -7,5 +7,5 @@ import org.springframework.http.ResponseEntity;
 public interface ReportService {
     ResponseEntity<?> nullCheckReport(ReportDTO reportDTO);
 
-    Report createNewReport(ReportDTO reportDTO);
+    ResponseEntity<?> createNewReport(ReportDTO reportDTO);
 }

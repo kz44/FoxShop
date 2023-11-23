@@ -27,6 +27,6 @@ public class ReportController {
         if (!responseNullCheck.getStatusCode().is2xxSuccessful()) {
             return responseNullCheck;
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(reportService.createNewReport(reportDTO));
+        return reportService.createNewReport(reportDTO);
     }
 }
