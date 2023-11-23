@@ -6,6 +6,8 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -86,6 +88,27 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         User user = getUserFromSecurityContextHolder();
         advertisement.setUser(user);
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+    }
+
+    @Override
+    public Page<Advertisement> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
+
+        if (pageable == null || pageable.getPageNumber() < 0 || pageable.getPageSize() <= 0) {
+            throw new IllegalArgumentException("Invalid pageable value");
+        }
+
+        Page<Advertisement> advertisements;
+
+        if (categoryId != null && maxPrice != null) {
+            advertisements = advertisementRepository.findByCategoryIdAndPriceLessThanEqualAndClosedFalse(categoryId, maxPrice, pageable);
+        } else if (categoryId != null && maxPrice == null) {
+            advertisements = advertisementRepository.findByCategoryIdAndClosedFalse(categoryId, pageable);
+        } else if (categoryId == null && maxPrice != null) {
+            advertisements = advertisementRepository.findByPriceLessThanEqualAndClosedFalse(maxPrice, pageable);
+        } else {
+            advertisements = advertisementRepository.findByClosedFalse(pageable);
+        }
+        return advertisements;
     }
 
     /**
