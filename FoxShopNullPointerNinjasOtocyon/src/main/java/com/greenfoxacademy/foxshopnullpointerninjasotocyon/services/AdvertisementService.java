@@ -1,13 +1,13 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface AdvertisementService {
-    ResponseEntity<?> nullCheckNewAvertisement(NewAdvertisementDto newAdvertisementDto);
+    ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto);
 
-    ResponseEntity<?> createNewAdvertisement(NewAdvertisementDto newAdvertisementDto);
+    ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 
 //    ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest, Long advertisementId);
 //
