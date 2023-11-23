@@ -28,6 +28,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
+    private final UserServiceImpl userServiceImpl;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -86,7 +87,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
         Advertisement advertisement = new Advertisement();
-        User user = getUserFromSecurityContextHolder();
+        User user = userServiceImpl.getUserFromSecurityContextHolder();
         advertisement.setUser(user);
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
     }
@@ -123,17 +124,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return advertisements;
     }
 
-    /**
-     * Retrieves the currently authenticated user from the SecurityContextHolder.
-     *
-     * @return The User object associated with the authenticated user.
-     */
 
-    private User getUserFromSecurityContextHolder() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return userRepository.findByUsername(username).get();
-    }
 
     /**
      * Performs data validation for the provided AdvertisementDto and updates the given Advertisement entity.

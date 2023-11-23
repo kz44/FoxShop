@@ -30,4 +30,6 @@ public interface UserService {
     void handleSecurityContextAndBlacklistToken();
 
     String checkUserRole();
+
+    User getUserFromSecurityContextHolder();
 }
