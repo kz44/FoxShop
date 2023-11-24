@@ -5,18 +5,11 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementRes
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,9 +26,8 @@ class AdvertisementServiceImplTest {
     @MockBean
     private DeliveryMethodRepository deliveryMethodRepository = Mockito.mock(DeliveryMethodRepository.class);
     @MockBean
-    private UserRepository userRepository = Mockito.mock(UserRepository.class);
-
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userRepository);
+    private UserService userService = Mockito.mock(UserService.class);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService);
 
 
     @Test
@@ -79,12 +71,7 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementEverythingOk() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
@@ -100,12 +87,7 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementWrongCategoryId() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
@@ -122,12 +104,7 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementWrongAllIds() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
@@ -144,12 +121,7 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementNegativePrice() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
@@ -166,18 +138,13 @@ class AdvertisementServiceImplTest {
     void updateAdvertisementEverythingOk() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Advertisement advertisement = new Advertisement();
         advertisement.setId(1L);
         advertisement.setTitle("OldTitle");
         advertisement.setDescription("OldDescription");
         advertisement.setPrice(50);
         advertisement.setUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
@@ -195,18 +162,13 @@ class AdvertisementServiceImplTest {
     void updateAdvertisementWrongIdOfAdvertisement() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Advertisement advertisement = new Advertisement();
         advertisement.setId(1L);
         advertisement.setTitle("OldTitle");
         advertisement.setDescription("OldDescription");
         advertisement.setPrice(50);
         advertisement.setUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
@@ -225,18 +187,13 @@ class AdvertisementServiceImplTest {
         User user = new User();
         User anotherUser = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Advertisement advertisement = new Advertisement();
         advertisement.setId(1L);
         advertisement.setTitle("OldTitle");
         advertisement.setDescription("OldDescription");
         advertisement.setPrice(50);
         advertisement.setUser(anotherUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
@@ -254,18 +211,13 @@ class AdvertisementServiceImplTest {
     void updateAdvertisementWrongCategoryIdAndWrongLocationId() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Advertisement advertisement = new Advertisement();
         advertisement.setId(1L);
         advertisement.setTitle("OldTitle");
         advertisement.setDescription("OldDescription");
         advertisement.setPrice(50);
         advertisement.setUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
@@ -283,18 +235,13 @@ class AdvertisementServiceImplTest {
     void updateAdvertisementPriceNegativeNumber() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
         Advertisement advertisement = new Advertisement();
         advertisement.setId(1L);
         advertisement.setTitle("OldTitle");
         advertisement.setDescription("OldDescription");
         advertisement.setPrice(50);
         advertisement.setUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));

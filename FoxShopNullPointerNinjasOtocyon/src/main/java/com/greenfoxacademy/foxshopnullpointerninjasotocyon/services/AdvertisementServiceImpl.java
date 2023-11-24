@@ -7,8 +7,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,7 +22,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private CategoryRepository categoryRepository;
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
-    private UserRepository userRepository;
+    private UserService userService;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -83,21 +81,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto) {
         Advertisement advertisement = new Advertisement();
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         advertisement.setUser(user);
         return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
-    }
-
-    /**
-     * Retrieves the currently authenticated user from the SecurityContextHolder.
-     *
-     * @return The User object associated with the authenticated user.
-     */
-
-    private User getUserFromSecurityContextHolder() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return userRepository.findByUsername(username).get();
     }
 
     /**
@@ -149,7 +135,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public ResponseEntity<?> updateAdvertisement(Long id, AdvertisementDto advertisementDto) {
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
         if (advertisementOptional.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with this id."));
