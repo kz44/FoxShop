@@ -1,7 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.NewAdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,15 +17,15 @@ public class AdvertisementController {
     private AdvertisementService advertisementService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createNewAdvertisement(@RequestBody(required = false) NewAdvertisementDto newAdvertisementDto) {
-        if (newAdvertisementDto == null) {
+    public ResponseEntity<?> createNewAdvertisement(@RequestBody(required = false) AdvertisementDto advertisementDto) {
+        if (advertisementDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is missing the body of request with all data for new advertisement."));
         }
-        ResponseEntity<?> responseNullCheck = advertisementService.nullCheckNewAvertisement(newAdvertisementDto);
+        ResponseEntity<?> responseNullCheck = advertisementService.nullCheckAdvertisement(advertisementDto);
         if (!responseNullCheck.getStatusCode().is2xxSuccessful()) {
             return responseNullCheck;
         }
-        return advertisementService.createNewAdvertisement(newAdvertisementDto);
+        return advertisementService.createNewAdvertisement(advertisementDto);
     }
 
     /**
