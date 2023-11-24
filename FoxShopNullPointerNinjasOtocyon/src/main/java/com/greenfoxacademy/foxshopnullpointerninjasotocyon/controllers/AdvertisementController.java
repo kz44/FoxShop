@@ -70,14 +70,14 @@ public class AdvertisementController {
 //        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
 //    }
 //
-//    @GetMapping(value = {"/removeImage/{imageUrl}", "/removeImage/{imageUrl}/",
-//            "/removeImage/{imageUrl}/{advertisementId}"})
-//    public ResponseEntity<?> removeImageFromAdvertisement(@PathVariable(required = false) String imageUrl, @PathVariable(required = false) Long advertisementId){
-//        if (imageUrl == null || advertisementId == null) {
+//    @DeleteMapping("/removeImage")
+//    public ResponseEntity<?> removeImageFromAdvertisement(HttpServletRequest httpServletRequest,
+//                                                          @RequestBody(required = false) RemoveImageDTO removeImageDto) {
+//        if (removeImageDto == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "Image url missing in request path."));
+//                    "Removal data have not been attached to the request."));
 //        }
-//        return advertisementService.deleteImageEntity(imageUrl, advertisementId);
+//        return advertisementService.deleteImage(httpServletRequest, removeImageDto.getImageUrl(), removeImageDto.getAdvertisementId());
 //    }
 
 }
