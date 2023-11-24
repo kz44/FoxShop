@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RemoveImageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -57,9 +58,8 @@ public class AdvertisementController {
 //        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
 //                httpServletRequest, advertisementId);
 //    }
-
     @PostMapping(value = {
-            "/binaryDataUpload/image","/binaryDataUpload/image/",
+            "/binaryDataUpload/image", "/binaryDataUpload/image/",
             "/binaryDataUpload/image/{advertisementId}"})
     public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
                                                    @PathVariable(required = false) Long advertisementId) {
@@ -70,16 +70,14 @@ public class AdvertisementController {
         return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
     }
 
-    @GetMapping(value = {"/removeImage/{imageUrl}", "/removeImage/{imageUrl}/",
-            "/removeImage/{imageUrl}/{advertisementId}"})
+    @DeleteMapping("/removeImage")
     public ResponseEntity<?> removeImageFromAdvertisement(HttpServletRequest httpServletRequest,
-                                                          @PathVariable(required = false) String imageUrl,
-                                                          @PathVariable(required = false) Long advertisementId) {
-        if (imageUrl == null || advertisementId == null) {
+                                                          @RequestBody(required = false) RemoveImageDTO removeImageDto) {
+        if (removeImageDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-                    "Image url missing in request path."));
+                    "Removal data have not been attached to the request."));
         }
-        return advertisementService.deleteImage(httpServletRequest, imageUrl, advertisementId);
+        return advertisementService.deleteImage(httpServletRequest, removeImageDto.getImageUrl(), removeImageDto.getAdvertisementId());
     }
 
 }

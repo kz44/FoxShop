@@ -267,6 +267,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     @Transactional
     public ResponseEntity<?> deleteImage(HttpServletRequest httpServletRequest, String imageUrl, Long advertisementId) {
+        if (imageUrl == null || advertisementId == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "The submitted request needs to contain both information: image url and advertisement id."));
+        }
         Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
         Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
         if (advertisement.isEmpty()) {
