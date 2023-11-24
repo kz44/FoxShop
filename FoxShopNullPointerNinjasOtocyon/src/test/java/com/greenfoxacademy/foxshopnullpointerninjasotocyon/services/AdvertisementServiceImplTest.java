@@ -6,6 +6,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,8 +35,14 @@ class AdvertisementServiceImplTest {
     private DeliveryMethodRepository deliveryMethodRepository = Mockito.mock(DeliveryMethodRepository.class);
     @MockBean
     private UserRepository userRepository = Mockito.mock(UserRepository.class);
-
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userRepository);
+    @MockBean
+    private ImagePathRepository imagePathRepository = Mockito.mock(ImagePathRepository.class);
+    @MockBean
+    JwtTokenService jwtTokenService = Mockito.mock(JwtTokenService.class);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(
+            advertisementRepository, locationRepository, categoryRepository,
+            conditionRepository, deliveryMethodRepository, userRepository,
+            imagePathRepository, jwtTokenService);
 
 
     @Test
