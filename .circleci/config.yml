@@ -82,14 +82,15 @@ jobs:
 
 workflows:
   publish-to-dockerhub:
-                jobs:
-                  - build
-                  - test:
-                      requires:
-                        - build
-                  - publish:
-                      requires:
-                        - test
+    
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - publish:
+          requires:
+            - test
                         
   say-hello-workflow:
     jobs:
