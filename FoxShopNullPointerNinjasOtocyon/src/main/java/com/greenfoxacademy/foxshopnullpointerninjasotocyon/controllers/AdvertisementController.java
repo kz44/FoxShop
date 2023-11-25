@@ -38,14 +38,6 @@ public class AdvertisementController {
      */
     @PostMapping("/closeAdvertisement/{advertisementId}")
     public ResponseEntity<?> closeAdvertisement(@PathVariable Long advertisementId) {
-        try {
-            if (advertisementService.closeAdvertisement(advertisementId)){
-                return ResponseEntity.ok("Advertisement closed");
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body((new ErrorMessageDTO("You don't have permission to close this advertisement")));
-            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((new ErrorMessageDTO("You don't have permission to close this advertisement")));
-        }
+            return advertisementService.closeAdvertisement(advertisementId);
     }
 }

@@ -3,9 +3,11 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +27,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -92,18 +95,18 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * Closes the specified advertisement identified by its unique identifier.
      *
      * @param advertisementId The unique identifier of the advertisement to be closed.
-     * @return true: if the advertisement was successfully closed by the owner
+     * @return Error or : if the advertisement was successfully closed by the owner
      * false: otherwise
      */
     @Override
-    public boolean closeAdvertisement(Long advertisementId) {
+    public ResponseEntity<?> closeAdvertisement(Long advertisementId) {
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
 
         if (advertisementOptional.isPresent()) {
             Advertisement advertisement = advertisementOptional.get();
 
             if (advertisement.isClosed()) {
-                return false;
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement is already closed"));
             }
 
             User loggedUser = getUserFromSecurityContextHolder();
@@ -111,10 +114,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
                 advertisement.setClosed(true);
                 advertisementRepository.save(advertisement);
-                return true;
+                return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed"));
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("You don't have permission to close this advertisement"));
             }
         }
-        return false;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something unexpected error happened during closing the advertisement");
     }
 
     /**

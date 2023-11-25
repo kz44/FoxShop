@@ -8,5 +8,5 @@ public interface AdvertisementService {
 
     ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 
-    boolean closeAdvertisement(Long advertisementId);
+    ResponseEntity<?> closeAdvertisement(Long advertisementId);
 }
