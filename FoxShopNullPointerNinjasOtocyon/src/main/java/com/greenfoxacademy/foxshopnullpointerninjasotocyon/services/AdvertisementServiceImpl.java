@@ -93,7 +93,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      *
      * @param advertisementId The unique identifier of the advertisement to be closed.
      * @return true: if the advertisement was successfully closed by the owner
-     *          false: otherwise
+     * false: otherwise
      */
     @Override
     public boolean closeAdvertisement(Long advertisementId) {
