@@ -33,8 +33,10 @@ public class AdvertisementController {
      *
      * @return
      *      - success message: if the advertisement closed
-     *      - permission message: if the user don't have permission to close the advertisement
-     *      - warning message: if the something went wrong during the changing advertisement status
+     *      - success message: if tha advertisement closed by ADMIN
+     *      - error message: if the advertisement is already closed
+     *      - error message: if the user don't have permission to close the advertisement
+     *      - error message: if the something went wrong during the changing advertisement status
      */
     @PostMapping("/closeAdvertisement/{advertisementId}")
     public ResponseEntity<?> closeAdvertisement(@PathVariable Long advertisementId) {
