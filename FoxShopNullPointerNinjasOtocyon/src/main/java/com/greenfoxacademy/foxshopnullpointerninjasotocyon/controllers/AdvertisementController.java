@@ -43,14 +43,12 @@ public class AdvertisementController {
      * @throws BadAttributeValueExpException  BadAttributeValueExpException If the provided page or size is null.
      */
     @GetMapping("/getAdvertisements")
-    public Page<Advertisement> getAdvertisements(@RequestParam Integer page,
-                                                   @RequestParam Integer size,
+    public Page<Advertisement> getAdvertisements(@RequestParam(required = false) Integer page,
+                                                   @RequestParam(required = false) Integer size,
                                                    @RequestParam(required = false) Long categoryId,
                                                    @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
-        if (page == null || size == null) {
-            throw new BadAttributeValueExpException("The page or size value cannot be null");
-        }
-        PageRequest pageRequest = PageRequest.of(page, size);
+
+        PageRequest pageRequest = PageRequest.of(page != null ? page : 0, size != null ? size : 10);
         return advertisementService.getAdvertisements(pageRequest, categoryId, maxPrice);
     }
 }
