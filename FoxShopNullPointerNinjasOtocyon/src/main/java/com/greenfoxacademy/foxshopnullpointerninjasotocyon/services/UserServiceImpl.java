@@ -11,7 +11,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
-import com.sun.jdi.InternalException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -150,7 +149,10 @@ public class UserServiceImpl implements UserService {
 
     public String checkUserRole() {
         var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (user != null && user instanceof FoxUserDetails) {
+        if (user == null) {
+            user.setRoleName("VISITOR");
+            return "VISITOR";
+        } else if (user instanceof FoxUserDetails) {
             return user.getRoleName();
         } else {
             return null;
