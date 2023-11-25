@@ -102,14 +102,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (advertisementOptional.isPresent()) {
             Advertisement advertisement = advertisementOptional.get();
 
+            if (advertisement.isClosed()) {
+                return false;
+            }
+
             User loggedUser = getUserFromSecurityContextHolder();
 
             if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
                 advertisement.setClosed(true);
                 advertisementRepository.save(advertisement);
                 return true;
-            } else {
-                return false;
             }
         }
         return false;

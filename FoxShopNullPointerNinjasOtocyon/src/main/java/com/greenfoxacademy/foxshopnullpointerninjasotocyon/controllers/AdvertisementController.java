@@ -37,15 +37,15 @@ public class AdvertisementController {
      *      - warning message: if the something went wrong during the changing advertisement status
      */
     @PostMapping("/closeAdvertisement/{advertisementId}")
-    public ResponseEntity<String> closeAdvertisement(@PathVariable Long advertisementId) {
+    public ResponseEntity<?> closeAdvertisement(@PathVariable Long advertisementId) {
         try {
             if (advertisementService.closeAdvertisement(advertisementId)){
                 return ResponseEntity.ok("Advertisement closed");
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You don't have permission to close this advertisement");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body((new ErrorMessageDTO("You don't have permission to close this advertisement")));
             }
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong while closing an advertisement");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((new ErrorMessageDTO("You don't have permission to close this advertisement")));
         }
     }
 }
