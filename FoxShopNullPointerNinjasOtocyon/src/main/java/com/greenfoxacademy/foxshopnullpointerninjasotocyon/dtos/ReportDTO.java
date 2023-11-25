@@ -12,6 +12,5 @@ import lombok.Setter;
 public class ReportDTO {
 
     private String description;
-    private Long sender;
     private Long receiver;
 }
