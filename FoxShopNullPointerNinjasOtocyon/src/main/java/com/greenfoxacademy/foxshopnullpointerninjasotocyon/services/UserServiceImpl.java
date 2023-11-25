@@ -4,6 +4,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Role;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.RoleRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
@@ -150,8 +151,13 @@ public class UserServiceImpl implements UserService {
     public String checkUserRole() {
         var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (user == null) {
-            user.setRoleName("VISITOR");
-            return "VISITOR";
+            String visitor = roleRepository.findByRoleName("VISITOR").get().getRoleName();
+            if (visitor != null) {
+                user.setRoleName(visitor);
+                return visitor;
+            } else {
+                return null;
+            }
         } else if (user instanceof FoxUserDetails) {
             return user.getRoleName();
         } else {

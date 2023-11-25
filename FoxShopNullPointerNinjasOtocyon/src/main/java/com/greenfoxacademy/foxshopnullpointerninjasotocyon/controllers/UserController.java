@@ -31,7 +31,7 @@ public class UserController {
             response.put("role", result);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication principal is not an instance of FoxUserDetails");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
         }
     }
 }
