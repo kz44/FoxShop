@@ -148,10 +148,19 @@ public class UserServiceImpl implements UserService {
         logoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
     }
 
+    /**
+     * Checks the role of the currently authenticated user.
+     *
+     * @return The roleName of the user, or null if the user is not authenticated
+     *         or if an error occurs while retrieving the role.
+     *         If the user is not authenticated, sets the role to "VISITOR" and returns it.
+     */
+
     public String checkUserRole() {
         var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (user == null) {
-            String visitor = roleRepository.findByRoleName("VISITOR").get().getRoleName();
+            Optional<Role> roleOptional = roleRepository.findByRoleName("VISITOR");
+            String visitor = roleOptional.map(Role::getRoleName).orElse(null);
             if (visitor != null) {
                 user.setRoleName(visitor);
                 return visitor;
