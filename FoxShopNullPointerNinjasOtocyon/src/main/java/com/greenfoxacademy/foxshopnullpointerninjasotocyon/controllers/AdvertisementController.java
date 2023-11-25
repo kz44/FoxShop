@@ -40,6 +40,6 @@ public class AdvertisementController {
      */
     @PostMapping("/closeAdvertisement/{advertisementId}")
     public ResponseEntity<?> closeAdvertisement(@PathVariable Long advertisementId) {
-            return advertisementService.closeAdvertisement(advertisementId);
+            return advertisementService.closeAdvertisementById(advertisementId);
     }
 }

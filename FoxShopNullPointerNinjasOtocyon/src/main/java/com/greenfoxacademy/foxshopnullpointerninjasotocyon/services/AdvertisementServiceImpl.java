@@ -99,7 +99,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * false: otherwise
      */
     @Override
-    public ResponseEntity<?> closeAdvertisement(Long advertisementId) {
+    public ResponseEntity<?> closeAdvertisementById(Long advertisementId) {
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
 
         if (advertisementOptional.isPresent()) {
