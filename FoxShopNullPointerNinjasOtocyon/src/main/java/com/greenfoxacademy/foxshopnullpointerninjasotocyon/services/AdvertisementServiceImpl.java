@@ -130,7 +130,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("You don't have permission to close this advertisement"));
             }
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something unexpected error happened during closing the advertisement");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessageDTO("Something unexpected error happened during closing the advertisement"));
     }
 
     /**
