@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
 
     /**
@@ -14,7 +16,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
      *  @param pageable   Pageable object contains the page number, size.
      *  @return A page of advertisements filtered on the specified category and not closed.
      */
-    Page<Advertisement> findByCategoryIdAndClosedFalse(Long categoryId, Pageable pageable);
+    List<Advertisement> findByCategoryIdAndClosedFalse(Long categoryId, Pageable pageable);
 
     /**
      *  Return a page of advertisements filtered by maxPrice and not closed.
@@ -23,7 +25,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
      * @param pageable  Pageable object contains the page number, size.
      * @return A page of advertisements filtered on the specified maxPrice and not closed.
      */
-    Page<Advertisement> findByPriceLessThanEqualAndClosedFalse(Integer maxPrice, Pageable pageable);
+    List<Advertisement> findByPriceLessThanEqualAndClosedFalse(Integer maxPrice, Pageable pageable);
 
     /**
      *  Return a page of advertisements filtered by categoryId, maxPrice and not closed.
@@ -33,7 +35,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
      * @param pageable  Pageable object contains the page number, size.
      * @return A page of advertisements filtered on the specified categoryId, maxPrice and not closed.
      */
-    Page<Advertisement> findByCategoryIdAndPriceLessThanEqualAndClosedFalse(Long categoryId, Integer maxPrice, Pageable pageable);
+    List<Advertisement> findByCategoryIdAndPriceLessThanEqualAndClosedFalse(Long categoryId, Integer maxPrice, Pageable pageable);
 
     /**
      *  Return a page of advertisements filtered by not closed.
@@ -41,5 +43,5 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
      * @param pageable  Pageable object contains the page number, size.
      * @return A page of advertisements which not closed.
      */
-    Page<Advertisement> findByClosedFalse(Pageable pageable);
+    List<Advertisement> findByClosedFalse(Pageable pageable);
 }
