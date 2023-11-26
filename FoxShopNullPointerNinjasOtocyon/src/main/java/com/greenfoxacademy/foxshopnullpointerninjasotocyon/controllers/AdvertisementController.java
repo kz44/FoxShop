@@ -2,15 +2,14 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.BadAttributeValueExpException;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -34,21 +33,16 @@ public class AdvertisementController {
     /**
      * This endpoint returns paginated list of Advertisements based on provided parameters
      *
-     * @param page  page number for pagination. Cannot be null.
-     * @param size  size of each page for pagination. Cannot be null.
-     * @param categoryId  Optional, ID of the categories to filter advertisements. Can be null.
-     * @param maxPrice  Optional, maximum price to filter advertisements. Can be null.
-     *
-     * @return  paginated list of Advertisements
-     * @throws BadAttributeValueExpException  BadAttributeValueExpException If the provided page or size is null.
+     * Pageable contains tha page and size
+     * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
+     * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
+     * @return paginated list of Advertisements
+     * @throws BadAttributeValueExpException BadAttributeValueExpException If the provided page or size is null.
      */
-    @GetMapping("/getAdvertisements")
-    public Page<Advertisement> getAdvertisements(@RequestParam(required = false) Integer page,
-                                                   @RequestParam(required = false) Integer size,
-                                                   @RequestParam(required = false) Long categoryId,
-                                                   @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
-
-        PageRequest pageRequest = PageRequest.of(page != null ? page : 0, size != null ? size : 10);
-        return advertisementService.getAdvertisements(pageRequest, categoryId, maxPrice);
+    @GetMapping()
+    public List<AdvertisementDto> getAdvertisements(Pageable pageable,
+                                                    @RequestParam(required = false) Long categoryId,
+                                                    @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
+        return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
     }
 }
