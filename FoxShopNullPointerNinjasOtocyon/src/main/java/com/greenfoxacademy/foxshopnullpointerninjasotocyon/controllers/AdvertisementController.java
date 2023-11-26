@@ -57,28 +57,28 @@ public class AdvertisementController {
 //        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
 //                httpServletRequest, advertisementId);
 //    }
-//
-//    @PostMapping(value = {
-//            "/binaryDataUpload/image","/binaryDataUpload/image/",
-//            "/binaryDataUpload/image/{advertisementId}"})
-//    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-//                                                   @PathVariable(required = false) Long advertisementId) {
-//        if (advertisementId == null) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "Advertisement id missing in request path."));
-//        }
-//        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
-//    }
-//
-//    @DeleteMapping("/removeImage")
-//    public ResponseEntity<?> removeImageFromAdvertisement(HttpServletRequest httpServletRequest,
-//                                                          @RequestBody(required = false) RemoveImageDTO removeImageDto) {
-//        if (removeImageDto == null) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "Removal data have not been attached to the request."));
-//        }
-//        return advertisementService.deleteImage(httpServletRequest, removeImageDto.getImageUrl(), removeImageDto.getAdvertisementId());
-//    }
+
+    @PostMapping(value = {
+            "/binaryDataUpload/image","/binaryDataUpload/image/",
+            "/binaryDataUpload/image/{advertisementId}"})
+    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
+                                                   @PathVariable(required = false) Long advertisementId) {
+        if (advertisementId == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "Advertisement id missing in request path."));
+        }
+        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
+    }
+
+    @DeleteMapping("/removeImage")
+    public ResponseEntity<?> removeImageFromAdvertisement(HttpServletRequest httpServletRequest,
+                                                          @RequestBody(required = false) RemoveImageDTO removeImageDto) {
+        if (removeImageDto == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "Removal data have not been attached to the request."));
+        }
+        return advertisementService.deleteImage(httpServletRequest, removeImageDto.getImageUrl(), removeImageDto.getAdvertisementId());
+    }
 
 }
 

@@ -158,7 +158,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        }
 //        String token = jwtTokenService.resolveToken(httpServletRequest);
 //        //user model of the already authenticated user:
-//        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+//        User user = getUserFromSecurityContextHolder();
 //        if (!advertisement.get().getUser().equals(user)) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
 //        }
@@ -221,36 +221,36 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //    }
 
 
-    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
-                                         Advertisement advertisementEntity)
-            throws IOException, FileNotFoundException {
-        String token = jwtTokenService.resolveToken(httpServletRequest);
-//      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-        String username = jwtTokenService.parseJwt(token);
-//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
-                + username + "/"
-                + advertisementEntity.getId().toString() + "/"
-                + numberForNewImageEntity + ".png";
-        File javaFileObject = new File(pathForSaving);
-        /* try creating file under the path specified - assuming directory+subdirectories exist already
-        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
-        and afterwards create the file
-         */
-        try {
-            FileOutputStream stream = new FileOutputStream(javaFileObject);
-//          write bytes to result file:
-            stream.write(imageBytes);
-        } catch (FileNotFoundException fileNotFoundException) {
-            if (javaFileObject.getParentFile().mkdirs()) {
-                FileOutputStream stream = new FileOutputStream(javaFileObject);
-                stream.write(imageBytes);
-            } else {
-                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
-            }
-        }
-        return pathForSaving;
-    }
+//    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+//                                         Advertisement advertisementEntity)
+//            throws IOException, FileNotFoundException {
+//        String token = jwtTokenService.resolveToken(httpServletRequest);
+////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
+//        String username = jwtTokenService.parseJwt(token);
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
+//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+//                + username + "/"
+//                + advertisementEntity.getId().toString() + "/"
+//                + numberForNewImageEntity + ".png";
+//        File javaFileObject = new File(pathForSaving);
+//        /* try creating file under the path specified - assuming directory+subdirectories exist already
+//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+//        and afterwards create the file
+//         */
+//        try {
+//            FileOutputStream stream = new FileOutputStream(javaFileObject);
+////          write bytes to result file:
+//            stream.write(imageBytes);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            if (javaFileObject.getParentFile().mkdirs()) {
+//                FileOutputStream stream = new FileOutputStream(javaFileObject);
+//                stream.write(imageBytes);
+//            } else {
+//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+//            }
+//        }
+//        return pathForSaving;
+//    }
 
     private Integer extractImageNumberFromUrl(String url) {
         int beginIndex = url.lastIndexOf("/") + 1;
@@ -259,48 +259,48 @@ public class AdvertisementServiceImpl implements AdvertisementService {
        return Integer.parseInt(imageNumberString);
     }
 
-//    @Override
-//    @Transactional
-//    public ResponseEntity<?> deleteImageEntity(HttpServletRequest httpServletRequest, String imageUrl, Long advertisementId) {
-//        if (imageUrl == null || advertisementId == null) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "The submitted request needs to contain both information: image url and advertisement id."));
-//        }
-//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-//        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
-//        if (advertisement.isEmpty()) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
-//        }
-//        String token = jwtTokenService.resolveToken(httpServletRequest);
-//        //user model of the already authenticated user:
-//        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
-//        if (!advertisement.get().getUser().equals(user)) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
-//        }
-//        if (imagePath.isEmpty()) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
-//        }
-//        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
-//        }
-////       remove static file from directory:
-//        try {
-//            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
-//        } catch (IOException ioException) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
-//        }
-//        advertisement.get().getImagePaths().remove(imagePath.get());
-//        advertisementRepository.save(advertisement.get());
-//        imagePathRepository.delete(imagePath.get());
-//        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
-//    }
-
-    private boolean deleteImageFile(String imageUrl) throws IOException {
-        File imageFileToBeDeleted = new File(imageUrl);
-        if (!imageFileToBeDeleted.exists()) {
-            throw new IOException();
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteImageEntity(HttpServletRequest httpServletRequest, String imageUrl, Long advertisementId) {
+        if (imageUrl == null || advertisementId == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "The submitted request needs to contain both information: image url and advertisement id."));
         }
-        return imageFileToBeDeleted.delete();
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
+        if (advertisement.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
+        }
+        String token = jwtTokenService.resolveToken(httpServletRequest);
+        //user model of the already authenticated user:
+        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        if (imagePath.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
+        }
+        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
+        }
+//       remove static file from directory:
+        try {
+            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
+        } catch (IOException ioException) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
+        }
+        advertisement.get().getImagePaths().remove(imagePath.get());
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.delete(imagePath.get());
+        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
     }
+//
+//    private boolean deleteImageFile(String imageUrl) throws IOException {
+//        File imageFileToBeDeleted = new File(imageUrl);
+//        if (!imageFileToBeDeleted.exists()) {
+//            throw new IOException();
+//        }
+//        return imageFileToBeDeleted.delete();
+//    }
 
 }
