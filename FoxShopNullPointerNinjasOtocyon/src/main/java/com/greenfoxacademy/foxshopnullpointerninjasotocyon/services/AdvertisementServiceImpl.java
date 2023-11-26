@@ -100,6 +100,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public ResponseEntity<?> closeAdvertisementById(Long advertisementId) {
+
+        if (advertisementId == null || advertisementId <= 0 || advertisementRepository.findById(advertisementId).isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid advertisement ID"));
+        }
+
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
 
         if (advertisementOptional.isPresent()) {
