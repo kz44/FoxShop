@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import javax.management.BadAttributeValueExpException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +31,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
     private final UserServiceImpl userServiceImpl;
+    private final AdvertisementMapper advertisementMapper;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -104,13 +107,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      *                                       or the categoryId or maxPrice is not valid.
      */
     @Override
-    public Page<Advertisement> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
+    public List<AdvertisementDto> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
 
         if (pageable == null || pageable.getPageNumber() < 0 || pageable.getPageSize() <= 0) {
             throw new IllegalArgumentException("Invalid pageable value");
         }
 
-        Page<Advertisement> advertisements;
+        List<Advertisement> advertisements;
 
         if (categoryId != null && maxPrice != null) {
             advertisements = advertisementRepository.findByCategoryIdAndPriceLessThanEqualAndClosedFalse(categoryId, maxPrice, pageable);
@@ -121,7 +124,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         } else {
             advertisements = advertisementRepository.findByClosedFalse(pageable);
         }
-        return advertisements;
+
+        return advertisements.stream().map(advertisementMapper::entityToDTO).collect(Collectors.toList());
     }
 
 

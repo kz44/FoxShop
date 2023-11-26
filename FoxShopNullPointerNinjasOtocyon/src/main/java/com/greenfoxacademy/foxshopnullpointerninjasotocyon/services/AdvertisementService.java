@@ -6,11 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface AdvertisementService {
     ResponseEntity<?> nullCheckAdvertisement(AdvertisementDto advertisementDto);
 
     ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 
-    Page<Advertisement> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice);
+    List<AdvertisementDto> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice);
 
 }
