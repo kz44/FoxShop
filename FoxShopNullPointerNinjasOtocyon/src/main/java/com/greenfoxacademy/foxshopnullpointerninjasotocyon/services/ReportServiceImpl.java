@@ -24,7 +24,7 @@ public class ReportServiceImpl implements ReportService {
     private AdvertisementRepository advertisementRepository;
 
     /**
-     * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
+     * Checks for null values in the provided ReportDTO and returns an appropriate ResponseEntity.
      * <p>
      * This method examines the essential fields of the ReportDTO, ensuring none of them are null.
      * If any null values are found, it returns a ResponseEntity with a Bad Request status and an error message
