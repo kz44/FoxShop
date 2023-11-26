@@ -125,7 +125,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             advertisements = advertisementRepository.findByClosedFalse(pageable);
         }
 
-        return advertisements.stream().map(advertisementMapper::entityToDTO).collect(Collectors.toList());
+        return advertisements.stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
     }
 
 

@@ -5,6 +5,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/advertisement")
+@RequestMapping("/api/advertisements")
 public class AdvertisementController {
 
     private AdvertisementService advertisementService;
@@ -42,7 +43,7 @@ public class AdvertisementController {
     @GetMapping()
     public List<AdvertisementDto> getAdvertisements(Pageable pageable,
                                                     @RequestParam(required = false) Long categoryId,
-                                                    @RequestParam(required = false) Integer maxPrice) throws BadAttributeValueExpException {
-        return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
+                                                    @RequestParam(required = false) Integer maxPrice) throws IllegalArgumentException {
+            return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
     }
 }

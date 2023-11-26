@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class AdvertisementMapper {
 
 
-    public AdvertisementDto entityToDTO (Advertisement entity){
+    public AdvertisementDto toDTO (Advertisement entity){
         return AdvertisementDto.builder()
                 .title(entity.getTitle())
                 .description(entity.getDescription())
@@ -24,7 +24,7 @@ public class AdvertisementMapper {
                 .build();
     }
 
-    public Advertisement DTOtoEntity (AdvertisementDto dto){
+    public Advertisement toEntity (AdvertisementDto dto){
         return Advertisement.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
