@@ -14,3 +14,9 @@ variable: `jdbc:mysql://localhost/foxshop?serverTimezone=UTC`)
 `JWT_SECRET` for the secret code, minimum length is 64 characters
 
 You need to set up these environment variables.
+
+
+You will find a file in the resources/assets/databasesetup directory called role_setup.sql.
+
+You should implement it on your computer in the database.
+

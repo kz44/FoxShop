@@ -5,6 +5,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.RoleRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
@@ -29,6 +30,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
     private final HttpServletRequest httpServletRequest;
@@ -120,6 +122,7 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setRole(roleRepository.findByRoleName("USER").get());
 
         userRepository.save(user);
     }
