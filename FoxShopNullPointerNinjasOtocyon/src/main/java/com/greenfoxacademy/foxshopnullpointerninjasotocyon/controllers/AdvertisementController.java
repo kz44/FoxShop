@@ -38,12 +38,11 @@ public class AdvertisementController {
      * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
      * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
      * @return paginated list of Advertisements
-     * @throws IllegalArgumentException IllegalArgumentException If the provided page or size is null, but the interface automatically modify it to 0.
      */
     @GetMapping("/advertisements")
     public List<AdvertisementDto> getAdvertisements(Pageable pageable,
                                                     @RequestParam(required = false) Long categoryId,
-                                                    @RequestParam(required = false) Integer maxPrice) throws IllegalArgumentException {
+                                                    @RequestParam(required = false) Integer maxPrice) {
             return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
     }
 }

@@ -102,16 +102,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
      * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
      * @return paginated list of Advertisements
-     * @throws IllegalArgumentException If the provided pageable is null,
-     *                                       or its page number or size is invalid,
-     *                                       or the categoryId or maxPrice is not valid.
      */
     @Override
     public List<AdvertisementDto> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
-
-        if (pageable == null || pageable.getPageNumber() < 0 || pageable.getPageSize() <= 0) {
-            throw new IllegalArgumentException("Invalid pageable value");
-        }
 
         List<Advertisement> advertisements;
 
