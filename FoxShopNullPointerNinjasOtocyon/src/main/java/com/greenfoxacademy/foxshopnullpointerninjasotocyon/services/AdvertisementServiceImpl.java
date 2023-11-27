@@ -1,8 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
@@ -83,7 +83,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Advertisement advertisement = new Advertisement();
         User user = userService.getUserFromSecurityContextHolder();
         advertisement.setUser(user);
-        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement, true);
     }
 
     /**
@@ -96,7 +96,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * wrapped in the appropriate HTTP status code.
      */
 
-    private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement) {
+    private ResponseEntity<?> dataValidationAndSaveAdvertisement(AdvertisementDto advertisementDto, Advertisement advertisement, boolean createNew) {
         List<String> errors = new ArrayList<>();
         advertisement.setTitle(advertisementDto.getTitle());
         advertisement.setDescription(advertisementDto.getDescription());
@@ -118,7 +118,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
         }
         advertisementRepository.save(advertisement);
-        return ResponseEntity.ok().body(new AdvertisementResponseDto(advertisement.getId()));
+        String message = String.format("Your advertisement with id %d was successfully %s.", advertisement.getId(), (createNew ? "created" : "updated"));
+        return ResponseEntity.ok().body(new SuccessMessageDTO(message));
     }
 
     /**
@@ -144,6 +145,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
-        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement);
+        return dataValidationAndSaveAdvertisement(advertisementDto, advertisement, false);
     }
 }

@@ -1,8 +1,8 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import org.junit.jupiter.api.Test;
@@ -78,9 +78,9 @@ class AdvertisementServiceImplTest {
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
         AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
         ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
-        assertInstanceOf(AdvertisementResponseDto.class, response.getBody());
-        AdvertisementResponseDto advertisementResponseDto = (AdvertisementResponseDto) response.getBody();
-        assertNotNull(advertisementResponseDto);
+        assertInstanceOf(SuccessMessageDTO.class, response.getBody());
+        SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
+        assertNotNull(successMessageDTO);
     }
 
     @Test
@@ -152,10 +152,10 @@ class AdvertisementServiceImplTest {
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
         AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
         ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementDto);
-        assertInstanceOf(AdvertisementResponseDto.class, response.getBody());
-        AdvertisementResponseDto advertisementResponseDto = (AdvertisementResponseDto) response.getBody();
-        assertNotNull(advertisementResponseDto);
-        assertEquals(1L, advertisementResponseDto.getId());
+        assertInstanceOf(SuccessMessageDTO.class, response.getBody());
+        SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
+        assertNotNull(successMessageDTO);
+        assertEquals("Your advertisement with id 1 was successfully updated.", successMessageDTO.getMessage());
     }
 
     @Test
