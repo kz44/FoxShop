@@ -98,11 +98,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     /**
      * This method returns a paginated list of Advertisements where you can add some filters but not necessary
      *
-     * @param pageable   contains the page and size for pagination
+     * @param pageable   contains the page and size values for pagination
      * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
      * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
      * @return paginated list of Advertisements
-     * @throws BadAttributeValueExpException If the provided pageable is null,
+     * @throws IllegalArgumentException If the provided pageable is null,
      *                                       or its page number or size is invalid,
      *                                       or the categoryId or maxPrice is not valid.
      */

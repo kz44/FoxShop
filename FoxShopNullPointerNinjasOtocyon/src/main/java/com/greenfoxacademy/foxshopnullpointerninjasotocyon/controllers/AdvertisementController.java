@@ -14,7 +14,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/advertisements")
+@RequestMapping("/api/advertisement")
 public class AdvertisementController {
 
     private AdvertisementService advertisementService;
@@ -32,15 +32,15 @@ public class AdvertisementController {
     }
 
     /**
-     * This endpoint returns paginated list of Advertisements based on provided parameters
+     * This endpoint returns paginated list of AdvertisementDto based on provided parameters
      *
-     * Pageable contains tha page and size
+     * Pageable contains tha page and size value
      * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
      * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
      * @return paginated list of Advertisements
-     * @throws BadAttributeValueExpException BadAttributeValueExpException If the provided page or size is null.
+     * @throws IllegalArgumentException IllegalArgumentException If the provided page or size is null, but the interface automatically modify it to 0.
      */
-    @GetMapping()
+    @GetMapping("/advertisements")
     public List<AdvertisementDto> getAdvertisements(Pageable pageable,
                                                     @RequestParam(required = false) Long categoryId,
                                                     @RequestParam(required = false) Integer maxPrice) throws IllegalArgumentException {
