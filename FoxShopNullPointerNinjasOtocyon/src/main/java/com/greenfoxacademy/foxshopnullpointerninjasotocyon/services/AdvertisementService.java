@@ -1,8 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
-import org.springframework.data.domain.Page;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
@@ -13,6 +12,6 @@ public interface AdvertisementService {
 
     ResponseEntity<?> createNewAdvertisement(AdvertisementDto advertisementDto);
 
-    List<AdvertisementDto> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice);
+    List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice);
 
 }

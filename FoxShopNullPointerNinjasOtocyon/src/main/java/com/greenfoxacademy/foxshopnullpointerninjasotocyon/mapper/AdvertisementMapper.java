@@ -1,8 +1,10 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
-import lombok.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Getter
@@ -12,30 +14,38 @@ import org.springframework.stereotype.Component;
 public class AdvertisementMapper {
 
 
-    public AdvertisementDto toDTO (Advertisement entity){
-        return AdvertisementDto.builder()
+    /**
+     * Converts an Advertisement entity to an AdvertisementPageableDTO.
+     *
+     * @param entity The Advertisement entity to be converted.
+     * @return AdvertisementPageableDTO containing information from the Advertisement entity.
+     */
+    public AdvertisementPageableDTO toDTO(Advertisement entity) {
+        return AdvertisementPageableDTO.builder()
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .price(entity.getPrice())
-                .locationId(entity.getLocation().getId())
-                .deliveryMethodId(entity.getDeliveryMethod().getId())
-                .categoryId(entity.getCategory().getId())
-                .conditionId(entity.getCondition().getId())
+                .locationName(entity.getLocation().getName())
+                .deliveryMethodName(entity.getDeliveryMethod().getName())
+                .categoryName(entity.getCategory().getName())
+                .conditionName(entity.getCondition().getName())
                 .build();
     }
 
-    public Advertisement toEntity (AdvertisementDto dto){
+    /*      I think we won't use it, maybe it will be removed later
+
+    public Advertisement toEntity (AdvertisementPageableDTO dto){
         return Advertisement.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .price(dto.getPrice())
-                .location(Location.builder().id(dto.getLocationId()).build())
-                .deliveryMethod(DeliveryMethod.builder().id(dto.getDeliveryMethodId()).build())
-                .category(Category.builder().id(dto.getCategoryId()).build())
-                .condition(Condition.builder().id(dto.getConditionId()).build())
+                .location(Location.builder().name(dto.getLocationName()).build())
+                .deliveryMethod(DeliveryMethod.builder().name(dto.getDeliveryMethodName()).build())
+                .category(Category.builder().name(dto.getCategoryName()).build())
+                .condition(Condition.builder().name(dto.getConditionName()).build())
                 .build();
     }
-
+     */
 
 
 }

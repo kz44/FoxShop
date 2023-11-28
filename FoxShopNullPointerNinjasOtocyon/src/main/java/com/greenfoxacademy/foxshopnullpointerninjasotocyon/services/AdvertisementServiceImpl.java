@@ -1,20 +1,17 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.management.BadAttributeValueExpException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,14 +21,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
+    private final UserServiceImpl userServiceImpl;
+    private final AdvertisementMapper advertisementMapper;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
     private CategoryRepository categoryRepository;
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
-    private final UserServiceImpl userServiceImpl;
-    private final AdvertisementMapper advertisementMapper;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -104,7 +101,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @return paginated list of Advertisements
      */
     @Override
-    public List<AdvertisementDto> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
+    public List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
 
         List<Advertisement> advertisements;
 
@@ -120,7 +117,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
         return advertisements.stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
     }
-
 
 
     /**
