@@ -2,6 +2,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
@@ -91,6 +92,6 @@ public class ReportServiceImpl implements ReportService {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
         }
         reportRepository.save(report);
-        return ResponseEntity.ok().body("Report sent successfully.");
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
     }
 }
