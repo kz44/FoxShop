@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class SuccessMessageDTO {
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
     private Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
     private String message;
 

@@ -4,10 +4,13 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Role;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.RoleRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.TokenBlacklistRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,17 +21,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
     private final HttpServletRequest httpServletRequest;
@@ -120,6 +121,7 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        user.setRole(roleRepository.findByRoleName("USER").get());
 
         userRepository.save(user);
     }
@@ -154,5 +156,31 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         return userRepository.findByUsername(username).get();
+    }
+
+    /**
+     * Checks the role of the currently authenticated user.
+     *
+     * @return The roleName of the user, or null if the user is not authenticated
+     *         or if an error occurs while retrieving the role.
+     *         If the user is not authenticated, sets the role to "VISITOR" and returns it.
+     */
+
+    public String checkUserRole() {
+        var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user == null) {
+            Optional<Role> roleOptional = roleRepository.findByRoleName("VISITOR");
+            String visitor = roleOptional.map(Role::getRoleName).orElse(null);
+            if (visitor != null) {
+                user.setRoleName(visitor);
+                return visitor;
+            } else {
+                return null;
+            }
+        } else if (user instanceof FoxUserDetails) {
+            return user.getRoleName();
+        } else {
+            return null;
+        }
     }
 }
