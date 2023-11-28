@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UserController {
             response.put("role", result);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("Authentication failed."));
         }
     }
 }
