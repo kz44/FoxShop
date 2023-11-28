@@ -38,7 +38,11 @@ public class AdvertisementController {
      *      - error message: if the user don't have permission to close the advertisement
      *      - error message: if the something went wrong during the changing advertisement status
      */
-    @PostMapping("/closeAdvertisement/{advertisementId}")
+    @PostMapping(value = {
+            "/closeAdvertisement/{advertisementId}",
+            "/closeAdvertisement/",
+            "/closeAdvertisement"
+    })
     public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
             return advertisementService.closeAdvertisementById(advertisementId);
     }
