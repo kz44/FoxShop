@@ -158,14 +158,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         String token = jwtTokenService.resolveToken(httpServletRequest);
         //user model of the already authenticated user:
+        // the controller endpoint is configured as accessible only for authenticated users
         User user = getUserFromSecurityContextHolder();
+        String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
         String pathForSaving = new String();
         try {
             byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
-            pathForSaving = inputBytesToImageFile(httpServletRequest, decodedImageBytes,
+            pathForSaving = inputBytesToImageFile(username, decodedImageBytes,
                     advertisement.get());
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
@@ -190,9 +192,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
-        String token = jwtTokenService.resolveToken(httpServletRequest);
-        //user model of the already authenticated user:
-        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+        User user = getUserFromSecurityContextHolder();
+        String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
@@ -203,7 +204,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             if (imageBytes.length == 0) {
                 return ResponseEntity.badRequest().body(new ErrorMessageDTO("The submitted http request does not contain any image binary data"));
             }
-            pathForSaving = inputBytesToImageFile(httpServletRequest, imageBytes,
+            pathForSaving = inputBytesToImageFile(username, imageBytes,
                     advertisement.get());
         } catch (FileNotFoundException e) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
@@ -221,12 +222,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
 
-//    private String inputBytesToImageFile(HttpServletRequest httpServletRequest, byte[] imageBytes,
+//    private String inputBytesToImageFile(String username, byte[] imageBytes,
 //                                          Advertisement advertisementEntity)
 //            throws IOException, FileNotFoundException {
-//        String token = jwtTokenService.resolveToken(httpServletRequest);
-////      as not specified otherwise, the controller endpoint is configured as accessible only for authenticated users
-//        String username = jwtTokenService.parseJwt(token);
 ////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
 //        Optional<Integer> advertisementMaximumImageNumber = advertisementEntity.getImagePaths().stream()
 //                .map(x -> extractImageNumberFromUrl(x.getUrl())).max(Integer::compareTo);
@@ -256,13 +254,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //            }
 //        }
 //        return pathForSaving;
-//    }
-//
-//    private Integer extractImageNumberFromUrl(String url) {
-//        int beginIndex = url.lastIndexOf("/") + 1;
-//        int endIndex = url.lastIndexOf(".");
-//        String imageNumberString = url.substring(beginIndex, endIndex);
-//       return Integer.parseInt(imageNumberString);
 //    }
 
 }
