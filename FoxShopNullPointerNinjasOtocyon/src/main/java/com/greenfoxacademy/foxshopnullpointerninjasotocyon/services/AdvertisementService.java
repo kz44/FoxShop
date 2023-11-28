@@ -11,8 +11,7 @@ public interface AdvertisementService {
 
 //    ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest, Long advertisementId);
 //
-//    ResponseEntity<?> addImageBase64(String decodedImage, HttpServletRequest httpServletRequest,
-//                                     Long advertisementId);
+//    ResponseEntity<?> addImageBase64(String decodedImage, Long advertisementId);
 
-//    ResponseEntity<?> deleteImageEntity(HttpServletRequest httpServletRequest, String imageUrl, Long advertisementId);
+//    ResponseEntity<?> deleteImageEntity(String imageUrl);
 }
