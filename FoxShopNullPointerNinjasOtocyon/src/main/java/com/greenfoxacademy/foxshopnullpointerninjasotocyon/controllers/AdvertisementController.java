@@ -47,7 +47,7 @@ public class AdvertisementController {
 //    @PostMapping(value = {
 //            "/base64encoded/image","/base64encoded/image/",
 //            "/base64encoded/image/{advertisementId}"})
-//    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
+//    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO,
 //                                            @PathVariable(required = false) Long advertisementId) {
 //        if (postImageDTO == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
@@ -55,8 +55,7 @@ public class AdvertisementController {
 //        if (advertisementId == null) {
 //            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id missing in request path."));
 //        }
-//        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
-//                httpServletRequest, advertisementId);
+//        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(), advertisementId);
 //    }
     @PostMapping(value = {
             "/binaryDataUpload/image", "/binaryDataUpload/image/",
@@ -71,13 +70,12 @@ public class AdvertisementController {
     }
 
     @DeleteMapping("/removeImage")
-    public ResponseEntity<?> removeImageFromAdvertisement(HttpServletRequest httpServletRequest,
-                                                          @RequestBody(required = false) RemoveImageDTO removeImageDto) {
+    public ResponseEntity<?> removeImageFromAdvertisement(@RequestBody(required = false) RemoveImageDTO removeImageDto) {
         if (removeImageDto == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(
                     "Removal data have not been attached to the request."));
         }
-        return advertisementService.deleteImage(httpServletRequest, removeImageDto.getImageUrl(), removeImageDto.getAdvertisementId());
+        return advertisementService.deleteImage(removeImageDto.getImageUrl());
     }
 
 }
