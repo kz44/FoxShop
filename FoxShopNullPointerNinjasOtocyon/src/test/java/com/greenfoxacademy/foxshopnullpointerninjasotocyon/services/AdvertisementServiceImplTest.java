@@ -1,6 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
@@ -32,15 +32,15 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementIsOk() {
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertEquals(ResponseEntity.ok().build(), response);
     }
 
     @Test
     void nullCheckNewAdvertisementWithoutTitle() {
-        AdvertisementDto advertisementDto = new AdvertisementDto(null, "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto(null, "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -49,8 +49,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutPriceAndLocationId() {
-        AdvertisementDto advertisementDto = new AdvertisementDto("title", "description", null, null, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("title", "description", null, null, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -59,8 +59,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutAnyData() {
-        AdvertisementDto advertisementDto = new AdvertisementDto(null, null, null, null, null, null, null);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto(null, null, null, null, null, null, null);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -76,8 +76,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(SuccessMessageDTO.class, response.getBody());
         SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
         assertNotNull(successMessageDTO);
@@ -92,8 +92,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 2L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 2L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -109,8 +109,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 5L, 6L, 2L, 4L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 5L, 6L, 2L, 4L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -126,8 +126,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", -100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", -100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -150,8 +150,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
         assertInstanceOf(SuccessMessageDTO.class, response.getBody());
         SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
         assertNotNull(successMessageDTO);
@@ -174,8 +174,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.updateAdvertisement(2L, advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(2L, advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -199,8 +199,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -223,8 +223,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", 100, 14L, 5L, 11L, 3L);
-        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 14L, 5L, 11L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -247,8 +247,8 @@ class AdvertisementServiceImplTest {
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("NewTitle", "NewDescription", -100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", -100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
