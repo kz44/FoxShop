@@ -147,6 +147,18 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Retrieves the currently authenticated user from the SecurityContextHolder.
+     *
+     * @return The User object associated with the authenticated user.
+     */
+
+    public User getUserFromSecurityContextHolder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository.findByUsername(username).get();
+    }
+
+    /**
      * Checks the role of the currently authenticated user.
      *
      * @return The roleName of the user, or null if the user is not authenticated
