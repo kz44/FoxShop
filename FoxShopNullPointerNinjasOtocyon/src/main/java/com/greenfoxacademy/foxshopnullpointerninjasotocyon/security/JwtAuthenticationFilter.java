@@ -23,7 +23,7 @@ import java.util.Optional;
 
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final static String GET_ADVERTISEMENTS_URI = "/api/advertisement/getAdvertisements";
+
     @Autowired
     private JwtTokenService jwtTokenService;
     @Autowired
@@ -34,28 +34,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (!request.getRequestURI().startsWith(GET_ADVERTISEMENTS_URI)) {
-            String token = jwtTokenService.resolveToken(request);
+        String token = jwtTokenService.resolveToken(request);
 
-            if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)
-                    && !jwtTokenService.isTokenExpired(token)
-                    && !tokenBlacklistRepository.existsByToken(token)
-            ) {
+        if (StringUtils.hasText(token) && jwtTokenService.validateTokenSignature(token)
+                && !jwtTokenService.isTokenExpired(token)
+                && !tokenBlacklistRepository.existsByToken(token)
+        ) {
 
-                String username = jwtTokenService.parseJwt(token);
-                Optional<User> userOpt = userService.findByUsername(username);
-                try {
-                    User user = userOpt.orElseThrow(AuthenticationException::new);
-                    UserDetails userDetails = FoxUserDetails.fromUser(user);
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, List.of(new SimpleGrantedAuthority("user")));
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                } catch (AuthenticationException e) {
-                    throw new RuntimeException(e);
-                }
+            String username = jwtTokenService.parseJwt(token);
+            Optional<User> userOpt = userService.findByUsername(username);
+            try {
+                User user = userOpt.orElseThrow(AuthenticationException::new);
+                UserDetails userDetails = FoxUserDetails.fromUser(user);
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, List.of(new SimpleGrantedAuthority("user")));
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            } catch (AuthenticationException e) {
+                throw new RuntimeException(e);
             }
         }
-
         filterChain.doFilter(request, response);
     }
 }
