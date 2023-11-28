@@ -47,7 +47,7 @@ public class AdvertisementController {
             "/base64encoded/image","/base64encoded/image/",
             "/base64encoded/image/{advertisementId}"})
 
-    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO, HttpServletRequest httpServletRequest,
+    public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO,
                                             @PathVariable(required = false) Long advertisementId) {
         if (postImageDTO == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("No data transfer file provided."));
@@ -55,8 +55,7 @@ public class AdvertisementController {
         if (advertisementId == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement id missing in request path."));
         }
-        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(),
-                httpServletRequest, advertisementId);
+        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(), advertisementId);
     }
 
     @PostMapping(value = {

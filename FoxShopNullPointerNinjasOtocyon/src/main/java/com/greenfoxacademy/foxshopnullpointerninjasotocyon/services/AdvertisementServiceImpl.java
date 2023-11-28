@@ -147,8 +147,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> addImageBase64(String encodedImage, HttpServletRequest httpServletRequest,
-                                            Long advertisementId) {
+    public ResponseEntity<?> addImageBase64(String encodedImage, Long advertisementId) {
         if (encodedImage == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
         }
@@ -156,7 +155,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
-        String token = jwtTokenService.resolveToken(httpServletRequest);
         //user model of the already authenticated user:
         // the controller endpoint is configured as accessible only for authenticated users
         User user = getUserFromSecurityContextHolder();
