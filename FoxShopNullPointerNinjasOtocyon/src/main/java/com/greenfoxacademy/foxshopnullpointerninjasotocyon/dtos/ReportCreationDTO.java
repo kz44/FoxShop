@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportDTO {
+public class ReportCreationDTO {
 
     private String description;
     private Long receiver;
