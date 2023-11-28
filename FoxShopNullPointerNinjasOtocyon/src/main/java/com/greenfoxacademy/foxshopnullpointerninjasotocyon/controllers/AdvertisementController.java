@@ -57,17 +57,17 @@ public class AdvertisementController {
 //        }
 //        return advertisementService.addImageBase64(postImageDTO.getImageBase64Encoded(), advertisementId);
 //    }
-    @PostMapping(value = {
-            "/binaryDataUpload/image", "/binaryDataUpload/image/",
-            "/binaryDataUpload/image/{advertisementId}"})
-    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
-                                                   @PathVariable(required = false) Long advertisementId) {
-        if (advertisementId == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-                    "Advertisement id missing in request path."));
-        }
-        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
-    }
+//    @PostMapping(value = {
+//            "/binaryDataUpload/image", "/binaryDataUpload/image/",
+//            "/binaryDataUpload/image/{advertisementId}"})
+//    public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
+//                                                   @PathVariable(required = false) Long advertisementId) {
+//        if (advertisementId == null) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+//                    "Advertisement id missing in request path."));
+//        }
+//        return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
+//    }
 
     @DeleteMapping("/removeImage")
     public ResponseEntity<?> removeImageFromAdvertisement(@RequestBody(required = false) RemoveImageDTO removeImageDto) {
