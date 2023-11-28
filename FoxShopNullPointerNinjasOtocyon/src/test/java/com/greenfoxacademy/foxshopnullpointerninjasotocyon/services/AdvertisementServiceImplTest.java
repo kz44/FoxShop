@@ -1,23 +1,15 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementResponseDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,28 +26,21 @@ class AdvertisementServiceImplTest {
     @MockBean
     private DeliveryMethodRepository deliveryMethodRepository = Mockito.mock(DeliveryMethodRepository.class);
     @MockBean
-    private UserRepository userRepository = Mockito.mock(UserRepository.class);
-    @MockBean
-    private ImagePathRepository imagePathRepository = Mockito.mock(ImagePathRepository.class);
-    @MockBean
-    JwtTokenService jwtTokenService = Mockito.mock(JwtTokenService.class);
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(
-            advertisementRepository, locationRepository, categoryRepository,
-            conditionRepository, deliveryMethodRepository, userRepository,
-            imagePathRepository, jwtTokenService);
+    private UserService userService = Mockito.mock(UserService.class);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService);
 
 
     @Test
     void nullCheckNewAdvertisementIsOk() {
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertEquals(ResponseEntity.ok().build(), response);
     }
 
     @Test
     void nullCheckNewAdvertisementWithoutTitle() {
-        AdvertisementDto advertisementDto = new AdvertisementDto(null, "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto(null, "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -64,8 +49,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutPriceAndLocationId() {
-        AdvertisementDto advertisementDto = new AdvertisementDto("title", "description", null, null, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("title", "description", null, null, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -74,8 +59,8 @@ class AdvertisementServiceImplTest {
 
     @Test
     void nullCheckNewAdvertisementWithoutAnyData() {
-        AdvertisementDto advertisementDto = new AdvertisementDto(null, null, null, null, null, null, null);
-        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto(null, null, null, null, null, null, null);
+        ResponseEntity<?> response = advertisementService.nullCheckAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -86,39 +71,29 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementEverythingOk() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
-        assertInstanceOf(AdvertisementResponseDto.class, response.getBody());
-        AdvertisementResponseDto advertisementResponseDto = (AdvertisementResponseDto) response.getBody();
-        assertNotNull(advertisementResponseDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
+        assertInstanceOf(SuccessMessageDTO.class, response.getBody());
+        SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
+        assertNotNull(successMessageDTO);
     }
 
     @Test
     void createNewAdvertisementWrongCategoryId() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 4L, 5L, 2L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 4L, 5L, 2L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -129,18 +104,13 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementWrongAllIds() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", 100, 5L, 6L, 2L, 4L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", 100, 5L, 6L, 2L, 4L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
@@ -151,18 +121,134 @@ class AdvertisementServiceImplTest {
     void createNewAdvertisementNegativePrice() {
         User user = new User();
         user.setUsername("testUsername");
-        FoxUserDetails foxUserDetails = FoxUserDetails.fromUser(user);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(foxUserDetails, null, List.of(new SimpleGrantedAuthority("user")));
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-        SecurityContextHolder.setContext(securityContext);
-        Mockito.when(userRepository.findByUsername("testUsername")).thenReturn(Optional.of(user));
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
         Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
         Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
         Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
         Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
-        AdvertisementDto advertisementDto = new AdvertisementDto("Title", "description", -100, 4L, 5L, 1L, 3L);
-        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementDto);
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("Title", "description", -100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.createNewAdvertisement(advertisementCreationDto);
+        assertInstanceOf(ErrorMessageDTO.class, response.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
+        assertNotNull(errorMessageDTO);
+        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getMessage());
+    }
+
+    @Test
+    void updateAdvertisementEverythingOk() {
+        User user = new User();
+        user.setUsername("testUsername");
+        Advertisement advertisement = new Advertisement();
+        advertisement.setId(1L);
+        advertisement.setTitle("OldTitle");
+        advertisement.setDescription("OldDescription");
+        advertisement.setPrice(50);
+        advertisement.setUser(user);
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
+        Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
+        assertInstanceOf(SuccessMessageDTO.class, response.getBody());
+        SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
+        assertNotNull(successMessageDTO);
+        assertEquals("Your advertisement with id 1 was successfully updated.", successMessageDTO.getMessage());
+    }
+
+    @Test
+    void updateAdvertisementWrongIdOfAdvertisement() {
+        User user = new User();
+        user.setUsername("testUsername");
+        Advertisement advertisement = new Advertisement();
+        advertisement.setId(1L);
+        advertisement.setTitle("OldTitle");
+        advertisement.setDescription("OldDescription");
+        advertisement.setPrice(50);
+        advertisement.setUser(user);
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
+        Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(2L, advertisementCreationDto);
+        assertInstanceOf(ErrorMessageDTO.class, response.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
+        assertNotNull(errorMessageDTO);
+        assertEquals("There is no advertisement with this id.", errorMessageDTO.getMessage());
+    }
+
+    @Test
+    void updateAdvertisementByNonOwner() {
+        User user = new User();
+        User anotherUser = new User();
+        user.setUsername("testUsername");
+        Advertisement advertisement = new Advertisement();
+        advertisement.setId(1L);
+        advertisement.setTitle("OldTitle");
+        advertisement.setDescription("OldDescription");
+        advertisement.setPrice(50);
+        advertisement.setUser(anotherUser);
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
+        Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
+        assertInstanceOf(ErrorMessageDTO.class, response.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
+        assertNotNull(errorMessageDTO);
+        assertEquals("It is not possible to change another user's advertisement.", errorMessageDTO.getMessage());
+    }
+
+    @Test
+    void updateAdvertisementWrongCategoryIdAndWrongLocationId() {
+        User user = new User();
+        user.setUsername("testUsername");
+        Advertisement advertisement = new Advertisement();
+        advertisement.setId(1L);
+        advertisement.setTitle("OldTitle");
+        advertisement.setDescription("OldDescription");
+        advertisement.setPrice(50);
+        advertisement.setUser(user);
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
+        Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", 100, 14L, 5L, 11L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
+        assertInstanceOf(ErrorMessageDTO.class, response.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
+        assertNotNull(errorMessageDTO);
+        assertEquals("There are some errors in your request: Wrong category id. Wrong location id.", errorMessageDTO.getMessage());
+    }
+
+    @Test
+    void updateAdvertisementPriceNegativeNumber() {
+        User user = new User();
+        user.setUsername("testUsername");
+        Advertisement advertisement = new Advertisement();
+        advertisement.setId(1L);
+        advertisement.setTitle("OldTitle");
+        advertisement.setDescription("OldDescription");
+        advertisement.setPrice(50);
+        advertisement.setUser(user);
+        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(user);
+        Mockito.when(advertisementRepository.findById(1L)).thenReturn(Optional.of(advertisement));
+        Mockito.when(categoryRepository.findById(1L)).thenReturn(Optional.of(new Category(1L, "testCategory", null, null, null)));
+        Mockito.when(conditionRepository.findById(3L)).thenReturn(Optional.of(new Condition(1L, "testCondition", null)));
+        Mockito.when(locationRepository.findById(4L)).thenReturn(Optional.of(new Location(1L, "testLocation", null)));
+        Mockito.when(deliveryMethodRepository.findById(5L)).thenReturn(Optional.of(new DeliveryMethod(1L, "testDeliveryMethod", null)));
+        AdvertisementCreationDto advertisementCreationDto = new AdvertisementCreationDto("NewTitle", "NewDescription", -100, 4L, 5L, 1L, 3L);
+        ResponseEntity<?> response = advertisementService.updateAdvertisement(1L, advertisementCreationDto);
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
