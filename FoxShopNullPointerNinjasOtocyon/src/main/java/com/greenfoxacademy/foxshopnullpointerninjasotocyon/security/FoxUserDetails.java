@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,15 +22,21 @@ public class FoxUserDetails implements UserDetails {
     private String firstName;
     private String lastName;
     private String email;
+    private String roleName;
 
 
     public static FoxUserDetails fromUser(User user){
-        return new FoxUserDetails(user.getUsername(), user.getFirstName(), user.getLastName(), user.getEmail());
+        return new FoxUserDetails(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getRole().getRoleName());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority(roleName));
     }
 
     @Override
