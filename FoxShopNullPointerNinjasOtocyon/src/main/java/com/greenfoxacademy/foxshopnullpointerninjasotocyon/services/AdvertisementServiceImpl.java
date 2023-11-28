@@ -121,7 +121,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (userService.checkUserRole().equals("ADMIN")) {
             advertisement.setClosed(true);
             advertisementRepository.save(advertisement);
-            return ResponseEntity.ok().body("Advertisement is closed by ADMIN");
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed by ADMIN"));
         }
 
         if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
