@@ -276,9 +276,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (advertisement.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
         }
-        String token = jwtTokenService.resolveToken(httpServletRequest);
         //user model of the already authenticated user:
-        User user = userRepository.findByUsername(jwtTokenService.parseJwt(token)).get();
+        User user = getUserFromSecurityContextHolder();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
