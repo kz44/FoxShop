@@ -21,13 +21,13 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
+    private final UserService userService;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
     private CategoryRepository categoryRepository;
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserRepository userRepository;
-    private final UserService userService;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -95,42 +95,42 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * Closes the specified advertisement identified by its unique identifier.
      *
      * @param advertisementId The unique identifier of the advertisement to be closed.
-     * @return Error or : if the advertisement was successfully closed by the owner
-     * false: otherwise
+     * @return ErrorMessageDTO: if the advertisement id was invalid.
+     *          SuccessMessageDTO: if the advertisement already closed
+     *          SuccessMessageDTO: if the advertisement closed by ADMIN
+     *          SuccessMessageDTO: if the advertisement closed
+     *          ErrorMessageDTO: if the advertisement cannot be closed because user don't have permission to do that
      */
     @Override
     public ResponseEntity<?> closeAdvertisementById(Long advertisementId) {
 
-        if (advertisementId <= 0 || advertisementRepository.findById(advertisementId).isEmpty()) {
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
+
+        if (advertisementId == null || advertisementId <= 0 || advertisementOptional.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid advertisement ID"));
         }
 
-        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
+        Advertisement advertisement = advertisementOptional.get();
 
-        if (advertisementOptional.isPresent()) {
-            Advertisement advertisement = advertisementOptional.get();
-
-            if (advertisement.isClosed()) {
-                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement is already closed"));
-            }
-
-            User loggedUser = getUserFromSecurityContextHolder();
-
-            if (userService.checkUserRole().equals("ADMIN")) {
-                advertisement.setClosed(true);
-                advertisementRepository.save(advertisement);
-                return ResponseEntity.ok().body("Advertisement is closed by ADMIN");
-            }
-
-            if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
-                advertisement.setClosed(true);
-                advertisementRepository.save(advertisement);
-                return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed"));
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("You don't have permission to close this advertisement"));
-            }
+        if (advertisement.isClosed()) {
+            return ResponseEntity.badRequest().body(new SuccessMessageDTO("Advertisement is already closed"));
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessageDTO("Something unexpected error happened during closing the advertisement"));
+
+        User loggedUser = getUserFromSecurityContextHolder();
+
+        if (userService.checkUserRole().equals("ADMIN")) {
+            advertisement.setClosed(true);
+            advertisementRepository.save(advertisement);
+            return ResponseEntity.ok().body("Advertisement is closed by ADMIN");
+        }
+
+        if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
+            advertisement.setClosed(true);
+            advertisementRepository.save(advertisement);
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed"));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("You don't have permission to close this advertisement"));
+        }
     }
 
     /**

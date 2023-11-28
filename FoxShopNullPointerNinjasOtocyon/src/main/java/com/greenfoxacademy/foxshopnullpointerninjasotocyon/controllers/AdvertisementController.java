@@ -39,7 +39,7 @@ public class AdvertisementController {
      *      - error message: if the something went wrong during the changing advertisement status
      */
     @PostMapping("/closeAdvertisement/{advertisementId}")
-    public ResponseEntity<?> closeAdvertisement(@PathVariable Long advertisementId) {
+    public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
             return advertisementService.closeAdvertisementById(advertisementId);
     }
 }
