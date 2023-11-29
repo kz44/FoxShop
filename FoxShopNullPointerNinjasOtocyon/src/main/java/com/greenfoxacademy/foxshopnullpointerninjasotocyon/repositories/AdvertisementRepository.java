@@ -4,44 +4,27 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
 
-    /**
-     *  Return a page of advertisements filtered by category ID and not closed.
-     *
-     *  @param categoryId The ID of the category to filter advertisements.
-     *  @param pageable   Pageable object contains the page number, size.
-     *  @return A page of advertisements filtered on the specified category and not closed.
-     */
-    List<Advertisement> findByCategoryIdAndClosedFalse(Long categoryId, Pageable pageable);
 
     /**
-     *  Return a page of advertisements filtered by maxPrice and not closed.
+     * Searches for advertisements based on the specified criteria.
      *
-     * @param maxPrice  The maximum price to filter advertisements.
-     * @param pageable  Pageable object contains the page number, size.
-     * @return A page of advertisements filtered on the specified maxPrice and not closed.
+     * @param categoryId The ID of the category to filter by. Set to null to ignore this filter.
+     * @param maxPrice   The maximum price for filtering. Set to code null to ignore this filter.
+     * @param pageable   The pagination information for the result set.
+     * @return A list of Advertisement objects that match the specified criteria and are not closed.
      */
-    List<Advertisement> findByPriceLessThanEqualAndClosedFalse(Integer maxPrice, Pageable pageable);
 
-    /**
-     *  Return a page of advertisements filtered by categoryId, maxPrice and not closed.
-     *
-     * @param categoryId  The ID of the category to filter advertisements.
-     * @param maxPrice  The maximum price to filter advertisements.
-     * @param pageable  Pageable object contains the page number, size.
-     * @return A page of advertisements filtered on the specified categoryId, maxPrice and not closed.
-     */
-    List<Advertisement> findByCategoryIdAndPriceLessThanEqualAndClosedFalse(Long categoryId, Integer maxPrice, Pageable pageable);
+    @Query("SELECT ad FROM Advertisement ad WHERE " +
+            "(:categoryId IS NULL OR ad.category.id = :categoryId) AND " +
+            "(:maxPrice IS NULL OR ad.price <= :maxPrice) AND " +
+            "ad.closed = false")
+    List<Advertisement> searchAdvertisements(@Param("categoryId") Long categoryId, @Param("maxPrice") Integer maxPrice, Pageable pageable);
 
-    /**
-     *  Return a page of advertisements filtered by not closed.
-     *
-     * @param pageable  Pageable object contains the page number, size.
-     * @return A page of advertisements which not closed.
-     */
-    List<Advertisement> findByClosedFalse(Pageable pageable);
 }

@@ -2,6 +2,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 

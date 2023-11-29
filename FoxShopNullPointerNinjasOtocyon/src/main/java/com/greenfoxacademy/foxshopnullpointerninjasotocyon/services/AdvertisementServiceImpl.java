@@ -102,20 +102,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
-
-        List<Advertisement> advertisements;
-
-        if (categoryId != null && maxPrice != null) {
-            advertisements = advertisementRepository.findByCategoryIdAndPriceLessThanEqualAndClosedFalse(categoryId, maxPrice, pageable);
-        } else if (categoryId != null && maxPrice == null) {
-            advertisements = advertisementRepository.findByCategoryIdAndClosedFalse(categoryId, pageable);
-        } else if (categoryId == null && maxPrice != null) {
-            advertisements = advertisementRepository.findByPriceLessThanEqualAndClosedFalse(maxPrice, pageable);
-        } else {
-            advertisements = advertisementRepository.findByClosedFalse(pageable);
-        }
-
-        return advertisements.stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
+        return advertisementRepository.searchAdvertisements(categoryId, maxPrice, pageable).stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
     }
 
 
