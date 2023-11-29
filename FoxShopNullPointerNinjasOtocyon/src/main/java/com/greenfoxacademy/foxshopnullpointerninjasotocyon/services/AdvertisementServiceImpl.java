@@ -93,6 +93,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Advertisement advertisement = new Advertisement();
         User user = userService.getUserFromSecurityContextHolder();
         advertisement.setUser(user);
+
         return dataValidationAndSaveAdvertisement(advertisementCreationDto, advertisement, true);
     }
 
