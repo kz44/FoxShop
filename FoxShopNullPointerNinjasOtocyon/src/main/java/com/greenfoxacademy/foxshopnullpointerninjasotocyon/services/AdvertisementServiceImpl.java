@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +29,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserService userService;
-    private UserRepository userRepository;
     private ImagePathRepository imagePathRepository;
 
     /**
@@ -172,7 +169,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         //user model of the already authenticated user:
         // the controller endpoint is configured as accessible only for authenticated users
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
@@ -205,7 +202,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
@@ -291,7 +288,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
         }
         //user model of the already authenticated user:
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));

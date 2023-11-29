@@ -27,7 +27,9 @@ class AdvertisementServiceImplTest {
     private DeliveryMethodRepository deliveryMethodRepository = Mockito.mock(DeliveryMethodRepository.class);
     @MockBean
     private UserService userService = Mockito.mock(UserService.class);
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService);
+    @MockBean
+    private ImagePathRepository imagePathRepository = Mockito.mock(ImagePathRepository.class);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService, imagePathRepository);
 
 
     @Test
