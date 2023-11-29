@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface AdvertisementService {
@@ -9,4 +10,7 @@ public interface AdvertisementService {
     ResponseEntity<?> createNewAdvertisement(AdvertisementCreationDto advertisementCreationDto);
 
     ResponseEntity<?> updateAdvertisement(Long id, AdvertisementCreationDto advertisementCreationDto);
+
+    ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest, Long advertisementId);
+    ResponseEntity<?> addImageBase64(String decodedImage, Long advertisementId);
 }

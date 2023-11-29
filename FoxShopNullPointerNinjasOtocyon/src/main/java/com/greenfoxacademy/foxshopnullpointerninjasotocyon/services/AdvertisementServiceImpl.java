@@ -2,14 +2,22 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +31,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserService userService;
+    private UserRepository userRepository;
+    private ImagePathRepository imagePathRepository;
 
     /**
      * Checks for null values in the provided AdvertisementDto and returns an appropriate ResponseEntity.
@@ -147,4 +157,115 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         return dataValidationAndSaveAdvertisement(advertisementCreationDto, advertisement, false);
     }
+
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> addImageBase64(String encodedImage, Long advertisementId) {
+        if (encodedImage == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Encoded image is missing in data transfer object."));
+        }
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        if (!advertisement.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
+        }
+        //user model of the already authenticated user:
+        // the controller endpoint is configured as accessible only for authenticated users
+        User user = getUserFromSecurityContextHolder();
+        String username = user.getUsername();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        String pathForSaving = new String();
+        try {
+            byte[] decodedImageBytes = Base64.getDecoder().decode(encodedImage); //decode String back to binary content:
+            pathForSaving = inputBytesToImageFile(username, decodedImageBytes,
+                    advertisement.get());
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
+        } catch (IOException e) {
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
+        }
+
+        ImagePath image = new ImagePath(pathForSaving);
+        image.setAdvertisement(advertisement.get());
+        advertisement.get().getImagePaths().add(image);
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.save(image);
+
+        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> addImageBinaryData(HttpServletRequest httpServletRequest,
+                                                Long advertisementId) {
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        if (!advertisement.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
+        }
+        User user = getUserFromSecurityContextHolder();
+        String username = user.getUsername();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        String pathForSaving = new String();
+        try {
+            InputStream inputStream = httpServletRequest.getInputStream();
+            byte[] imageBytes = IOUtils.toByteArray(inputStream);
+            if (imageBytes.length == 0) {
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("The submitted http request does not contain any image binary data"));
+            }
+            pathForSaving = inputBytesToImageFile(username, imageBytes,
+                    advertisement.get());
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("File could not be constructed under the path specified."));
+        } catch (IOException e) {
+            ResponseEntity.badRequest().body(new ErrorMessageDTO("Conversion of bytes into file failed."));
+        }
+
+        ImagePath image = new ImagePath(pathForSaving);
+        image.setAdvertisement(advertisement.get());
+        advertisement.get().getImagePaths().add(image);
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.save(image);
+
+        return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
+    }
+
+
+//    private String inputBytesToImageFile(String username, byte[] imageBytes,
+//                                          Advertisement advertisementEntity)
+//            throws IOException, FileNotFoundException {
+////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
+//        Optional<Integer> advertisementMaximumImageNumber = advertisementEntity.getImagePaths().stream()
+//                .map(x -> extractImageNumberFromUrl(x.getUrl())).max(Integer::compareTo);
+//        int numberForNewImageEntity = 0;
+//        if (advertisementMaximumImageNumber.isPresent()) {
+//            numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
+//        }
+//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+//                + username + "/"
+//                + advertisementEntity.getId().toString() + "/"
+//                + numberForNewImageEntity + ".png";
+//        File javaFileObject = new File(pathForSaving);
+//        /* try creating file under the path specified - assuming directory+subdirectories exist already
+//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+//        and afterwards create the file
+//         */
+//        try {
+//            FileOutputStream stream = new FileOutputStream(javaFileObject);
+////          write bytes to result file:
+//            stream.write(imageBytes);
+//        } catch (FileNotFoundException fileNotFoundException) {
+//            if (javaFileObject.getParentFile().mkdirs()) {
+//                FileOutputStream stream = new FileOutputStream(javaFileObject);
+//                stream.write(imageBytes);
+//            } else {
+//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+//            }
+//        }
+//        return pathForSaving;
+//    }
+
 }
