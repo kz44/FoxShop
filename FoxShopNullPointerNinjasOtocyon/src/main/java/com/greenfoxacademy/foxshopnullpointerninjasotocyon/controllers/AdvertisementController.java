@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RemoveImageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -85,5 +86,13 @@ public class AdvertisementController {
         return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
     }
 
-
+    @DeleteMapping("/removeImage")
+    public ResponseEntity<?> removeImageFromAdvertisement(@RequestBody(required = false) RemoveImageDTO removeImageDto) {
+        if (removeImageDto == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "Removal data have not been attached to the request."));
+        }
+        return advertisementService.deleteImage(removeImageDto.getImageUrl());
+    }
 }
+

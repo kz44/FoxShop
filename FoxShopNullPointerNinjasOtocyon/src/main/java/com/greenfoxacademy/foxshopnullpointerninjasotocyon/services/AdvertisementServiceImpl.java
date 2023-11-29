@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +29,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
     private UserService userService;
-    private UserRepository userRepository;
     private ImagePathRepository imagePathRepository;
 
     /**
@@ -172,7 +169,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         //user model of the already authenticated user:
         // the controller endpoint is configured as accessible only for authenticated users
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
@@ -205,7 +202,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         if (!advertisement.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement entity not located in the database."));
         }
-        User user = getUserFromSecurityContextHolder();
+        User user = userService.getUserFromSecurityContextHolder();
         String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
@@ -269,4 +266,64 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 //        return pathForSaving;
 //    }
 
+//    private Integer extractImageNumberFromUrl(String url) {
+//        int beginIndex = url.lastIndexOf("/") + 1;
+//        int endIndex = url.lastIndexOf(".");
+//        String imageNumberString = url.substring(beginIndex, endIndex);
+//       return Integer.parseInt(imageNumberString);
+//    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteImage(String imageUrl) {
+        if (imageUrl == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "The submitted request needs to contain the image url."));
+        }
+
+        Long advertisementId = extractAdvertisementIdFromUrl(imageUrl);
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
+        if (advertisement.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
+        }
+        //user model of the already authenticated user:
+        User user = userService.getUserFromSecurityContextHolder();
+        String username = user.getUsername();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        if (imagePath.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
+        }
+        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
+        }
+//          //   remove static file from directory:
+//        try {
+//            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
+//        } catch (IOException ioException) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
+//        }
+        advertisement.get().getImagePaths().remove(imagePath.get());
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.delete(imagePath.get());
+        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
+    }
+
+//    private boolean deleteImageFile(String imageUrl) throws IOException {
+//        File imageFileToBeDeleted = new File(imageUrl);
+//        if (!imageFileToBeDeleted.exists()) {
+//            throw new IOException();
+//        }
+//        return imageFileToBeDeleted.delete();
+//    }
+
+    private Long extractAdvertisementIdFromUrl(String url) {
+        String[] urlParts = url.split("/");
+        int beginIndex = url.indexOf(urlParts[6]);
+        int endIndex = url.lastIndexOf("/");
+        String imageNumberString = url.substring(beginIndex, endIndex);
+        return Long.parseLong(imageNumberString);
+    }
 }
