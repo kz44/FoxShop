@@ -95,4 +95,3 @@ public class AdvertisementController {
         return advertisementService.deleteImage(removeImageDto.getImageUrl());
     }
 }
-

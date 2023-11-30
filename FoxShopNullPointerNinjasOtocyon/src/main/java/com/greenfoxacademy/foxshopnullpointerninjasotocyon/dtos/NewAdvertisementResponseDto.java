@@ -3,10 +3,13 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@Setter
 @AllArgsConstructor
-public class RemoveImageDTO {
-    private String imageUrl;
+@NoArgsConstructor
+public class NewAdvertisementResponseDto {
+
+    private Long id;
 }

@@ -231,47 +231,39 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return ResponseEntity.ok(new ImageOperationSuccessDTO(pathForSaving));
     }
 
-
-//    private String inputBytesToImageFile(String username, byte[] imageBytes,
-//                                          Advertisement advertisementEntity)
-//            throws IOException, FileNotFoundException {
-////      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
-//        Optional<Integer> advertisementMaximumImageNumber = advertisementEntity.getImagePaths().stream()
-//                .map(x -> extractImageNumberFromUrl(x.getUrl())).max(Integer::compareTo);
-//        int numberForNewImageEntity = 0;
-//        if (advertisementMaximumImageNumber.isPresent()) {
-//            numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
-//        }
-//        String pathForSaving = "src/main/resources/assets/advertisementImages/"
-//                + username + "/"
-//                + advertisementEntity.getId().toString() + "/"
-//                + numberForNewImageEntity + ".png";
-//        File javaFileObject = new File(pathForSaving);
-//        /* try creating file under the path specified - assuming directory+subdirectories exist already
-//        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
-//        and afterwards create the file
-//         */
-//        try {
-//            FileOutputStream stream = new FileOutputStream(javaFileObject);
-////          write bytes to result file:
-//            stream.write(imageBytes);
-//        } catch (FileNotFoundException fileNotFoundException) {
-//            if (javaFileObject.getParentFile().mkdirs()) {
-//                FileOutputStream stream = new FileOutputStream(javaFileObject);
-//                stream.write(imageBytes);
-//            } else {
-//                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
-//            }
-//        }
-//        return pathForSaving;
-//    }
-
-//    private Integer extractImageNumberFromUrl(String url) {
-//        int beginIndex = url.lastIndexOf("/") + 1;
-//        int endIndex = url.lastIndexOf(".");
-//        String imageNumberString = url.substring(beginIndex, endIndex);
-//       return Integer.parseInt(imageNumberString);
-//    }
+    private String inputBytesToImageFile(String username, byte[] imageBytes,
+                                         Advertisement advertisementEntity)
+            throws IOException, FileNotFoundException {
+        Optional<Integer> advertisementMaximumImageNumber = advertisementEntity.getImagePaths().stream()
+                .map(x -> extractImageNumberFromUrl(x.getUrl())).max(Integer::compareTo);
+        int numberForNewImageEntity = 0;
+        if (advertisementMaximumImageNumber.isPresent()) {
+            numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
+        }
+//      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
+        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+                + username + "/"
+                + advertisementEntity.getId().toString() + "/"
+                + numberForNewImageEntity + ".png";
+        File javaFileObject = new File(pathForSaving);
+        /* try creating file under the path specified - assuming directory+subdirectories exist already
+        if the directory tree is not fully existent yet, method: mkdirs(create all directories that do not exist yet)
+        and afterwards create the file
+         */
+        try {
+            FileOutputStream stream = new FileOutputStream(javaFileObject);
+//          write bytes to result file:
+            stream.write(imageBytes);
+        } catch (FileNotFoundException fileNotFoundException) {
+            if (javaFileObject.getParentFile().mkdirs()) {
+                FileOutputStream stream = new FileOutputStream(javaFileObject);
+                stream.write(imageBytes);
+            } else {
+                throw new FileNotFoundException("Failed to create stream under directory " + javaFileObject.getParent());
+            }
+        }
+        return pathForSaving;
+    }
 
     @Override
     @Transactional
@@ -289,7 +281,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         //user model of the already authenticated user:
         User user = userService.getUserFromSecurityContextHolder();
-        String username = user.getUsername();
         if (!advertisement.get().getUser().equals(user)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
         }
@@ -300,24 +291,23 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
         }
 //          //   remove static file from directory:
-//        try {
-//            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
-//        } catch (IOException ioException) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
-//        }
+        try {
+            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
+        } catch (IOException ioException) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
+        }
         advertisement.get().getImagePaths().remove(imagePath.get());
         advertisementRepository.save(advertisement.get());
         imagePathRepository.delete(imagePath.get());
         return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
     }
 
-//    private boolean deleteImageFile(String imageUrl) throws IOException {
-//        File imageFileToBeDeleted = new File(imageUrl);
-//        if (!imageFileToBeDeleted.exists()) {
-//            throw new IOException();
-//        }
-//        return imageFileToBeDeleted.delete();
-//    }
+    private Integer extractImageNumberFromUrl(String url) {
+        int beginIndex = url.lastIndexOf("/") + 1;
+        int endIndex = url.lastIndexOf(".");
+        String imageNumberString = url.substring(beginIndex, endIndex);
+        return Integer.parseInt(imageNumberString);
+    }
 
     private Long extractAdvertisementIdFromUrl(String url) {
         String[] urlParts = url.split("/");
@@ -325,5 +315,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         int endIndex = url.lastIndexOf("/");
         String imageNumberString = url.substring(beginIndex, endIndex);
         return Long.parseLong(imageNumberString);
+    }
+
+    private boolean deleteImageFile(String imageUrl) throws IOException {
+        File imageFileToBeDeleted = new File(imageUrl);
+        if (!imageFileToBeDeleted.exists()) {
+            throw new IOException();
+        }
+        return imageFileToBeDeleted.delete();
     }
 }
