@@ -4,7 +4,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCre
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -266,55 +265,48 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return pathForSaving;
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<?> deleteImage(String imageUrl) {
+        if (imageUrl == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "The submitted request needs to contain the image url."));
+        }
+
+        Long advertisementId = extractAdvertisementIdFromUrl(imageUrl);
+        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
+        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
+        if (advertisement.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
+        }
+        //user model of the already authenticated user:
+        User user = userService.getUserFromSecurityContextHolder();
+        if (!advertisement.get().getUser().equals(user)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
+        }
+        if (imagePath.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
+        }
+        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
+        }
+//          //   remove static file from directory:
+        try {
+            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
+        } catch (IOException ioException) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
+        }
+        advertisement.get().getImagePaths().remove(imagePath.get());
+        advertisementRepository.save(advertisement.get());
+        imagePathRepository.delete(imagePath.get());
+        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
+    }
+
     private Integer extractImageNumberFromUrl(String url) {
         int beginIndex = url.lastIndexOf("/") + 1;
         int endIndex = url.lastIndexOf(".");
         String imageNumberString = url.substring(beginIndex, endIndex);
         return Integer.parseInt(imageNumberString);
-    }
-
-//    @Override
-//    @Transactional
-//    public ResponseEntity<?> deleteImageEntity(String imageUrl) {
-//        if (imageUrl == null) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
-//                    "The submitted request needs to contain both information: image url and advertisement id."));
-//        }
-//        Long advertisementId = extractAdvertisementIdFromUrl(imageUrl);
-//        Optional<Advertisement> advertisement = advertisementRepository.findById(advertisementId);
-//        Optional<ImagePath> imagePath = imagePathRepository.findDistinctByUrl(imageUrl);
-//        if (advertisement.isEmpty()) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement not located in database."));
-//        }
-//        //user model of the already authenticated user:
-//        User user = userService.getUserFromSecurityContextHolder();
-//        if (!advertisement.get().getUser().equals(user)) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("It is not possible to change another user's advertisement."));
-//        }
-//        if (imagePath.isEmpty()) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Image not located in database."));
-//        }
-//        if (!advertisement.get().getImagePaths().contains(imagePath.get())) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Advertisement does not contain the image path specified."));
-//        }
-////       remove static file from directory:
-//        try {
-//            boolean deletionStaticFileResult = deleteImageFile(imageUrl);
-//        } catch (IOException ioException) {
-//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The image file does not exist under the path specified."));
-//        }
-//        advertisement.get().getImagePaths().remove(imagePath.get());
-//        advertisementRepository.save(advertisement.get());
-//        imagePathRepository.delete(imagePath.get());
-//        return ResponseEntity.ok(new ImageOperationSuccessDTO("Image path successfully removed from advertisement."));
-//    }
-//
-    private boolean deleteImageFile(String imageUrl) throws IOException {
-        File imageFileToBeDeleted = new File(imageUrl);
-        if (!imageFileToBeDeleted.exists()) {
-            throw new IOException();
-        }
-        return imageFileToBeDeleted.delete();
     }
 
     private Long extractAdvertisementIdFromUrl(String url) {
@@ -325,4 +317,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return Long.parseLong(imageNumberString);
     }
 
+    private boolean deleteImageFile(String imageUrl) throws IOException {
+        File imageFileToBeDeleted = new File(imageUrl);
+        if (!imageFileToBeDeleted.exists()) {
+            throw new IOException();
+        }
+        return imageFileToBeDeleted.delete();
+    }
 }
