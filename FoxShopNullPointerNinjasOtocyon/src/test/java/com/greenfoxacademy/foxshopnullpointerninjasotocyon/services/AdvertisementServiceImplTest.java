@@ -3,9 +3,11 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdvertisementServiceImplTest {
+    @MockBean
+    private AdvertisementMapper advertisementMapper = Mockito.mock(AdvertisementMapper.class);
     @MockBean
     private AdvertisementRepository advertisementRepository = Mockito.mock(AdvertisementRepository.class);
     @MockBean
@@ -29,7 +33,7 @@ class AdvertisementServiceImplTest {
     private UserService userService = Mockito.mock(UserService.class);
     @MockBean
     private ImagePathRepository imagePathRepository = Mockito.mock(ImagePathRepository.class);
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService, imagePathRepository);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementMapper, advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService, imagePathRepository);
 
 
     @Test

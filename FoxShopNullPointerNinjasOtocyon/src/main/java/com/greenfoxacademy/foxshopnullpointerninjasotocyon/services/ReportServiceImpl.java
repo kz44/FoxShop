@@ -2,12 +2,14 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportSummaryDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.AdvertisementRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportRepository;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class ReportServiceImpl implements ReportService {
     private ReportRepository reportRepository;
     private UserService userService;
     private AdvertisementRepository advertisementRepository;
+    private UserRepository userRepository;
 
     /**
      * Checks for null values in the provided ReportCreationDTO and returns an appropriate ResponseEntity.
@@ -93,5 +96,14 @@ public class ReportServiceImpl implements ReportService {
         }
         reportRepository.save(report);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
+    }
+
+    public List<ReportSummaryDTO> reportsToDTOs () {
+        List<Report> reports = reportRepository.findAllBySender(userService.getUserFromSecurityContextHolder());
+        List<ReportSummaryDTO> reportSummaries = new ArrayList<>();
+        for (Report r : reports){
+            reportSummaries.add(new ReportSummaryDTO( r.getTitle(), r.getReportStatus().getState()));
+        }
+        return reportSummaries;
     }
 }
