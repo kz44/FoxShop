@@ -21,8 +21,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -146,6 +149,7 @@ public class UserServiceImpl implements UserService {
         logoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
     }
 
+    /**
      * Retrieves the currently authenticated user from the SecurityContextHolder.
      *
      * @return The User object associated with the authenticated user.

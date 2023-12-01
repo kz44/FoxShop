@@ -21,3 +21,4 @@ public class SuccessMessageDTO {
     public SuccessMessageDTO(String message) {
         this.message = message;
     }
+}
