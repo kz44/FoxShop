@@ -61,5 +61,8 @@ public class User {
     @ManyToOne()
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    private boolean verified = false;
 }
 
