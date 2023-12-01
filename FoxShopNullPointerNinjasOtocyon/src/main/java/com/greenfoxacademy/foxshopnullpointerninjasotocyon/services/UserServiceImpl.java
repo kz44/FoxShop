@@ -183,15 +183,4 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-
-    /**
-     * Retrieves the currently authenticated user from the SecurityContextHolder.
-     *
-     * @return The User object associated with the authenticated user.
-     */
-    public User getUserFromSecurityContextHolder() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return userRepository.findByUsername(username).get();
-    }
 }

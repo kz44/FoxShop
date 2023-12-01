@@ -30,5 +30,4 @@ public interface UserService {
 
     String checkUserRole();
 
-    User getUserFromSecurityContextHolder();
 }

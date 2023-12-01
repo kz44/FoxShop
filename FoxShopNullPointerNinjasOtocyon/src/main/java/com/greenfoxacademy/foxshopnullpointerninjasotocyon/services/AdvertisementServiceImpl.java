@@ -34,7 +34,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private CategoryRepository categoryRepository;
     private ConditionRepository conditionRepository;
     private DeliveryMethodRepository deliveryMethodRepository;
-    private final AdvertisementMapper advertisementMapper;
     private UserService userService;
     private ImagePathRepository imagePathRepository;
 
