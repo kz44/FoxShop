@@ -21,4 +21,6 @@ public interface AdvertisementService {
     ResponseEntity<?> deleteImage(String imageUrl);
 
     List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice);
+
+    ResponseEntity<?> closeAdvertisementById(Long advertisementId);
 }
