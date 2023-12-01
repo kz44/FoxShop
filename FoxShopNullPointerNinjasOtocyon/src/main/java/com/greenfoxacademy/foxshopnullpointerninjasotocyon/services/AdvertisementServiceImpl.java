@@ -1,9 +1,12 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
+import org.springframework.data.domain.Pageable;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +21,14 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
+    private final UserServiceImpl userServiceImpl;
+    private final AdvertisementMapper advertisementMapper;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
     private CategoryRepository categoryRepository;
@@ -92,6 +98,19 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisement.setUser(user);
 
         return dataValidationAndSaveAdvertisement(advertisementCreationDto, advertisement, true);
+    }
+
+    /**
+     * This method returns a paginated list of Advertisements where you can add some filters but not necessary
+     *
+     * @param pageable   contains the page and size values for pagination
+     * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
+     * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
+     * @return paginated list of Advertisements
+     */
+    @Override
+    public List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
+        return advertisementRepository.searchAdvertisements(categoryId, maxPrice, pageable).stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
     }
 
     /**
