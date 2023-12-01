@@ -363,7 +363,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         Advertisement advertisement = advertisementOptional.get();
 
         if (advertisement.isClosed()) {
-            return ResponseEntity.badRequest().body(new SuccessMessageDTO("Advertisement is already closed"));
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is already closed"));
         }
 
         User loggedUser = userService.getUserFromSecurityContextHolder();
