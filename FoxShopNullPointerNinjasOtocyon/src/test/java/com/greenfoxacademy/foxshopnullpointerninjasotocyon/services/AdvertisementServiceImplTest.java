@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AdvertisementServiceImplTest {
+    @MockBean
+    private AdvertisementMapper advertisementMapper = Mockito.mock(AdvertisementMapper.class);
     @MockBean
     private AdvertisementRepository advertisementRepository = Mockito.mock(AdvertisementRepository.class);
     @MockBean
@@ -29,7 +32,7 @@ class AdvertisementServiceImplTest {
     private UserService userService = Mockito.mock(UserService.class);
     @MockBean
     private ImagePathRepository imagePathRepository = Mockito.mock(ImagePathRepository.class);
-    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService, imagePathRepository);
+    private final AdvertisementService advertisementService = new AdvertisementServiceImpl(advertisementMapper, advertisementRepository, locationRepository, categoryRepository, conditionRepository, deliveryMethodRepository, userService, imagePathRepository);
 
 
     @Test
@@ -46,7 +49,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: title.", errorMessageDTO.getMessage());
+        assertEquals("There are missing some data in your request: title.", errorMessageDTO.getError());
     }
 
     @Test
@@ -56,7 +59,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: price, location id.", errorMessageDTO.getMessage());
+        assertEquals("There are missing some data in your request: price, location id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -66,7 +69,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are missing some data in your request: title, description, price, category id, condition id, location id, delivery method id.", errorMessageDTO.getMessage());
+        assertEquals("There are missing some data in your request: title, description, price, category id, condition id, location id, delivery method id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -99,7 +102,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Wrong category id.", errorMessageDTO.getMessage());
+        assertEquals("There are some errors in your request: Wrong category id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -116,7 +119,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Wrong category id. Wrong condition id. Wrong location id. Wrong delivery method id.", errorMessageDTO.getMessage());
+        assertEquals("There are some errors in your request: Wrong category id. Wrong condition id. Wrong location id. Wrong delivery method id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -133,7 +136,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getMessage());
+        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getError());
     }
 
     @Test
@@ -157,7 +160,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(SuccessMessageDTO.class, response.getBody());
         SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) response.getBody();
         assertNotNull(successMessageDTO);
-        assertEquals("Your advertisement with id 1 was successfully updated.", successMessageDTO.getMessage());
+        assertEquals("Your advertisement with id 1 was successfully updated.", successMessageDTO.getSuccess());
     }
 
     @Test
@@ -181,7 +184,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There is no advertisement with this id.", errorMessageDTO.getMessage());
+        assertEquals("There is no advertisement with this id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -206,7 +209,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("It is not possible to change another user's advertisement.", errorMessageDTO.getMessage());
+        assertEquals("It is not possible to change another user's advertisement.", errorMessageDTO.getError());
     }
 
     @Test
@@ -230,7 +233,7 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Wrong category id. Wrong location id.", errorMessageDTO.getMessage());
+        assertEquals("There are some errors in your request: Wrong category id. Wrong location id.", errorMessageDTO.getError());
     }
 
     @Test
@@ -254,6 +257,6 @@ class AdvertisementServiceImplTest {
         assertInstanceOf(ErrorMessageDTO.class, response.getBody());
         ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) response.getBody();
         assertNotNull(errorMessageDTO);
-        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getMessage());
+        assertEquals("There are some errors in your request: Price must be positive number.", errorMessageDTO.getError());
     }
 }

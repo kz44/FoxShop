@@ -16,9 +16,9 @@ public class SuccessMessageDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 
     private Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-    private String message;
+    private String success;
 
-    public SuccessMessageDTO(String message) {
-        this.message = message;
+    public SuccessMessageDTO(String success) {
+        this.success = success;
     }
 }

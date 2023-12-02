@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
-    private final UserServiceImpl userServiceImpl;
     private final AdvertisementMapper advertisementMapper;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
@@ -346,10 +345,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      *
      * @param advertisementId The unique identifier of the advertisement to be closed.
      * @return ErrorMessageDTO: if the advertisement id was invalid.
-     *          SuccessMessageDTO: if the advertisement already closed
-     *          SuccessMessageDTO: if the advertisement closed by ADMIN
-     *          SuccessMessageDTO: if the advertisement closed
-     *          ErrorMessageDTO: if the advertisement cannot be closed because user don't have permission to do that
+     * SuccessMessageDTO: if the advertisement already closed
+     * SuccessMessageDTO: if the advertisement closed by ADMIN
+     * SuccessMessageDTO: if the advertisement closed
+     * ErrorMessageDTO: if the advertisement cannot be closed because user don't have permission to do that
      */
     @Override
     public ResponseEntity<?> closeAdvertisementById(Long advertisementId) {
