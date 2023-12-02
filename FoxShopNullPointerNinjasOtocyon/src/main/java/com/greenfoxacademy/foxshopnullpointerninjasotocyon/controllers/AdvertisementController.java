@@ -1,17 +1,21 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RemoveImageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -85,5 +89,49 @@ public class AdvertisementController {
         return advertisementService.addImageBinaryData(httpServletRequest, advertisementId);
     }
 
+    @DeleteMapping("/removeImage")
+    public ResponseEntity<?> removeImageFromAdvertisement(@RequestBody(required = false) RemoveImageDTO removeImageDto) {
+        if (removeImageDto == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(
+                    "Removal data have not been attached to the request."));
+        }
+        return advertisementService.deleteImage(removeImageDto.getImageUrl());
+    }
 
+    /**
+     * This endpoint returns paginated list of AdvertisementDto based on provided parameters
+     * <p>
+     * Pageable contains tha page and size value
+     *
+     * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
+     * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
+     * @return paginated list of Advertisements
+     */
+    @GetMapping("/advertisements")
+    public List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable,
+                                                            @RequestParam(required = false) Long categoryId,
+                                                            @RequestParam(required = false) Integer maxPrice) {
+        return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
+    }
+
+
+    /**
+     * This endpoint close the advertisement by id
+     * @param advertisementId id of the advertisement want to close
+     *
+     * @return
+     *      - success message: if the advertisement closed
+     *      - success message: if tha advertisement closed by ADMIN
+     *      - error message: if the advertisement is already closed
+     *      - error message: if the user don't have permission to close the advertisement
+     *      - error message: if the something went wrong during the changing advertisement status
+     */
+    @PostMapping(value = {
+            "/closeAdvertisement/{advertisementId}",
+            "/closeAdvertisement/",
+            "/closeAdvertisement"
+    })
+    public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
+        return advertisementService.closeAdvertisementById(advertisementId);
+    }
 }
