@@ -5,9 +5,11 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDT
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportSummaryDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.ReportService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -29,8 +31,13 @@ public class ReportController {
         return reportService.createNewReport(reportCreationDTO);
     }
 
-    @GetMapping("s")
+    @GetMapping("/reports")
     public List<ReportSummaryDTO> reportsByUser() {
-        return reportService.reportsToDTOs();
+//        List l = new ArrayList<>();
+//        ReportSummaryDTO rsd = new ReportSummaryDTO("title",1L,"pending","advertisement");
+//l.add(rsd);
+//        return l;
+//        return ResponseEntity.ok().body(rsd);
+                return reportService.reportsToDTOs();
     }
 }

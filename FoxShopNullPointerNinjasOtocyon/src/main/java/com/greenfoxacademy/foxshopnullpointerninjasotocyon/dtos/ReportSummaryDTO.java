@@ -8,6 +8,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ReportSummaryDTO {
-    private String title;
-    private String status;
+    private String reportTitle;
+    private Long reportID;
+    private String reportStatus;
+    private String advertisementTitle;
 }
+
+/*
+Path variable - id
+ReportDetailDTO
+GET
+reportDescription, username, reportStatus, reportTitle, advertisementId, advertisementTitle
+ */

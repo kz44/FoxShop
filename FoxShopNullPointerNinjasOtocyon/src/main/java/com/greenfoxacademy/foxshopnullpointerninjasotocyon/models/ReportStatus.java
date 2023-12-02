@@ -18,9 +18,11 @@ public class ReportStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+//    enum with string field: pending, accepted, denied
+   @Column(unique = true, nullable = false)
     private String state = "pending";
 
-    @OneToMany(mappedBy = "status")
+    @OneToMany(mappedBy = "reportStatus")
     private Set<Report> reports;
 
 }

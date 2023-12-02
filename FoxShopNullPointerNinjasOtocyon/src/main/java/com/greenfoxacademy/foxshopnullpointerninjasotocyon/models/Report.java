@@ -15,7 +15,7 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique=true)
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -30,6 +30,6 @@ public class Report {
     private Advertisement receiver;
 
     @ManyToOne
-    @JoinColumn(name = "report_status_id", nullable = false)
+    @JoinColumn(name = "reportStatus_id", nullable = false)
     private ReportStatus reportStatus;
 }
