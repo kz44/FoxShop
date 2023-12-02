@@ -23,6 +23,7 @@ import java.util.Optional;
 
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     @Autowired
     private JwtTokenService jwtTokenService;
     @Autowired
@@ -52,7 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 throw new RuntimeException(e);
             }
         }
-        filterChain.doFilter(request, response);    }
-
-
+        filterChain.doFilter(request, response);
+    }
 }

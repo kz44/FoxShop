@@ -1,14 +1,14 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ImageOperationSuccessDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +18,14 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
+    private final UserServiceImpl userServiceImpl;
+    private final AdvertisementMapper advertisementMapper;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
     private CategoryRepository categoryRepository;
@@ -92,6 +95,19 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         advertisement.setUser(user);
 
         return dataValidationAndSaveAdvertisement(advertisementCreationDto, advertisement, true);
+    }
+
+    /**
+     * This method returns a paginated list of Advertisements where you can add some filters but not necessary
+     *
+     * @param pageable   contains the page and size values for pagination
+     * @param categoryId Optional, ID of the categories to filter advertisements. Can be null.
+     * @param maxPrice   Optional, maximum price to filter advertisements. Can be null.
+     * @return paginated list of Advertisements
+     */
+    @Override
+    public List<AdvertisementPageableDTO> getAdvertisements(Pageable pageable, Long categoryId, Integer maxPrice) {
+        return advertisementRepository.searchAdvertisements(categoryId, maxPrice, pageable).stream().map(advertisementMapper::toDTO).collect(Collectors.toList());
     }
 
     /**
@@ -324,4 +340,47 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         return imageFileToBeDeleted.delete();
     }
+
+    /**
+     * Closes the specified advertisement identified by its unique identifier.
+     *
+     * @param advertisementId The unique identifier of the advertisement to be closed.
+     * @return ErrorMessageDTO: if the advertisement id was invalid.
+     *          SuccessMessageDTO: if the advertisement already closed
+     *          SuccessMessageDTO: if the advertisement closed by ADMIN
+     *          SuccessMessageDTO: if the advertisement closed
+     *          ErrorMessageDTO: if the advertisement cannot be closed because user don't have permission to do that
+     */
+    @Override
+    public ResponseEntity<?> closeAdvertisementById(Long advertisementId) {
+
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
+
+        if (advertisementId == null || advertisementId <= 0 || advertisementOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid advertisement ID"));
+        }
+
+        Advertisement advertisement = advertisementOptional.get();
+
+        if (advertisement.isClosed()) {
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is already closed"));
+        }
+
+        User loggedUser = userService.getUserFromSecurityContextHolder();
+
+        if (userService.checkUserRole().equals("ADMIN")) {
+            advertisement.setClosed(true);
+            advertisementRepository.save(advertisement);
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed by ADMIN"));
+        }
+
+        if (advertisement.getUser().getUsername().equals(loggedUser.getUsername())) {
+            advertisement.setClosed(true);
+            advertisementRepository.save(advertisement);
+            return ResponseEntity.ok().body(new SuccessMessageDTO("Advertisement is closed"));
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorMessageDTO("You don't have permission to close this advertisement"));
+        }
+    }
+
 }
