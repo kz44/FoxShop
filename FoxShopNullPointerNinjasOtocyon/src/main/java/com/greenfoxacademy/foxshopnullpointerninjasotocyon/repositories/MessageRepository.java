@@ -2,6 +2,8 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Message;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,4 +19,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("SELECT COUNT(m.content) FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user)")
     int countMessagesBetweenUsers(User user, User otherUser);
+
+    @Query("SELECT m FROM Message m WHERE " +
+            "(m.sender.username = :username AND m.receiver.username = :otherUsername) OR " +
+            "(m.sender.username = :otherUsername AND m.receiver.username = :username) " +
+            "ORDER BY m.sent DESC")
+    Page<Message> findMessagesBetweenUsers(String username, String otherUsername, Pageable pageable);
 }
