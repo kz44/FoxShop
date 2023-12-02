@@ -9,12 +9,12 @@ import java.util.Set;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query("SELECT DISTINCT CASE WHEN m.sender = :user THEN m.receiver ELSE m.sender END FROM Message m WHERE m.sender = :user OR m.receiver = :user")
+    @Query("SELECT DISTINCT otherUser FROM Message m JOIN User otherUser ON (m.sender = :user AND m.receiver = otherUser) OR (m.sender = otherUser AND m.receiver = :user)")
     Set<User> findOtherUsers(User user);
 
     @Query("SELECT m FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user) ORDER BY m.sent DESC LIMIT 1")
     Message getLastMessage(User user, User otherUser);
 
-    @Query("SELECT COUNT(m) FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user)")
+    @Query("SELECT COUNT(m.content) FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user)")
     int countMessagesBetweenUsers(User user, User otherUser);
 }
