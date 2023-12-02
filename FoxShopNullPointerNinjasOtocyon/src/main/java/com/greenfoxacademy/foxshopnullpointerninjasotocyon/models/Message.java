@@ -28,4 +28,7 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
+
+    @Column(nullable = false)
+    private boolean isAlreadyRead = false;
 }
