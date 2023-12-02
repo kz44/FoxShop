@@ -113,4 +113,25 @@ public class AdvertisementController {
                                                             @RequestParam(required = false) Integer maxPrice) {
         return advertisementService.getAdvertisements(pageable, categoryId, maxPrice);
     }
+
+
+    /**
+     * This endpoint close the advertisement by id
+     * @param advertisementId id of the advertisement want to close
+     *
+     * @return
+     *      - success message: if the advertisement closed
+     *      - success message: if tha advertisement closed by ADMIN
+     *      - error message: if the advertisement is already closed
+     *      - error message: if the user don't have permission to close the advertisement
+     *      - error message: if the something went wrong during the changing advertisement status
+     */
+    @PostMapping(value = {
+            "/closeAdvertisement/{advertisementId}",
+            "/closeAdvertisement/",
+            "/closeAdvertisement"
+    })
+    public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
+        return advertisementService.closeAdvertisementById(advertisementId);
+    }
 }
