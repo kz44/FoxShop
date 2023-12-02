@@ -7,6 +7,10 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Message;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,7 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
     private UserService userService;
 
+    @Override
     public ResponseEntity<?> getConversationInfo() {
         User user = userService.getUserFromSecurityContextHolder();
         Set<User> otherUsers = messageRepository.findOtherUsers(user);
@@ -39,5 +44,18 @@ public class MessageServiceImpl implements MessageService {
             conversations.add(conversationDTO);
         }
         return ResponseEntity.ok().body(conversations);
+    }
+
+    @Override
+    public Page<Message> getMessagesWithOtherUser(String otherUsername,
+                                                  int pageNumber,
+                                                  Pageable pageable) {
+        User user = userService.getUserFromSecurityContextHolder();
+        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
+
+        return messageRepository.findMessagesBetweenUsers(
+                user.getUsername(),
+                otherUsername,
+                PageRequest.of(pageNumber, pageable.getPageSize(), sort));
     }
 }
