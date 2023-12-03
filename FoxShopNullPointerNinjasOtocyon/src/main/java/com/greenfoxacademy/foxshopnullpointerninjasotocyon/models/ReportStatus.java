@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.enums.State;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@Setter
 public class ReportStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +20,13 @@ public class ReportStatus {
 
 //    enum with string field: pending, accepted, denied
    @Column(unique = true, nullable = false)
-    private String state = "pending";
+    private String state = State.PENDING.getStatusValue();
 
     @OneToMany(mappedBy = "reportStatus")
     private Set<Report> reports;
+
+    public void setReportStatus(State state){
+        this.state = state.getStatusValue();
+    }
 
 }
