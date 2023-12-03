@@ -43,4 +43,13 @@ public class ReportController {
         }
         return reportService.reportOverview(id);
     }
+    @GetMapping(value={"/reports/{pageNumber}", "/reports/"})
+    public ResponseEntity<?> filterDatabaseRecords(@RequestParam(required = false) String status,
+                                                   @PathVariable(required = false) Integer pageNumber) {
+        if (pageNumber == null){
+            return ResponseEntity.badRequest().body("Please insert the number of pages for the displayed results");
+        }
+        return reportService.reportFiltering(pageNumber, status);
+    }
+
 }

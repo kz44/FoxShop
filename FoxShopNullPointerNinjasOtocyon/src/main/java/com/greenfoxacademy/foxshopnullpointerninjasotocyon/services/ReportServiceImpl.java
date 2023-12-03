@@ -12,6 +12,9 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportSt
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -136,7 +139,7 @@ public class ReportServiceImpl implements ReportService {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
-            if (report.isPresent() && !report.get().getSender().equals(user)){
+            if (report.isPresent() && !report.get().getSender().equals(user)) {
                 return ResponseEntity.badRequest().body("The advertisement details can be displayed only to its creator.");
             }
         }
@@ -148,5 +151,19 @@ public class ReportServiceImpl implements ReportService {
                 report.get().getSender().getUsername(), report.get().getReportStatus().getState(),
                 report.get().getReceiver().getId(), report.get().getReceiver().getTitle()
         ));
+    }
+
+    @Override
+    public ResponseEntity<?> reportFiltering(Integer pageNumber, String status) {
+        Integer recordsPerPage = 20;
+        Integer databaseSize = reportRepository.countEntriesInReportTable();
+        Integer pagesTotal = (int) Math.ceil(databaseSize/(recordsPerPage*1.0));
+        if (status == null) {
+            Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+        }
+        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+         if (reportStatusOptional.isEmpty()){return ResponseEntity.badRequest().body("Invalid report status inserted.");}
+        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
+        return ResponseEntity.ok(new FilteredReportsDto(filteredPage, pagesTotal));
     }
 }
