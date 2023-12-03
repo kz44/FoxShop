@@ -7,9 +7,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class ReportSummaryDTO {
+public class ReportDetailDTO {
     private String reportTitle;
-    private Long reportID;
+    private String description;
+    private String creator;
     private String reportStatus;
+    private Long advertisementId;
     private String advertisementTitle;
+
+
+    /* GET request with:
+Path variable - id
+ReportDetailDTO
+
+reportDescription, username, reportStatus, reportTitle, advertisementId, advertisementTitle
+ */
 }

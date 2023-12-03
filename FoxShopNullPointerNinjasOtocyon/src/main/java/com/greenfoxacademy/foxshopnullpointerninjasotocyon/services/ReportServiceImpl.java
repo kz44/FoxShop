@@ -1,9 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportSummaryDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.ReportStatus;
@@ -118,6 +115,7 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
     }
 
+    @Override
     public List<ReportSummaryDTO> reportsToDTOs() {
         //the api/reports endpoint using this method is being accessible only to authenticated users:
         List<Report> reports = reportRepository.findAllBySender(userService.getUserFromSecurityContextHolder());
@@ -126,5 +124,18 @@ public class ReportServiceImpl implements ReportService {
             reportSummaries.add(new ReportSummaryDTO(r.getTitle(), r.getId(), r.getReportStatus().getState(), r.getReceiver().getTitle()));
         }
         return reportSummaries;
+    }
+
+    @Override
+    public ResponseEntity<?> reportOverview(Long reportID) {
+        Optional<Report> report = reportRepository.findById(reportID);
+        if (report.isEmpty()) {
+            return ResponseEntity.badRequest().body("The advertisement id is not located in database");
+        }
+        return ResponseEntity.ok(new ReportDetailDTO(
+                report.get().getTitle(), report.get().getDescription(),
+                report.get().getSender().getUsername(), report.get().getReportStatus().getState(),
+                report.get().getReceiver().getId(), report.get().getReceiver().getTitle()
+        ));
     }
 }

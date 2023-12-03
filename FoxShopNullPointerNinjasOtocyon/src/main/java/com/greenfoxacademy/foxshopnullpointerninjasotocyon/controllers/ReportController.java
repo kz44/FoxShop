@@ -33,11 +33,14 @@ public class ReportController {
 
     @GetMapping("/reports")
     public List<ReportSummaryDTO> reportsByUser() {
-//        List l = new ArrayList<>();
-//        ReportSummaryDTO rsd = new ReportSummaryDTO("title",1L,"pending","advertisement");
-//l.add(rsd);
-//        return l;
-//        return ResponseEntity.ok().body(rsd);
-                return reportService.reportsToDTOs();
+        return reportService.reportsToDTOs();
+    }
+
+    @GetMapping(value = {"/{id}", "/"})
+    public ResponseEntity<?> reportDetails(@PathVariable(required = false) Long id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body("Advertisement id missing in request path.");
+        }
+        return reportService.reportOverview(id);
     }
 }
