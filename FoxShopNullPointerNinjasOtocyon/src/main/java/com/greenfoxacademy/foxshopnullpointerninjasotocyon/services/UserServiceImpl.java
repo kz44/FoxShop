@@ -185,4 +185,12 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
+
+    @Override
+    public User getUserByUsername(String username) {
+        if (userRepository.existsByUsername(username)){
+            return userRepository.findByUsername(username).get();
+        }
+        return null;
+    }
 }
