@@ -19,6 +19,18 @@ public class SendGridService {
     private static final String TEMPLATE_ID = "d-18fb635d86fe4c48bea95781d72c34e0";
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Sends a verification email to the specified user using the SendGrid API.
+     * <p>
+     * This method constructs an email using the SendGrid library, populating it with user-specific
+     * information such as name and verification link. The email is then sent to the user's email address
+     * for verification.
+     * The token in the verification link is encoded username, because username must be unique, so the token
+     * would be also unique this way.
+     *
+     * @param user The user for whom the verification email is to be sent.
+     * @throws RuntimeException If an exception occurs during the email sending process.
+     */
     public void sendVerificationEmail(User user) {
         SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
         Request request = new Request();

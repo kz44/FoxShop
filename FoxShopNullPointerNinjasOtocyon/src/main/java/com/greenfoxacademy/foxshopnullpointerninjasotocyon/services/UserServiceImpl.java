@@ -188,6 +188,20 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Verifies a user's email based on the provided user ID and verification token.
+     * <p>
+     * This method attempts to verify a user's email by checking the validity of the user ID and verification
+     * token. If the user is found and the token is valid, the user's account is marked as verified in the
+     * repository. A success response is returned if the verification is successful; otherwise, an error
+     * response is returned with appropriate details.
+     *
+     * @param userId The unique identifier of the user whose email is to be verified.
+     * @param token  The verification token associated with the user's email verification process.
+     * @return A ResponseEntity representing the result of the email verification process.
+     * If successful, returns an OK response with a success message.
+     * If unsuccessful, returns a bad request response with an error message indicating the reason.
+     */
     @Override
     public ResponseEntity<?> verifyUserEmail(Long userId, String token) {
         Optional<User> userOpt = userRepository.findById(userId);

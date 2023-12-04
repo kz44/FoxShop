@@ -74,6 +74,18 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
+    /**
+     * Handles a GET request to verify a user's email.
+     * <p>
+     * This method is mapped to the endpoint "/verify" using the GET method. It expects two query parameters,
+     * userId and token, to identify the user and the verification token. The user's email verification is
+     * triggered by invoking the corresponding service method.
+     *
+     * @param userId The unique identifier of the user whose email is to be verified.
+     * @param token  The verification token associated with the user's email verification process.
+     * @return A ResponseEntity representing the result of the email verification process.
+     * The response status and body may vary depending on the success or failure of the verification.
+     */
     @GetMapping("/verify")
     public ResponseEntity<?> verifyUserEmail(@RequestParam Long userId, @RequestParam String token) {
         return userService.verifyUserEmail(userId, token);
