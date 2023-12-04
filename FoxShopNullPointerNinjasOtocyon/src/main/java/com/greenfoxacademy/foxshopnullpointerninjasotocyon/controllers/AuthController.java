@@ -88,6 +88,9 @@ public class AuthController {
      */
     @GetMapping("/verify")
     public ResponseEntity<?> verifyUserEmail(@RequestParam Long userId, @RequestParam String token) {
+        if (userId == null || token == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid verification link."));
+        }
         return userService.verifyUserEmail(userId, token);
     }
 }
