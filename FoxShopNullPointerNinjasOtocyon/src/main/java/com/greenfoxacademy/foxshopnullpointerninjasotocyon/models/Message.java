@@ -21,6 +21,9 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime sent;
 
+    @Column(nullable = false)
+    private boolean seen = false;
+
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
