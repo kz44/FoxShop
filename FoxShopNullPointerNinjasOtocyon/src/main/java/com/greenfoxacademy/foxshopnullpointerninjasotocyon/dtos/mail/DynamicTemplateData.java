@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MailUserDto {
+@Data
+public class DynamicTemplateData {
 
-    private String email;
-    private String name;
+    String name;
+    String link;
 }

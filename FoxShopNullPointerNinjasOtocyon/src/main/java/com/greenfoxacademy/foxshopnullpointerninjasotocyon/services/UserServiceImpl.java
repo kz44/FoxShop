@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final HttpServletResponse httpServletResponse;
     private final TokenBlacklistRepository tokenBlacklistRepository;
     private final DeleteExpiredToken deleteExpiredToken;
+    private final SendGridService sendGridService;
 
     @Override
     public Optional<User> findByUsername(String name) {
@@ -125,8 +126,8 @@ public class UserServiceImpl implements UserService {
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setRole(roleRepository.findByRoleName("USER").get());
-
         userRepository.save(user);
+        sendGridService.sendVerificationEmail(user);
     }
 
     /**
@@ -165,8 +166,8 @@ public class UserServiceImpl implements UserService {
      * Checks the role of the currently authenticated user.
      *
      * @return The roleName of the user, or null if the user is not authenticated
-     *         or if an error occurs while retrieving the role.
-     *         If the user is not authenticated, sets the role to "VISITOR" and returns it.
+     * or if an error occurs while retrieving the role.
+     * If the user is not authenticated, sets the role to "VISITOR" and returns it.
      */
     public String checkUserRole() {
         var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
