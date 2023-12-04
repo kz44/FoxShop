@@ -74,8 +74,8 @@ public class AuthController {
         return ResponseEntity.ok("Logout successful");
     }
 
-    @GetMapping("/verify/{userId}/{token}")
-    public ResponseEntity<?> verifyUserEmail(@PathVariable Long userId, @PathVariable String token) {
-        return ResponseEntity.ok().body(new SuccessMessageDTO(String.format("User id is %s, token is %s", userId, token)));
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyUserEmail(@RequestParam Long userId, @RequestParam String token) {
+        return userService.verifyUserEmail(userId, token);
     }
 }

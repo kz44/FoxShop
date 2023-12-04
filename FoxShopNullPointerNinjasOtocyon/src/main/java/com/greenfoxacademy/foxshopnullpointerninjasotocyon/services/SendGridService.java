@@ -28,10 +28,14 @@ public class SendGridService {
         request.setEndpoint("/mail/send");
         String name = user.getFirstName() != null ? user.getFirstName() : "our new user";
 
-        Email from = new Email("foxshop@post.cz");
-        String subject = String.format("IDEA Thanks for signing up, %s", name);
+        Email from = new Email("foxshop@post.cz", "FoxShop");
+        String subject = String.format("Thanks for signing up, %s", name);
         Email to = new Email(user.getEmail());
-        String link = "http://localhost:8080/api/auth/verify/".concat(String.valueOf(user.getId())).concat("/").concat(passwordEncoder.encode(user.getUsername()));
+        String token = passwordEncoder.encode(user.getUsername());
+        String link = "http://localhost:8080/api/auth/verify"
+                .concat("?userId=")
+                .concat(String.valueOf(user.getId()))
+                .concat("&token=").concat(token);
         DynamicTemplateData dynamicTemplateData = new DynamicTemplateData(name, link);
         MailContent mailContent = new MailContent(dynamicTemplateData);
         ObjectMapper mapper = new ObjectMapper();

@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Role;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
@@ -185,5 +186,20 @@ public class UserServiceImpl implements UserService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public ResponseEntity<?> verifyUserEmail(Long userId, String token) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid user id"));
+        }
+        User user = userOpt.get();
+        if (!passwordEncoder.matches(user.getUsername(), token)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid token"));
+        }
+        user.setVerified(true);
+        userRepository.save(user);
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Your user account was successfully activated."));
     }
 }
