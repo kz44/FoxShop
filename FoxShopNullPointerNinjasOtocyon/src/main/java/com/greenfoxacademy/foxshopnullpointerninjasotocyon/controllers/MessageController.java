@@ -16,6 +16,15 @@ public class MessageController {
 
     private final MessageService messageService;
 
+    /**
+     * Endpoint for sending a message to a specified user.
+     *
+     * @param receiverUsername The username of the recipient.
+     * @param content The content of the message.
+     * @return ResponseEntity containing information about the status of the message sending:
+     *   - 200 OK and details of the sent message in the response body for a successful request with the given username.
+     *   - 400 Bad Request and an error message in the response body for a failed request.
+     */
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestParam String receiverUsername,
                                          @RequestParam String content) {
