@@ -38,6 +38,6 @@ public class MessageController {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content"));
         }
 
-        return messageService.sendMessage(receiverUsername, content);
+        return messageService.sendMessageByUsername(receiverUsername, content);
     }
 }
