@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 public interface MessageService {
     ResponseEntity<?> getConversationInfo();
 
-    ResponseEntity<?> getMessagesPagination(String otherUsername, int pageNumber, Pageable pageable);
+    ResponseEntity<?> getMessagesPagination(String otherUsername, int pageNumber);
 }

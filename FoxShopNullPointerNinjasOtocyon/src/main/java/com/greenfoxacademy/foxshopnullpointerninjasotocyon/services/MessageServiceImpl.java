@@ -68,7 +68,6 @@ public class MessageServiceImpl implements MessageService {
      *
      * @param otherUsername String - The username of the other user to retrieve messages with.
      * @param pageNumber int - The page number for pagination (starting from 0).
-     * @param pageable Pageable - Object specifying pagination and sorting parameters.
      * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a list of paginated
      *                                                  and sorted MessagePageableDTO objects.
      *                                                  If the request is invalid or the user does not exist,
@@ -77,8 +76,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
-                                                   int pageNumber,
-                                                   Pageable pageable) {
+                                                   int pageNumber) {
         if (pageNumber < 0 ) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
         }

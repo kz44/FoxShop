@@ -18,8 +18,7 @@ public class MessageController {
 
     @GetMapping("/{otherUsername}/{pageNumber}")
     protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable(required = false) String otherUsername,
-                                                       @PathVariable(required = false) int pageNumber,
-                                                       Pageable pageable) {
-        return ResponseEntity.ok().body(messageService.getMessagesPagination(otherUsername, pageNumber, pageable));
+                                                       @PathVariable(required = false) int pageNumber) {
+        return ResponseEntity.ok().body(messageService.getMessagesPagination(otherUsername, pageNumber));
     }
 }
