@@ -155,15 +155,23 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ResponseEntity<?> reportFiltering(Integer pageNumber, String status) {
-        Integer recordsPerPage = 20;
-        Integer databaseSize = reportRepository.countEntriesInReportTable();
-        Integer pagesTotal = (int) Math.ceil(databaseSize/(recordsPerPage*1.0));
+        Integer recordsPerPage = 3;
         if (status == null) {
             Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+            List<Report> filteredList = filteredPage.getContent();
+        return ResponseEntity.ok(new FilteredReportsDto(filteredList, 1));
         }
         Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
          if (reportStatusOptional.isEmpty()){return ResponseEntity.badRequest().body("Invalid report status inserted.");}
         Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
-        return ResponseEntity.ok(new FilteredReportsDto(filteredPage, pagesTotal));
+        List<Report> filteredList = filteredPage.getContent();
+       Integer pagesTotal = filteredPage.getTotalPages();
+         return ResponseEntity.ok(new FilteredReportsDto(filteredList, pagesTotal));
+    }
+
+    public Integer reportTableSizeSQL(){
+        Integer recordsInTable = reportRepository.countEntriesInReportTable();
+        System.out.println("The number of records in the repository table: " + recordsInTable);
+        return recordsInTable;
     }
 }

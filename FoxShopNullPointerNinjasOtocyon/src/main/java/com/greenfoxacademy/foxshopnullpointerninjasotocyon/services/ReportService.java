@@ -17,4 +17,5 @@ public interface ReportService {
     ResponseEntity<?> reportOverview(Long reportID);
 
     ResponseEntity<?> reportFiltering (Integer numberPages, String status);
+    Integer reportTableSizeSQL();
 }

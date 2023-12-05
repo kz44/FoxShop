@@ -52,4 +52,9 @@ public class ReportController {
         return reportService.reportFiltering(pageNumber, status);
     }
 
+    @GetMapping("/reportTableSize")
+    public Integer reportTableSize (){
+        return reportService.reportTableSizeSQL();
+    }
+
 }
