@@ -1,16 +1,15 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ConversationDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ConversationInfoDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.MessageMapper;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Message;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,9 @@ import java.util.*;
 public class MessageServiceImpl implements MessageService {
 
     private MessageRepository messageRepository;
+    private UserRepository userRepository;
     private UserService userService;
+    private MessageMapper messageMapper;
 
     @Override
     public ResponseEntity<?> getConversationInfo() {
@@ -47,15 +48,20 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Page<Message> getMessagesWithOtherUser(String otherUsername,
-                                                  int pageNumber,
-                                                  Pageable pageable) {
+    public ResponseEntity<?> getMessagesPagination(String otherUsername,
+                                                   int pageNumber,
+                                                   Pageable pageable) {
         User user = userService.getUserFromSecurityContextHolder();
-        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
-
-        return messageRepository.findMessagesBetweenUsers(
-                user.getUsername(),
-                otherUsername,
-                PageRequest.of(pageNumber, pageable.getPageSize(), sort));
+        Optional<User> otherUser = userRepository.findByUsername(otherUsername);
+        if (!otherUser.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("User does not exist."));
+        }
+        // Sort sort = Sort.by(Sort.Direction.DESC, "sent");
+        int pageSize = 10;
+        Page<MessagePageableDTO> messagePagedAndSorted = messageRepository.findMessagesBetweenUsers(
+                user,
+                otherUser.get(),
+                PageRequest.of(pageNumber, pageSize)).map(messageMapper::toDTO);
+        return ResponseEntity.ok().body(messagePagedAndSorted);
     }
 }
