@@ -14,6 +14,4 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllBySender(User sender);
     Page<Report> findAll(Pageable pageable);
     Page<Report> findAllByReportStatus(Pageable pageable, ReportStatus reportStatus);
-    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM report")
-    Integer countEntriesInReportTable();
 }

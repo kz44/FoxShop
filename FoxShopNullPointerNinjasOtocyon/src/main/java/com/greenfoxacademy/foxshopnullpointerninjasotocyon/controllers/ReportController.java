@@ -5,11 +5,9 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDT
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportSummaryDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.ReportService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -33,7 +31,7 @@ public class ReportController {
 
     @GetMapping("/reports")
     public List<ReportSummaryDTO> reportsByUser() {
-        return reportService.reportsToDTOs();
+        return reportService.browseReportsByUser();
     }
 
     @GetMapping(value = {"/{id}", "/"})
@@ -41,20 +39,15 @@ public class ReportController {
         if (id == null) {
             return ResponseEntity.badRequest().body("Advertisement id missing in request path.");
         }
-        return reportService.reportOverview(id);
+        return reportService.reportDetails(id);
     }
     @GetMapping(value={"/reports/{pageNumber}", "/reports/"})
     public ResponseEntity<?> filterDatabaseRecords(@RequestParam(required = false) String status,
                                                    @PathVariable(required = false) Integer pageNumber) {
-        if (pageNumber == null){
-            return ResponseEntity.badRequest().body("Please insert the number of pages for the displayed results");
+        if (pageNumber == null || pageNumber <0){
+            return ResponseEntity.badRequest().body("Please insert a valid number of pages for the displayed results");
         }
-        return reportService.reportFiltering(pageNumber, status);
-    }
-
-    @GetMapping("/reportTableSize")
-    public Integer reportTableSize (){
-        return reportService.reportTableSizeSQL();
+        return reportService.browseReportsByStatus(pageNumber, status);
     }
 
 }

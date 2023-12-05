@@ -1,11 +1,11 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class ReportDetailDTO {
     private String reportTitle;
@@ -22,4 +22,12 @@ ReportDetailDTO
 
 reportDescription, username, reportStatus, reportTitle, advertisementId, advertisementTitle
  */
+    public ReportDetailDTO(Report r){
+        reportTitle = r.getTitle();
+        description = r.getDescription();
+        creator = r.getSender().getUsername();
+        reportStatus = r.getReportStatus().getState();
+        advertisementId = r.getReceiver().getId();
+        advertisementTitle = r.getReceiver().getTitle();
+    }
 }

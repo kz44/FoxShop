@@ -13,7 +13,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -124,18 +123,14 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportSummaryDTO> reportsToDTOs() {
+    public List<ReportSummaryDTO> browseReportsByUser() {
         //the api/reports endpoint using this method is being accessible only to authenticated users:
         List<Report> reports = reportRepository.findAllBySender(userService.getUserFromSecurityContextHolder());
-        List<ReportSummaryDTO> reportSummaries = new ArrayList<>();
-        for (Report r : reports) {
-            reportSummaries.add(new ReportSummaryDTO(r.getTitle(), r.getId(), r.getReportStatus().getState(), r.getReceiver().getTitle()));
-        }
-        return reportSummaries;
+        return reports.stream().map(ReportSummaryDTO::new).toList();
     }
 
     @Override
-    public ResponseEntity<?> reportOverview(Long reportID) {
+    public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
@@ -146,32 +141,29 @@ public class ReportServiceImpl implements ReportService {
         if (report.isEmpty()) {
             return ResponseEntity.badRequest().body("The advertisement id is not located in database");
         }
-        return ResponseEntity.ok(new ReportDetailDTO(
-                report.get().getTitle(), report.get().getDescription(),
-                report.get().getSender().getUsername(), report.get().getReportStatus().getState(),
-                report.get().getReceiver().getId(), report.get().getReceiver().getTitle()
-        ));
+        return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
 
     @Override
-    public ResponseEntity<?> reportFiltering(Integer pageNumber, String status) {
+    public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
         Integer recordsPerPage = 3;
         if (status == null) {
             Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
-            List<Report> filteredList = filteredPage.getContent();
-        return ResponseEntity.ok(new FilteredReportsDto(filteredList, 1));
+            List<Report> filteredEntityList = filteredPage.getContent();
+            Integer pagesTotal = filteredPage.getTotalPages();
+            List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+            return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
         }
-        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
-         if (reportStatusOptional.isEmpty()){return ResponseEntity.badRequest().body("Invalid report status inserted.");}
-        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
-        List<Report> filteredList = filteredPage.getContent();
-       Integer pagesTotal = filteredPage.getTotalPages();
-         return ResponseEntity.ok(new FilteredReportsDto(filteredList, pagesTotal));
-    }
 
-    public Integer reportTableSizeSQL(){
-        Integer recordsInTable = reportRepository.countEntriesInReportTable();
-        System.out.println("The number of records in the repository table: " + recordsInTable);
-        return recordsInTable;
+        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+        if (reportStatusOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid report status inserted.");
+        }
+
+        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
+        List<Report> filteredEntityList = filteredPage.getContent();
+        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+        Integer pagesTotal = filteredPage.getTotalPages();
+        return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
     }
 }
