@@ -94,6 +94,23 @@ public class MessageServiceImpl implements MessageService {
         return ResponseEntity.ok().body(messagePagedAndSorted);
     }
 
+    /**
+     * Retrieves a paginated and sorted list of messages between two users.
+     * <p>
+     * This method is accessible only to users with the role of "ADMIN." It checks the role of the current user,
+     * verifies the validity of the provided page number, and ensures that both users exist before retrieving
+     * and returning the messages between them.
+     *
+     * @param user1 String - The username of the first user.
+     * @param user2 String - The username of the second user.
+     * @param pageNumber int - The page number for pagination (starting from 0).
+     * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a paginated and sorted list
+     *                                                    of MessagePageableDTO objects if successful.
+     *                                                    If there are permission issues, invalid page number, or
+     *                                                    at least one of the users does not exist, an error message
+     *                                                    is returned in the response body.
+     */
+
     @Override
     public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, int pageNumber) {
         String roleOfTheCurrentUser = userService.checkUserRole();
