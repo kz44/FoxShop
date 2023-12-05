@@ -27,6 +27,17 @@ public class MessageServiceImpl implements MessageService {
     private UserService userService;
     private MessageMapper messageMapper;
 
+    /**
+     * Service method to retrieve information about user conversations.
+     * <p>
+     * This method fetches details about the conversations the current user has with other users.
+     * It includes information such as the last message sent, whether it has been read, and the total
+     * number of messages in each conversation.
+     *
+     * @return List<ConversationDTO> - A list of ConversationDTO objects containing information about each conversation.
+     *                                If the user has no conversations, an empty list is returned.
+     */
+
     @Override
     public ResponseEntity<?> getConversationInfo() {
         User user = userService.getUserFromSecurityContextHolder();
@@ -48,6 +59,21 @@ public class MessageServiceImpl implements MessageService {
         }
         return ResponseEntity.ok().body(conversations);
     }
+
+    /**
+     * Service method to retrieve paginated and sorted messages between the current user and another user.
+     * <p>
+     * This method fetches messages between the current user and the specified user, paginated and sorted by
+     * the sent timestamp in descending order.
+     *
+     * @param otherUsername String - The username of the other user to retrieve messages with.
+     * @param pageNumber int - The page number for pagination (starting from 0).
+     * @param pageable Pageable - Object specifying pagination and sorting parameters.
+     * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a list of paginated
+     *                                                  and sorted MessagePageableDTO objects.
+     *                                                  If the request is invalid or the user does not exist,
+     *                                                  an error message is returned in the response body.
+     */
 
     @Override
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
