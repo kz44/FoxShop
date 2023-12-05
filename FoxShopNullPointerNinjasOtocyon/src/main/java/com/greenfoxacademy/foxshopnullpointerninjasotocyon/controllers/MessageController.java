@@ -37,6 +37,7 @@ public class MessageController {
         if (content == null || content.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content"));
         }
+
         return messageService.sendMessage(receiverUsername, content);
     }
 }

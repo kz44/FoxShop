@@ -4,5 +4,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface MessageService {
 
-    ResponseEntity<?> sendMessage(String receiverUsername, String content);
+    ResponseEntity<?> sendMessageByUsername(String receiverUsername, String content);
 }
