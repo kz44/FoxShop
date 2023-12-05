@@ -87,7 +87,7 @@ public class AuthController {
      * The response status and body may vary depending on the success or failure of the verification.
      */
     @GetMapping("/verify")
-    public ResponseEntity<?> verifyUserEmail(@RequestParam Long userId, @RequestParam String token) {
+    public ResponseEntity<?> verifyUserEmail(@RequestParam(required = false) Long userId, @RequestParam(required = false) String token) {
         if (userId == null || token == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid verification link."));
         }
