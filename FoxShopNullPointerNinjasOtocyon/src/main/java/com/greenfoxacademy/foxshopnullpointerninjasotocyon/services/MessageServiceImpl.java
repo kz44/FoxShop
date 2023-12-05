@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ import java.util.*;
 @AllArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
+    private static final int PAGE_SIZE = 10;
     private MessageRepository messageRepository;
     private UserRepository userRepository;
     private UserService userService;
@@ -51,17 +53,21 @@ public class MessageServiceImpl implements MessageService {
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
                                                    int pageNumber,
                                                    Pageable pageable) {
-        User user = userService.getUserFromSecurityContextHolder();
+        if (pageNumber < 0 ) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
+        }
         Optional<User> otherUser = userRepository.findByUsername(otherUsername);
         if (!otherUser.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("User does not exist."));
         }
-        // Sort sort = Sort.by(Sort.Direction.DESC, "sent");
-        int pageSize = 10;
-        Page<MessagePageableDTO> messagePagedAndSorted = messageRepository.findMessagesBetweenUsers(
+        User user = userService.getUserFromSecurityContextHolder();
+        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
+        int pageSize = PAGE_SIZE;
+        List<MessagePageableDTO> messagePagedAndSorted =
+                messageRepository.findMessagesBetweenUsers(
                 user,
                 otherUser.get(),
-                PageRequest.of(pageNumber, pageSize)).map(messageMapper::toDTO);
+                PageRequest.of(pageNumber, pageSize, sort)).stream().map(messageMapper::toDTO).toList();
         return ResponseEntity.ok().body(messagePagedAndSorted);
     }
 }
