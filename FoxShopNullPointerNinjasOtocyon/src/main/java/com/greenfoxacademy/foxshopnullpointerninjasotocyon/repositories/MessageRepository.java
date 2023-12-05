@@ -22,5 +22,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     int countMessagesBetweenUsers(User user, User otherUser);
 
     @Query("SELECT m FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user) ORDER BY m.sent DESC")
-    Page<Message> findMessagesBetweenUsers(User user, User otherUser, Pageable pageable);
+    List<Message> findMessagesBetweenUsers(User user, User otherUser, Pageable pageable);
 }
