@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Set;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
@@ -20,9 +21,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT COUNT(m.content) FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user)")
     int countMessagesBetweenUsers(User user, User otherUser);
 
-    @Query("SELECT m FROM Message m WHERE " +
-            "(m.sender.username = :username AND m.receiver.username = :otherUsername) OR " +
-            "(m.sender.username = :otherUsername AND m.receiver.username = :username) " +
-            "ORDER BY m.sent DESC")
-    Page<Message> findMessagesBetweenUsers(String username, String otherUsername, Pageable pageable);
+    @Query("SELECT m FROM Message m WHERE (m.sender = :user AND m.receiver = :otherUser) OR (m.sender = :otherUser AND m.receiver = :user) ORDER BY m.sent DESC")
+    Page<Message> findMessagesBetweenUsers(User user, User otherUser, Pageable pageable);
 }
