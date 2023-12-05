@@ -7,7 +7,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -68,7 +67,6 @@ public class MessageServiceImpl implements MessageService {
      *
      * @param otherUsername String - The username of the other user to retrieve messages with.
      * @param pageNumber int - The page number for pagination (starting from 0).
-     * @param pageable Pageable - Object specifying pagination and sorting parameters.
      * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a list of paginated
      *                                                  and sorted MessagePageableDTO objects.
      *                                                  If the request is invalid or the user does not exist,
@@ -77,8 +75,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
-                                                   int pageNumber,
-                                                   Pageable pageable) {
+                                                   int pageNumber) {
         if (pageNumber < 0 ) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
         }
@@ -94,6 +91,30 @@ public class MessageServiceImpl implements MessageService {
                 user,
                 otherUser.get(),
                 PageRequest.of(pageNumber, pageSize, sort)).stream().map(messageMapper::toDTO).toList();
+        return ResponseEntity.ok().body(messagePagedAndSorted);
+    }
+
+    @Override
+    public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, int pageNumber) {
+        String roleOfTheCurrentUser = userService.checkUserRole();
+        if (!roleOfTheCurrentUser.equals("ADMIN")) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("You have no permission to the request."));
+        }
+        if (pageNumber < 0 ) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
+        }
+        Optional<User> userOpt1 = userRepository.findByUsername(user1);
+        Optional<User> userOpt2 = userRepository.findByUsername(user2);
+        if (!userOpt1.isPresent() || !userOpt2.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("At least one of the users or both does not exist."));
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
+        int pageSize = PAGE_SIZE;
+        List<MessagePageableDTO> messagePagedAndSorted =
+                messageRepository.findMessagesBetweenUsers(
+                        userOpt1.get(),
+                        userOpt2.get(),
+                        PageRequest.of(pageNumber, pageSize, sort)).stream().map(messageMapper::toDTO).toList();
         return ResponseEntity.ok().body(messagePagedAndSorted);
     }
 }
