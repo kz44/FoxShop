@@ -97,20 +97,6 @@ public class ReportServiceImpl implements ReportService {
         report.setDescription(reportCreationDTO.getDescription());
         Optional<Advertisement> advertisement = advertisementRepository.findById(reportCreationDTO.getReceiver());
         advertisement.ifPresentOrElse(report::setReceiver, () -> errors.add("Wrong advertisement id."));
-//        status field can only be updated by admin + report status can be updated, but not set at creation - DTO field should not be required
-        if (reportCreationDTO.getReportStatus() != null) {
-            Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(reportCreationDTO.getReportStatus());
-            if (reportStatusOptional.isEmpty()) {
-                errors.add("Invalid report status value.");
-            } else {
-                User user = userService.getUserFromSecurityContextHolder();
-                if (user.getRole().getRoleName().equals("ADMIN")) {
-                    report.setReportStatus(reportStatusOptional.get());
-                } else {
-                    errors.add("Report status can be changed only by admin.");
-                }
-            }
-        }
         if (!errors.isEmpty()) {
             String message = "There are some errors in your request: ".concat(String.join(" ", errors));
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
@@ -132,11 +118,11 @@ public class ReportServiceImpl implements ReportService {
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
-                return ResponseEntity.badRequest().body("The report details can be displayed only to its creator.");
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
             }
         }
         if (report.isEmpty()) {
-            return ResponseEntity.badRequest().body("The report id is not located in database");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report id is not located in database"));
         }
         return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
