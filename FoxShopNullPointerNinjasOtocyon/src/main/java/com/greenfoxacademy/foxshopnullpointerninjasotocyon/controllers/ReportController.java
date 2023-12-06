@@ -32,8 +32,8 @@ public class ReportController {
     }
 
     @GetMapping("/reports")
-    public List<ReportSummaryDTO> reportsByUser() {
-        return reportService.reportsToDTOs();
+    public ResponseEntity<?> reportsByUser() {
+        return ResponseEntity.ok(reportService.browseReportsByUser());
     }
 
     @GetMapping(value = {"/{id}", "/"})
