@@ -9,10 +9,15 @@ import java.util.List;
 
 public interface ReportService {
     ResponseEntity<?> nullCheckReport(ReportCreationDTO reportCreationDTO);
+
     ResponseEntity<?> createNewReport(ReportCreationDTO reportCreationDTO);
-//    List<ReportSummaryDTO> reportsToDTOs ();
+
+    //    List<ReportSummaryDTO> reportsToDTOs ();
     ResponseEntity<?> reportDetails(Long reportID);
+
     List<ReportSummaryDTO> browseReportsByUser();
+
     ResponseEntity<?> browseReportsByStatus(Integer numberPages, String status);
+
     ResponseEntity<?> acceptOrDenyReport(Long reportId, State state);
 }

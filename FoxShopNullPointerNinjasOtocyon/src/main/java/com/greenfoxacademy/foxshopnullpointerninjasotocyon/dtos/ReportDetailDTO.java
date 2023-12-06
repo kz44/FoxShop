@@ -1,7 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +21,7 @@ ReportDetailDTO
 
 reportDescription, username, reportStatus, reportTitle, advertisementId, advertisementTitle
  */
-    public ReportDetailDTO(Report r){
+    public ReportDetailDTO(Report r) {
         reportTitle = r.getTitle();
         description = r.getDescription();
         creator = r.getSender().getUsername();

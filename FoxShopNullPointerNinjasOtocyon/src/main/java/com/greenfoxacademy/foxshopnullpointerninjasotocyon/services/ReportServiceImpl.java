@@ -11,7 +11,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportRe
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportStatusRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.aspectj.weaver.patterns.Pointcut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -171,15 +170,15 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ResponseEntity<?> acceptOrDenyReport(Long reportId, State state) {
         //no null/validity check on status, as inserted by controller endpoint logic, not manually
-        Optional<Report> reportOptional = reportRepository.findDistinctById(reportId);
+        Optional<Report> reportOptional = reportRepository.findById(reportId);
         if (reportOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid report id inserted.");
         }
         if (reportOptional.get().getStatusChange()) {
             return ResponseEntity.badRequest().body("Approval decisions cannot be modified once granted.");
         }
-Optional<ReportStatus> reportStatus = reportStatusRepository.findDistinctByState(state.getStatusValue());
-        reportOptional.get().setReportStatus(reportStatus.get());
+        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(state.getStatusValue());
+        reportOptional.get().setReportStatus(reportStatusOptional.get());
         reportOptional.get().setStatusChange(true);
         reportRepository.save(reportOptional.get());
         return ResponseEntity.ok("Report successfully " + state.getStatusValue() + ".");

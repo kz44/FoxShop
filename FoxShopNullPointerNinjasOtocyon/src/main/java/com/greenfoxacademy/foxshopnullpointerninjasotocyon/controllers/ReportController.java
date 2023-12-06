@@ -2,15 +2,12 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportSummaryDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.enums.State;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.ReportService;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @AllArgsConstructor
 @RestController
@@ -56,7 +53,8 @@ public class ReportController {
         }
         return reportService.browseReportsByStatus(pageNumber, status);
     }
-//    URI path with double slash /reports//accept is not recognised as a valid URi by postman, the system returns message 400 Bad request
+
+    //    URI path with double slash /reports//accept is not recognised as a valid URi by postman, the system returns message 400 Bad request
     @PostMapping(value = {"/reports/{id}/accept", "/reports/accept"})
     public ResponseEntity<?> acceptAdvertisementReport(@PathVariable(required = false) Long id) {
         if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
