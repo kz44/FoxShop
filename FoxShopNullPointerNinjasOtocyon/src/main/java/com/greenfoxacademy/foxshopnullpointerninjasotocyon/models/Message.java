@@ -30,5 +30,5 @@ public class Message {
     private User receiver;
 
     @Column(nullable = false)
-    private boolean isAlreadyRead = false;
+    private boolean seen = false;
 }
