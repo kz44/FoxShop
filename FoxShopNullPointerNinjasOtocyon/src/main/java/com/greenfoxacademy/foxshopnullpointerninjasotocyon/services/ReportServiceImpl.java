@@ -11,6 +11,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportRe
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportStatusRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.aspectj.weaver.patterns.Pointcut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -135,11 +136,11 @@ public class ReportServiceImpl implements ReportService {
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
-                return ResponseEntity.badRequest().body("The advertisement details can be displayed only to its creator.");
+                return ResponseEntity.badRequest().body("The report details can be displayed only to its creator.");
             }
         }
         if (report.isEmpty()) {
-            return ResponseEntity.badRequest().body("The advertisement id is not located in database");
+            return ResponseEntity.badRequest().body("The report id is not located in database");
         }
         return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
@@ -166,4 +167,22 @@ public class ReportServiceImpl implements ReportService {
         Integer pagesTotal = filteredPage.getTotalPages();
         return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
     }
+
+    @Override
+    public ResponseEntity<?> acceptOrDenyReport(Long reportId, State state) {
+        //no null/validity check on status, as inserted by controller endpoint logic, not manually
+        Optional<Report> reportOptional = reportRepository.findDistinctById(reportId);
+        if (reportOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid report id inserted.");
+        }
+        if (reportOptional.get().getStatusChange()) {
+            return ResponseEntity.badRequest().body("Approval decisions cannot be modified once granted.");
+        }
+Optional<ReportStatus> reportStatus = reportStatusRepository.findDistinctByState(state.getStatusValue());
+        reportOptional.get().setReportStatus(reportStatus.get());
+        reportOptional.get().setStatusChange(true);
+        reportRepository.save(reportOptional.get());
+        return ResponseEntity.ok("Report successfully " + state.getStatusValue() + ".");
+    }
+
 }
