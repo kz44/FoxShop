@@ -18,7 +18,7 @@ public class MessageMapper {
                 .sent(messageEntity.getSent())
                 .sender(messageEntity.getSender().getId())
                 .receiver(messageEntity.getReceiver().getId())
-                .isAlreadyRead(messageEntity.isAlreadyRead())
+                .isAlreadyRead(messageEntity.isSeen())
                 .build();
     }
 }

@@ -50,7 +50,7 @@ public class MessageServiceImpl implements MessageService {
         for (User otherUser : otherUsers) {
             Message lastMessage = messageRepository.getLastMessage(user, otherUser);
             LocalDateTime lastMessageTime = lastMessage.getSent();
-            boolean isLastMessageAlreadyRead = lastMessage.isAlreadyRead();
+            boolean isLastMessageAlreadyRead = lastMessage.isSeen();
             long numberOfMessages = messageRepository.countMessagesBetweenUsers(user, otherUser);
 
             ConversationDTO conversationDTO = new ConversationDTO(otherUser.getUsername(),
