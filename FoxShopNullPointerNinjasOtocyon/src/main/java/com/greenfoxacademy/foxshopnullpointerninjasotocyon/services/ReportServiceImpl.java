@@ -121,14 +121,10 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public List<ReportSummaryDTO> reportsToDTOs() {
+    public List<ReportSummaryDTO> browseReportsByUser() {
         //the api/reports endpoint using this method is being accessible only to authenticated users:
         List<Report> reports = reportRepository.findAllBySender(userService.getUserFromSecurityContextHolder());
-        List<ReportSummaryDTO> reportSummaries = new ArrayList<>();
-        for (Report r : reports) {
-            reportSummaries.add(new ReportSummaryDTO(r.getTitle(), r.getId(), r.getReportStatus().getState(), r.getReceiver().getTitle()));
-        }
-        return reportSummaries;
+        return reports.stream().map(ReportSummaryDTO::new).toList();
     }
 
     @Override
@@ -136,17 +132,13 @@ public class ReportServiceImpl implements ReportService {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
-            if (report.isPresent() && !report.get().getSender().equals(user)){
-                return ResponseEntity.badRequest().body("The advertisement details can be displayed only to its creator.");
+            if (report.isPresent() && !report.get().getSender().equals(user)) {
+                return ResponseEntity.badRequest().body("The report details can be displayed only to its creator.");
             }
         }
         if (report.isEmpty()) {
-            return ResponseEntity.badRequest().body("The advertisement id is not located in database");
+            return ResponseEntity.badRequest().body("The report id is not located in database");
         }
-        return ResponseEntity.ok(new ReportDetailDTO(
-                report.get().getTitle(), report.get().getDescription(),
-                report.get().getSender().getUsername(), report.get().getReportStatus().getState(),
-                report.get().getReceiver().getId(), report.get().getReceiver().getTitle()
-        ));
+        return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
 }
