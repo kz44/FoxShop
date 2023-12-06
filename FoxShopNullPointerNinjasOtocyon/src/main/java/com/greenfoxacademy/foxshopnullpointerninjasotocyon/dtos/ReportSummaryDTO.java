@@ -1,7 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,7 @@ public class ReportSummaryDTO {
     private String reportStatus;
     private String advertisementTitle;
 
-    public ReportSummaryDTO(Report report){
+    public ReportSummaryDTO(Report report) {
         reportTitle = report.getTitle();
         reportID = report.getId();
         reportStatus = report.getReportStatus().getState();
