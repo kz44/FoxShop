@@ -40,4 +40,14 @@ public class MessageController {
 
         return messageService.sendMessageByUsername(receiverUsername, content);
     }
+
+    @PutMapping("/edit")
+    public ResponseEntity<?> editMessage (@RequestParam String newContent) {
+        if (newContent.isEmpty() || newContent == null){
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing"));
+        }
+
+        return messageService.editMessage(newContent);
+
+    }
 }
