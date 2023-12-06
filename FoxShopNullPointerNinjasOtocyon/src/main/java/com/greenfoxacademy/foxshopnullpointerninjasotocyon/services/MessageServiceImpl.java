@@ -8,7 +8,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageR
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class MessageServiceImpl implements MessageService {
         for (User otherUser : otherUsers) {
             Message lastMessage = messageRepository.getLastMessage(user, otherUser);
             LocalDateTime lastMessageTime = lastMessage.getSent();
-            boolean isLastMessageAlreadyRead = lastMessage.isAlreadyRead();
+            boolean isLastMessageAlreadyRead = lastMessage.isSeen();
             long numberOfMessages = messageRepository.countMessagesBetweenUsers(user, otherUser);
 
             ConversationDTO conversationDTO = new ConversationDTO(otherUser.getUsername(),
