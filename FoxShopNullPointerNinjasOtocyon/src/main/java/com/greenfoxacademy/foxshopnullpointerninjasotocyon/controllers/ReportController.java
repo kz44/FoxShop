@@ -37,7 +37,7 @@ public class ReportController {
     @GetMapping(value = {"/{id}", "/"})
     public ResponseEntity<?> reportDetails(@PathVariable(required = false) Long id) {
         if (id == null) {
-            return ResponseEntity.badRequest().body("Report id missing in request path.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Report id missing in request path."));
         }
         return reportService.reportDetails(id);
     }
@@ -46,10 +46,10 @@ public class ReportController {
     public ResponseEntity<?> filterDatabaseRecords(@RequestParam(required = false) String status,
                                                    @PathVariable(required = false) Integer pageNumber) {
         if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
-            return ResponseEntity.badRequest().body("Access not authorized.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (pageNumber == null || pageNumber < 0) {
-            return ResponseEntity.badRequest().body("Please insert a valid number of pages for the displayed results");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Please insert a valid number of pages for the displayed results"));
         }
         return reportService.browseReportsByStatus(pageNumber, status);
     }
@@ -58,10 +58,10 @@ public class ReportController {
     @PostMapping(value = {"/reports/{id}/accept", "/reports/accept"})
     public ResponseEntity<?> acceptAdvertisementReport(@PathVariable(required = false) Long id) {
         if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
-            return ResponseEntity.badRequest().body("Access not authorized.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (id == null) {
-            return ResponseEntity.badRequest().body("Report id missing in request path.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Report id missing in request path."));
         }
         return reportService.acceptOrDenyReport(id, State.ACCEPTED);
     }
@@ -69,10 +69,10 @@ public class ReportController {
     @PostMapping(value = {"/reports/{id}/deny", "/reports/deny"})
     public ResponseEntity<?> denyAdvertisementReport(@PathVariable(required = false) Long id) {
         if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
-            return ResponseEntity.badRequest().body("Access not authorized.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (id == null) {
-            return ResponseEntity.badRequest().body("Report id missing in request path.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Report id missing in request path."));
         }
         return reportService.acceptOrDenyReport(id, State.DENIED);
     }

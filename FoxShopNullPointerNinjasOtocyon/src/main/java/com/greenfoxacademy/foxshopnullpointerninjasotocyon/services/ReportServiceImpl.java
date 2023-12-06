@@ -100,20 +100,6 @@ public class ReportServiceImpl implements ReportService {
         report.setDescription(reportCreationDTO.getDescription());
         Optional<Advertisement> advertisement = advertisementRepository.findById(reportCreationDTO.getReceiver());
         advertisement.ifPresentOrElse(report::setReceiver, () -> errors.add("Wrong advertisement id."));
-//        status field can only be updated by admin + report status can be updated, but not set at creation - DTO field should not be required
-        if (reportCreationDTO.getReportStatus() != null) {
-            Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(reportCreationDTO.getReportStatus());
-            if (reportStatusOptional.isEmpty()) {
-                errors.add("Invalid report status value.");
-            } else {
-                User user = userService.getUserFromSecurityContextHolder();
-                if (user.getRole().getRoleName().equals("ADMIN")) {
-                    report.setReportStatus(reportStatusOptional.get());
-                } else {
-                    errors.add("Report status can be changed only by admin.");
-                }
-            }
-        }
         if (!errors.isEmpty()) {
             String message = "There are some errors in your request: ".concat(String.join(" ", errors));
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
@@ -135,11 +121,11 @@ public class ReportServiceImpl implements ReportService {
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
-                return ResponseEntity.badRequest().body("The report details can be displayed only to its creator.");
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
             }
         }
         if (report.isEmpty()) {
-            return ResponseEntity.badRequest().body("The report id is not located in database");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report id is not located in database"));
         }
         return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
@@ -157,7 +143,7 @@ public class ReportServiceImpl implements ReportService {
 
         Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
         if (reportStatusOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid report status inserted.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
         }
 
         Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
@@ -172,16 +158,16 @@ public class ReportServiceImpl implements ReportService {
         //no null/validity check on status, as inserted by controller endpoint logic, not manually
         Optional<Report> reportOptional = reportRepository.findById(reportId);
         if (reportOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid report id inserted.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report id inserted."));
         }
         if (reportOptional.get().getStatusChange()) {
-            return ResponseEntity.badRequest().body("Approval decisions cannot be modified once granted.");
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Approval decisions cannot be modified once granted."));
         }
         Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(state.getStatusValue());
         reportOptional.get().setReportStatus(reportStatusOptional.get());
         reportOptional.get().setStatusChange(true);
         reportRepository.save(reportOptional.get());
-        return ResponseEntity.ok("Report successfully " + state.getStatusValue() + ".");
+        return ResponseEntity.ok(new SuccessMessageDTO("Report successfully " + state.getStatusValue() + "."));
     }
 
 }
