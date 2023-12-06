@@ -12,5 +12,5 @@ public interface ReportService {
 
     ResponseEntity<?> createNewReport(ReportCreationDTO reportCreationDTO);
     List<ReportSummaryDTO> reportsToDTOs ();
-    ResponseEntity<?> reportOverview(Long reportID);
+    ResponseEntity<?> reportDetails(Long reportID);
 }

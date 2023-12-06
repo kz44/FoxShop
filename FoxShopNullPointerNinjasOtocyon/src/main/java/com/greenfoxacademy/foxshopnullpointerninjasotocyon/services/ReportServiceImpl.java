@@ -132,7 +132,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ResponseEntity<?> reportOverview(Long reportID) {
+    public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
         if (!user.getRole().getRoleName().equals("ADMIN")) {

@@ -39,8 +39,8 @@ public class ReportController {
     @GetMapping(value = {"/{id}", "/"})
     public ResponseEntity<?> reportDetails(@PathVariable(required = false) Long id) {
         if (id == null) {
-            return ResponseEntity.badRequest().body("Advertisement id missing in request path.");
+            return ResponseEntity.badRequest().body("Report id missing in request path.");
         }
-        return reportService.reportOverview(id);
+        return reportService.reportDetails(id);
     }
 }
