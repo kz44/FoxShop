@@ -25,6 +25,6 @@ public class ConversationController {
     public ResponseEntity<?> getConversationsBetweenUsers(@PathVariable String user1,
                                                           @PathVariable String user2,
                                                           @PathVariable int pageNumber) {
-        return ResponseEntity.ok().body(messageService.getConversationBetweenTwoUsers(user1, user2, pageNumber));
+        return messageService.getConversationBetweenTwoUsers(user1, user2, pageNumber);
     }
 }
