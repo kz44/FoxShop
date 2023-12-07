@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
 
-    private final UserServiceImpl userServiceImpl;
     private final AdvertisementMapper advertisementMapper;
     private AdvertisementRepository advertisementRepository;
     private LocationRepository locationRepository;
