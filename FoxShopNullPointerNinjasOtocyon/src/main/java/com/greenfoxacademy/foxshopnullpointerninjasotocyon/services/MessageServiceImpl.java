@@ -47,7 +47,8 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public ResponseEntity<?> editMessage(String newContent) {
         final var sender = userService.getUserFromSecurityContextHolder();
-        var message = messageRepository.findMessageByUserIdAndSeenFalseAndWithin10MinutesDescLimit1(sender.getId());
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
+        var message = messageRepository.findMessageByUserIdAndSeenFalseAndWithin10MinutesDescLimit1(sender.getId(), timeThreshold);
 
         if (message.isEmpty()){
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to edit within 10 minutes"));

@@ -42,12 +42,11 @@ public class MessageController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<?> editMessage (@RequestParam String newContent) {
-        if (newContent.isEmpty() || newContent == null){
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing"));
+    public ResponseEntity<?> editMessage (@RequestParam (required = false) String newContent) {
+        if (newContent == null || newContent.isEmpty()){
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing the message"));
         }
 
         return messageService.editMessage(newContent);
-
     }
 }
