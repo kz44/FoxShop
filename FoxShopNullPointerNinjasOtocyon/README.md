@@ -16,7 +16,11 @@ variable: `jdbc:mysql://localhost/foxshop?serverTimezone=UTC`)
 You need to set up these environment variables.
 
 
-You will find a file in the resources/assets/databasesetup directory called role_setup.sql.
+There are scripts for filling database tables in the `resources/assets/databasesetup` directory:
+* role_setup.sql
+* location_setup.sql
+* report_status_setup.sql
+
 
 You should implement it on your computer in the database.
 
