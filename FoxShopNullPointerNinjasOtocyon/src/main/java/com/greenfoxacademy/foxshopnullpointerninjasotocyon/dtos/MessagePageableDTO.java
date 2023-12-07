@@ -1,6 +1,5 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,6 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.MessageService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +16,8 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping("/{otherUsername}/{pageNumber}")
-    protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable(required = false) String otherUsername,
-                                                       @PathVariable(required = false) int pageNumber) {
+    protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable String otherUsername,
+                                                       @PathVariable int pageNumber) {
         return ResponseEntity.ok().body(messageService.getMessagesPagination(otherUsername, pageNumber));
     }
 }
