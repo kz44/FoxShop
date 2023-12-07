@@ -30,5 +30,6 @@ public class Message {
     private User receiver;
 
     @Column(nullable = false)
+    @Builder.Default
     private boolean seen = false;
 }

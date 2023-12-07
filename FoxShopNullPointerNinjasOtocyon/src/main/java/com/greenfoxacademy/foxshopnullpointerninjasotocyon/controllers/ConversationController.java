@@ -18,7 +18,7 @@ public class ConversationController {
 
     @GetMapping
     protected ResponseEntity<?> getAllConversationsOfLoggedInUser() {
-        return ResponseEntity.ok().body(messageService.getConversationInfo());
+        return messageService.getConversationInfo();
     }
 
     @GetMapping("/user1={user1}&user2={user2}/{pageNumber}")

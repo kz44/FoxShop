@@ -26,14 +26,12 @@ public class MessageServiceImpl implements MessageService {
     private MessageMapper messageMapper;
 
     /**
-     * Service method to retrieve information about user conversations.
+     * Retrieves information about conversations for the current user.
      * <p>
-     * This method fetches details about the conversations the current user has with other users.
-     * It includes information such as the last message sent, whether it has been read, and the total
-     * number of messages in each conversation.
+     * This method fetches information about conversations, including details about other users,
+     * the last message sent, and the number of messages in each conversation.
      *
-     * @return List<ConversationDTO> - A list of ConversationDTO objects containing information about each conversation.
-     *                                If the user has no conversations, an empty list is returned.
+     * @return ResponseEntity with conversation information or a success message if no conversations exist.
      */
 
     @Override
@@ -50,7 +48,6 @@ public class MessageServiceImpl implements MessageService {
             LocalDateTime lastMessageTime = lastMessage.getSent();
             boolean isLastMessageAlreadyRead = lastMessage.isSeen();
             long numberOfMessages = messageRepository.countMessagesBetweenUsers(user, otherUser);
-
             ConversationDTO conversationDTO = new ConversationDTO(otherUser.getUsername(),
                     new ConversationInfoDTO(lastMessageTime, isLastMessageAlreadyRead, numberOfMessages));
             conversations.add(conversationDTO);
@@ -59,78 +56,70 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
-     * Service method to retrieve paginated and sorted messages between the current user and another user.
+     * Retrieves paginated messages between the current user and another user based on the specified page number.
      * <p>
-     * This method fetches messages between the current user and the specified user, paginated and sorted by
-     * the sent timestamp in descending order.
+     * This method validates the provided page number, checks the existence of the specified user,
+     * and retrieves paginated and sorted messages between the two users.
      *
-     * @param otherUsername String - The username of the other user to retrieve messages with.
-     * @param pageNumber int - The page number for pagination (starting from 0).
-     * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a list of paginated
-     *                                                  and sorted MessagePageableDTO objects.
-     *                                                  If the request is invalid or the user does not exist,
-     *                                                  an error message is returned in the response body.
+     * @param otherUsername The username of the other user.
+     * @param pageNumber    The page number for pagination.
+     * @return ResponseEntity with paginated and sorted messages or an error message if validation fails.
      */
 
     @Override
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
                                                    int pageNumber) {
-        if (pageNumber < 0 ) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
+        ResponseEntity<?> pageValidationResponse = validatePageNumber(pageNumber);
+        if (pageValidationResponse != null) {
+            return pageValidationResponse;
         }
+        User user = userService.getUserFromSecurityContextHolder();
         Optional<User> otherUser = userRepository.findByUsername(otherUsername);
         if (!otherUser.isPresent()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("User does not exist."));
         }
-        User user = userService.getUserFromSecurityContextHolder();
-        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
-        int pageSize = PAGE_SIZE;
-        List<MessagePageableDTO> messagePagedAndSorted =
-                messageRepository.findMessagesBetweenUsers(
-                user,
-                otherUser.get(),
-                PageRequest.of(pageNumber, pageSize, sort)).stream().map(messageMapper::toDTO).toList();
-        return ResponseEntity.ok().body(messagePagedAndSorted);
+        return processMessages(user, otherUser.get(), pageNumber);
     }
 
     /**
-     * Retrieves a paginated and sorted list of messages between two users.
+     * Validates the provided page number for pagination.
      * <p>
-     * This method is accessible only to users with the role of "ADMIN." It checks the role of the current user,
-     * verifies the validity of the provided page number, and ensures that both users exist before retrieving
-     * and returning the messages between them.
+     * This method checks whether the provided page number is non-negative.
+     * If the validation fails, it returns an error response; otherwise, it returns null.
      *
-     * @param user1 String - The username of the first user.
-     * @param user2 String - The username of the second user.
-     * @param pageNumber int - The page number for pagination (starting from 0).
-     * @return ResponseEntity<List<MessagePageableDTO>> - A response entity containing a paginated and sorted list
-     *                                                    of MessagePageableDTO objects if successful.
-     *                                                    If there are permission issues, invalid page number, or
-     *                                                    at least one of the users does not exist, an error message
-     *                                                    is returned in the response body.
+     * @param pageNumber The page number to be validated.
+     * @return ResponseEntity with an error message if the page number is invalid, otherwise null.
      */
 
-    @Override
-    public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, int pageNumber) {
-        String roleOfTheCurrentUser = userService.checkUserRole();
-        if (!roleOfTheCurrentUser.equals("ADMIN")) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("You have no permission to the request."));
-        }
-        if (pageNumber < 0 ) {
+    private ResponseEntity<?> validatePageNumber(int pageNumber) {
+        if (pageNumber < 0) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
         }
-        Optional<User> userOpt1 = userRepository.findByUsername(user1);
-        Optional<User> userOpt2 = userRepository.findByUsername(user2);
-        if (!userOpt1.isPresent() || !userOpt2.isPresent()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("At least one of the users or both does not exist."));
-        }
+        return null;
+    }
+
+    /**
+     * Processes and retrieves paginated and sorted messages between two specified users.
+     * <p>
+     * This method uses the provided users and page number to retrieve paginated and sorted messages
+     * between them. If no messages are found, it returns a success message; otherwise, it returns the messages.
+     *
+     * @param user1      The first user.
+     * @param user2      The second user.
+     * @param pageNumber The page number for pagination.
+     * @return ResponseEntity with paginated and sorted messages or a success message if no messages exist.
+     */
+
+    private ResponseEntity<?> processMessages(User user1, User user2, int pageNumber) {
         Sort sort = Sort.by(Sort.Direction.DESC, "sent");
-        int pageSize = PAGE_SIZE;
         List<MessagePageableDTO> messagePagedAndSorted =
                 messageRepository.findMessagesBetweenUsers(
-                        userOpt1.get(),
-                        userOpt2.get(),
-                        PageRequest.of(pageNumber, pageSize, sort)).stream().map(messageMapper::toDTO).toList();
+                        user1,
+                        user2,
+                        PageRequest.of(pageNumber, PAGE_SIZE, sort)).stream().map(messageMapper::toDTO).toList();
+        if (messagePagedAndSorted.isEmpty()) {
+            return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
+        }
         return ResponseEntity.ok().body(messagePagedAndSorted);
     }
 }
