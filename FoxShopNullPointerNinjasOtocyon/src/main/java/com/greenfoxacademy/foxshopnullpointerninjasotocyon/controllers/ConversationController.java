@@ -17,6 +17,6 @@ public class ConversationController {
 
     @GetMapping
     protected ResponseEntity<?> getAllConversationsOfLoggedInUser() {
-        return ResponseEntity.ok().body(messageService.getConversationInfo());
+        return messageService.getConversationInfo();
     }
 }
