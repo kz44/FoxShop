@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class MessageController {
      */
     @PostMapping(value = {"/send/{receiverUsername}", "/send/", "/send"})
     public ResponseEntity<?> sendMessage(@PathVariable(required = false) String receiverUsername,
-                                         @RequestParam(required = false) String content) {
+                                         @RequestBody(required = false) MessageDTO content) {
 
-        if ((receiverUsername == null || receiverUsername.isEmpty()) && (content == null || content.isEmpty())) {
+        if ((receiverUsername == null || receiverUsername.isEmpty()) && (content == null || content.getContent().isEmpty())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
         }
 
@@ -34,7 +35,7 @@ public class MessageController {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
         }
 
-        if (content == null || content.isEmpty()) {
+        if (content == null || content.getContent().isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content"));
         }
 
@@ -44,17 +45,28 @@ public class MessageController {
     /**
      * Endpoint for editing a message
      *
+     * @param receiverUsername The username of the recipient.
      * @param newContent the new content.
      * @return ResponseEntity containing information about the status of the message sending:
      * - 200 OK and successful message in the response body for a successful request.
      * - 400 Bad Request and an error message in the response body for a failed request.
      */
-    @PutMapping("/edit")
-    public ResponseEntity<?> editMessage(@RequestParam(required = false) String newContent) {
-        if (newContent == null || newContent.isEmpty()) {
+    @PutMapping(value = {"/edit/{receiverUsername}", "/edit/", "/edit"})
+    public ResponseEntity<?> editMessage(@PathVariable (required = false) String receiverUsername,
+                                         @RequestBody(required = false) MessageDTO newContent) {
+
+        if ((receiverUsername == null) && (newContent == null)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
+        }
+
+        if (receiverUsername == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
+        }
+
+        if (newContent == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing the message"));
         }
 
-        return messageService.editMessage(newContent);
+        return messageService.editMessage(receiverUsername, newContent);
     }
 }

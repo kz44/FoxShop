@@ -14,14 +14,17 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
      * Finds the latest unseen message sent by a user within a specified time threshold.
      *
      * @param userId        The ID of the sender user.
+     * @param receiverId    The ID of the receiver user.
      * @param timeThreshold The time threshold indicating the period within which the message was sent.
      * @return the latest unseen message, empty if no matching message is found.
      */
     @Query("SELECT msg FROM Message msg WHERE " +
             "msg.sender.id = :userId AND " +
+            "msg.receiver.id = :receiverId AND " +
             "msg.seen = false AND " +
             "msg.sent >= :timeThreshold " +
             "ORDER BY msg.sent DESC LIMIT 1")
     Optional<Message> findUnseenMessageWithinMinutesDescLimit1(@Param("userId") Long userId,
-                                                                                  @Param("timeThreshold")LocalDateTime timeThreshold);
+                                                               @Param("receiverId") Long receiverId,
+                                                               @Param("timeThreshold") LocalDateTime timeThreshold);
 }
