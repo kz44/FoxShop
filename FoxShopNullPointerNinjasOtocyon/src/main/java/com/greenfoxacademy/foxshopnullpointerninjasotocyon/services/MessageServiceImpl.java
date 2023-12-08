@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
+    private static final LocalDateTime TIME_THRESHOLD = LocalDateTime.now().minusMinutes(10);
     private final MessageRepository messageRepository;
     private final UserService userService;
-    private static final LocalDateTime TIME_THRESHOLD = LocalDateTime.now().minusMinutes(10);
 
     /**
      * Sends a message to the specified user and persists the message in the repository.
@@ -107,6 +107,5 @@ public class MessageServiceImpl implements MessageService {
         var message = messageOpt.get();
         messageRepository.delete(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully deleted"));
-
     }
 }

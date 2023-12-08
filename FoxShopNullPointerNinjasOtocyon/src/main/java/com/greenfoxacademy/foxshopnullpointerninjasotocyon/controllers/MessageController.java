@@ -72,8 +72,9 @@ public class MessageController {
 
 
     /**
+     * Endpoint for delete Message
+     *
      * Deletes the last unseen message sent by the authenticated user to the specified receiver
-     * <p>
      * if the message was sent within the last 10 minutes.
      * If the receiver username is not provided, a bad request response is returned with an error message.
      *
@@ -90,6 +91,4 @@ public class MessageController {
         }
         return messageService.deleteLastMessage(receiverUsername);
     }
-
-
 }
