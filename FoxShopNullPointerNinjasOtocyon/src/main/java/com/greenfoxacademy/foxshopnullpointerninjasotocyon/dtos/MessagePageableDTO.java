@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class MessagePageableDTO {
     private String content;
     private LocalDateTime sent;
-    private Long sender;
-    private Long receiver;
-    private boolean isAlreadyRead;
+    private String senderUsername;
+    private String receiverUsername;
+    private boolean seen;
 }
