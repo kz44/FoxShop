@@ -186,11 +186,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Retrieves a user by their username from the repository.
+     *
+     * @param username The username of the user to retrieve.
+     * @return The user with the specified username, or null if not found.
+     */
     @Override
     public User getUserByUsername(String username) {
-        if (userRepository.existsByUsername(username)){
-            return userRepository.findByUsername(username).get();
-        }
-        return null;
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        return userOpt.orElse(null);
     }
 }
