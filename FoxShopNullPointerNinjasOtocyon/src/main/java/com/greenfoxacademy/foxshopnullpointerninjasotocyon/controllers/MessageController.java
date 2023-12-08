@@ -55,7 +55,7 @@ public class MessageController {
     public ResponseEntity<?> editMessage(@PathVariable (required = false) String receiverUsername,
                                          @RequestBody(required = false) MessageDTO newContent) {
 
-        if ((receiverUsername == null) && (newContent == null)) {
+        if (receiverUsername == null && (newContent == null || newContent.getContent().isEmpty())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
         }
 
@@ -63,7 +63,7 @@ public class MessageController {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
         }
 
-        if (newContent == null) {
+        if (newContent == null || newContent.getContent().isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing the message"));
         }
 
