@@ -16,9 +16,9 @@ public class MessageMapper {
         return MessagePageableDTO.builder()
                 .content(messageEntity.getContent())
                 .sent(messageEntity.getSent())
-                .sender(messageEntity.getSender().getId())
-                .receiver(messageEntity.getReceiver().getId())
-                .isAlreadyRead(messageEntity.isSeen())
+                .senderUsername(messageEntity.getSender().getUsername())
+                .receiverUsername(messageEntity.getReceiver().getUsername())
+                .seen(true)
                 .build();
     }
 }

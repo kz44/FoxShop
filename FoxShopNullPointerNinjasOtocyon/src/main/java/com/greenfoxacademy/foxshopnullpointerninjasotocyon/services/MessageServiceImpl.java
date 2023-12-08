@@ -68,7 +68,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public ResponseEntity<?> getMessagesPagination(String otherUsername,
-                                                   int pageNumber) {
+                                                   Integer pageNumber) {
         ResponseEntity<?> pageValidationResponse = validatePageNumber(pageNumber);
         if (pageValidationResponse != null) {
             return pageValidationResponse;
@@ -121,7 +121,7 @@ public class MessageServiceImpl implements MessageService {
      * @return ResponseEntity with an error message if the page number is invalid, otherwise null.
      */
 
-    private ResponseEntity<?> validatePageNumber(int pageNumber) {
+    private ResponseEntity<?> validatePageNumber(Integer pageNumber) {
         if (pageNumber < 0) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid page number."));
         }
