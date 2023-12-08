@@ -50,7 +50,7 @@ public class MessageController {
      * - 400 Bad Request and an error message in the response body for a failed request.
      */
     @PutMapping("/edit")
-    public ResponseEntity<?> editMessage(@RequestBody(required = false) String newContent) {
+    public ResponseEntity<?> editMessage(@RequestParam(required = false) String newContent) {
         if (newContent == null || newContent.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing the message"));
         }
