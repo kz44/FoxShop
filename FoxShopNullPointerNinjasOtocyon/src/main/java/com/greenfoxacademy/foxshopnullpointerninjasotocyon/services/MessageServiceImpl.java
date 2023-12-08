@@ -7,6 +7,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -130,9 +131,13 @@ public class MessageServiceImpl implements MessageService {
 
     /**
      * Processes and retrieves paginated and sorted messages between two specified users.
-     * <p>
-     * This method uses the provided users and page number to retrieve paginated and sorted messages
-     * between them. If no messages are found, it returns a success message; otherwise, it returns the messages.
+     *
+     * <p>This method retrieves messages between two users, applies sorting and pagination,
+     * and optionally updates the "seen" status for messages received by the current user.
+     * If the logged-in user has the role "USER," the method updates the "seen" status for messages
+     * where the logged-in user is the receiver and "seen" is currently false.
+     * The updated messages are then saved to the database.
+     * The method returns a list of paginated and sorted messages mapped to DTOs.</p>
      *
      * @param user1      The first user.
      * @param user2      The second user.
@@ -142,14 +147,25 @@ public class MessageServiceImpl implements MessageService {
 
     private ResponseEntity<?> processMessages(User user1, User user2, int pageNumber) {
         Sort sort = Sort.by(Sort.Direction.DESC, "sent");
-        List<MessagePageableDTO> messagePagedAndSorted =
+        Page<Message> messagePagedAndSorted =
                 messageRepository.findMessagesBetweenUsers(
                         user1,
                         user2,
-                        PageRequest.of(pageNumber, PAGE_SIZE, sort)).stream().map(messageMapper::toDTO).toList();
-        if (messagePagedAndSorted.isEmpty()) {
+                        PageRequest.of(pageNumber, PAGE_SIZE, sort));
+        if (userService.checkUserRole().equals("USER")) {
+            User currentUser = userService.getUserFromSecurityContextHolder();
+            messagePagedAndSorted.getContent().stream()
+                    .filter(m -> m.getReceiver().equals(currentUser))
+                    .filter(m -> !m.isSeen()).forEach(m -> m.setSeen(true));
+            messageRepository.saveAll(messagePagedAndSorted.getContent());
+        }
+        List<MessagePageableDTO> mapMessagesToDTO = messagePagedAndSorted
+                .stream()
+                .map(messageMapper::toDTO)
+                .toList();
+        if (mapMessagesToDTO.isEmpty()) {
             return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
         }
-        return ResponseEntity.ok().body(messagePagedAndSorted);
+        return ResponseEntity.ok().body(mapMessagesToDTO);
     }
 }

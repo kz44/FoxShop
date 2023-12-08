@@ -18,7 +18,7 @@ public class MessageMapper {
                 .sent(messageEntity.getSent())
                 .senderUsername(messageEntity.getSender().getUsername())
                 .receiverUsername(messageEntity.getReceiver().getUsername())
-                .seen(true)
+                .seen(messageEntity.isSeen())
                 .build();
     }
 }
