@@ -49,7 +49,7 @@ public class MessageServiceImpl implements MessageService {
      * Edits the content of the latest unseen message sent by the authenticated user within the last 10 minutes.
      *
      * @param receiverUsername The receiver username
-     * @param newContent The new content to set for the message.
+     * @param newContent       The new content to set for the message.
      * @return ResponseEntity, the status of the edit operation:
      * - 200 OK and a success message in the response body for a successful edit.
      * - 400 Bad Request and an error message in the response body if there is no eligible message within 10 minutes.
@@ -60,7 +60,7 @@ public class MessageServiceImpl implements MessageService {
         final var receiver = userService.getUserByUsername(receiverUsername);
         LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
 
-        if (receiver == null){
+        if (receiver == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't user with the given username"));
         }
 
@@ -77,4 +77,38 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully edited"));
     }
+
+
+    /**
+     * Deletes the last unseen message sent by the authenticated user to the specified receiver
+     * if the message was sent within the last 10 minutes.
+     *
+     * @param receiverUsername The username of the message receiver.
+     * @return ResponseEntity containing either a success message if the message
+     * was successfully deleted or an error message
+     * if there was no message to delete or
+     * if the specified receiver does not exist.
+     */
+    @Override
+    public ResponseEntity<?> deleteLastMessage(String receiverUsername) {
+        final var sender = userService.getUserFromSecurityContextHolder();
+        final var receiver = userService.getUserByUsername(receiverUsername);
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
+
+        if (receiver == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't user with the given username"));
+        }
+
+        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), timeThreshold);
+
+        if (messageOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to edit within 10 minutes"));
+        }
+
+        var message = messageOpt.get();
+        messageRepository.delete(message);
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully deleted"));
+
+    }
+
 }
