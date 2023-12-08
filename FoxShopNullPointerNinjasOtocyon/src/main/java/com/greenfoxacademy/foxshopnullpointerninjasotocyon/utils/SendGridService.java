@@ -1,4 +1,4 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.sendgrid.Method;

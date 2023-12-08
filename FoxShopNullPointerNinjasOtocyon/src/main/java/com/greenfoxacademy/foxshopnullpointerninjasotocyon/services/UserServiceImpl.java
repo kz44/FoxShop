@@ -13,6 +13,8 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.SendGridService;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.UnverifiedUserRemove;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -41,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final TokenBlacklistRepository tokenBlacklistRepository;
     private final DeleteExpiredToken deleteExpiredToken;
     private final SendGridService sendGridService;
+    private final UnverifiedUserRemove unverifiedUserRemove;
 
     @Override
     public Optional<User> findByUsername(String name) {
@@ -129,6 +132,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(roleRepository.findByRoleName("USER").get());
         userRepository.save(user);
         sendGridService.sendVerificationEmail(user);
+        unverifiedUserRemove.deleteUnverifiedUser(user);
     }
 
     /**
