@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,9 @@ public class MessageController {
      */
     @PostMapping(value = {"/send/{receiverUsername}", "/send/", "/send"})
     public ResponseEntity<?> sendMessage(@PathVariable(required = false) String receiverUsername,
-                                         @RequestParam(required = false) String content) {
+                                         @RequestBody(required = false) MessageDTO content) {
 
-        if ((receiverUsername == null || receiverUsername.isEmpty()) && (content == null || content.isEmpty())) {
+        if ((receiverUsername == null || receiverUsername.isEmpty()) && (content == null || content.getContent().isEmpty())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
         }
 
@@ -34,7 +35,7 @@ public class MessageController {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
         }
 
-        if (content == null || content.isEmpty()) {
+        if (content == null || content.getContent().isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content"));
         }
 

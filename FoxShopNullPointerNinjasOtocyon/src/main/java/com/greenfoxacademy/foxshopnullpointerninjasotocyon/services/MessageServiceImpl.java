@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Message;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
@@ -27,7 +28,7 @@ public class MessageServiceImpl implements MessageService {
      * - 400 Bad Request and an error message in the response body if the recipient is not registered.
      */
     @Override
-    public ResponseEntity<?> sendMessageByUsername(String receiverUsername, String content) {
+    public ResponseEntity<?> sendMessageByUsername(String receiverUsername, MessageDTO content) {
         final var receiver = userService.getUserByUsername(receiverUsername);
 
         if (receiver == null) {
@@ -35,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         messageRepository.save(Message.builder()
-                .content(content)
+                .content(content.getContent())
                 .sender(userService.getUserFromSecurityContextHolder())
                 .receiver(receiver)
                 .sent(LocalDateTime.now())
