@@ -4,6 +4,7 @@ In application.properties are used some environment variables:
 
 `DB` for connection to database (the example of the value of this
 variable: `jdbc:mysql://localhost/foxshop?serverTimezone=UTC`)
+I suggest to remove the "?serverTimeZone=UTC" part of it. It cause the problem with editMessage. It has different time zone.
 
 `DB_USERNAME` for username for connection to the database
 

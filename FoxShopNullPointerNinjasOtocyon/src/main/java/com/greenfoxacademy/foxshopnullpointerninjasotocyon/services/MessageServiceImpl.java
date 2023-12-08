@@ -44,20 +44,29 @@ public class MessageServiceImpl implements MessageService {
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message successfully send to " + receiver.getUsername()));
     }
 
+    /**
+     * Edits the content of the latest unseen message sent by the authenticated user within the last 10 minutes.
+     *
+     * @param newContent The new content to set for the message.
+     * @return ResponseEntity, the status of the edit operation:
+     * - 200 OK and a success message in the response body for a successful edit.
+     * - 400 Bad Request and an error message in the response body if there is no eligible message within 10 minutes.
+     */
     @Override
     public ResponseEntity<?> editMessage(String newContent) {
         final var sender = userService.getUserFromSecurityContextHolder();
         LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
-        var message = messageRepository.findMessageByUserIdAndSeenFalseAndWithin10MinutesDescLimit1(sender.getId(), timeThreshold);
+        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), timeThreshold);
 
-        if (message.isEmpty()){
+        if (messageOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to edit within 10 minutes"));
         }
 
-        message.get().setContent(newContent);
-        message.get().setSent(LocalDateTime.now());
+        var message = messageOpt.get();
+        message.setContent(newContent);
+        message.setSent(LocalDateTime.now());
 
-        messageRepository.save(message.get());
+        messageRepository.save(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully edited"));
     }
 }
