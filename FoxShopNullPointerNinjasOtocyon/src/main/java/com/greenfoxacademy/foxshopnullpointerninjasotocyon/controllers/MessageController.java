@@ -27,11 +27,11 @@ public class MessageController {
     public ResponseEntity<?> sendMessage(@PathVariable(required = false) String receiverUsername,
                                          @RequestBody(required = false) MessageDTO content) {
 
-        if ((receiverUsername == null || receiverUsername.isEmpty()) && (content == null || content.getContent().isEmpty())) {
+        if ((receiverUsername == null) && (content == null || content.getContent().isEmpty())) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
         }
 
-        if (receiverUsername == null || receiverUsername.isEmpty()) {
+        if (receiverUsername == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
         }
 
