@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class SendGridService {
-
+    // This is the id of dynamic template which was created in web api of Send Grid.
+    // The template is used for nice html format of sent mails.
+    // In the template are two variables: `name` and `link`.
     private static final String TEMPLATE_ID = "d-18fb635d86fe4c48bea95781d72c34e0";
     private final PasswordEncoder passwordEncoder;
 
