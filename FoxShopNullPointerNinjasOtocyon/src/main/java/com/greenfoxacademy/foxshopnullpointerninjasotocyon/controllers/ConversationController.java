@@ -21,10 +21,16 @@ public class ConversationController {
         return messageService.getConversationInfo();
     }
 
-    @GetMapping("/user1={user1}&user2={user2}/{pageNumber}")
+    @GetMapping(value = {
+            "/user1={user1}&user2={user2}/{pageNumber}",
+            "/user1={user1}&user2={user2}/",
+            "/user1={user1}&user2={user2}"})
     public ResponseEntity<?> getConversationsBetweenUsers(@PathVariable String user1,
                                                           @PathVariable String user2,
-                                                          @PathVariable int pageNumber) {
+                                                          @PathVariable(required = false) Integer pageNumber) {
+        if (pageNumber == null) {
+            pageNumber = 0;
+        }
         return messageService.getConversationBetweenTwoUsers(user1, user2, pageNumber);
     }
 }

@@ -95,8 +95,8 @@ public class MessageServiceImpl implements MessageService {
      */
 
     @Override
-    public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, int pageNumber) {
-        if (!userService.checkUserRole().equals("ADMIN") || !userService.checkUserRole().equals("DEVELOPER")) {
+    public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, Integer pageNumber) {
+        if (!userService.checkUserRole().equals("ADMIN") && !userService.checkUserRole().equals("DEVELOPER")) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("You have no permission to the request."));
         }
         ResponseEntity<?> pageValidationResponse = validatePageNumber(pageNumber);
