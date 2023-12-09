@@ -121,12 +121,11 @@ public class MessageServiceImpl implements MessageService {
      */
 
     private ResponseEntity<?> processMessages(User user1, User user2, int pageNumber) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
         Page<Message> messagePagedAndSorted =
                 messageRepository.findMessagesBetweenUsers(
                         user1,
                         user2,
-                        PageRequest.of(pageNumber, PAGE_SIZE, sort));
+                        PageRequest.of(pageNumber, PAGE_SIZE));
         if (userService.checkUserRole().equals("USER")) {
             User currentUser = userService.getUserFromSecurityContextHolder();
             messagePagedAndSorted.getContent().stream()
