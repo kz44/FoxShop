@@ -105,6 +105,14 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
     }
 
+    /**
+     * Retrieves a list of report summaries for the reports sent by the authenticated user.
+     *
+     * This method fetches reports from the report repository based on the currently authenticated user.
+     * The API endpoint utilizing this method is accessible only to authenticated users.
+     *
+     * @return A list of ReportSummaryDTO objects representing summaries of reports sent by the user.
+     */
     @Override
     public List<ReportSummaryDTO> browseReportsByUser() {
         //the api/reports endpoint using this method is being accessible only to authenticated users:
@@ -112,11 +120,21 @@ public class ReportServiceImpl implements ReportService {
         return reports.stream().map(ReportSummaryDTO::new).toList();
     }
 
+    /**
+     * Retrieves detailed information about a specific report identified by its ID.
+     *
+     * This method fetches the report details based on the provided report ID and the current user's authentication.
+     * If the user is not an ADMIN and is not the creator of the report, access to the report details is denied.
+     *
+     * @param reportID The ID of the report to retrieve details for.
+     * @return A ResponseEntity containing the detailed information of the requested report if found,
+     *         or an error message if the report is not found in the database or access is restricted.
+     */
     @Override
     public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
-        if (!user.getRole().getRoleName().equals("ADMIN")) {
+        if (!(user.getRole().getRoleName().equals("ADMIN") || user.getRole().getRoleName().equals("DEVELOPER"))) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
                 return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
             }
