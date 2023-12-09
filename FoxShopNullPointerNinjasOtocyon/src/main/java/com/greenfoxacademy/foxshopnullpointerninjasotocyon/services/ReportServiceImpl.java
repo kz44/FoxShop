@@ -108,6 +108,14 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
     }
 
+    /**
+     * Retrieves a summary list of reports specific to the currently authenticated user.
+     *
+     * This method fetches reports from the repository associated with the authenticated user.
+     * The API endpoint using this method is restricted to authenticated users only.
+     *
+     * @return A List of ReportSummaryDTO objects representing summaries of reports accessible to the authenticated user.
+     */
     @Override
     public List<ReportSummaryDTO> browseReportsByUser() {
         //the api/reports endpoint using this method is being accessible only to authenticated users:
@@ -115,6 +123,16 @@ public class ReportServiceImpl implements ReportService {
         return reports.stream().map(ReportSummaryDTO::new).toList();
     }
 
+    /**
+     * Retrieves detailed information about a specific report identified by its ID.
+     *
+     * This method fetches the report details based on the provided report ID and the current user's authentication.
+     * If the user is not an ADMIN and is not the creator of the report, access to the report details is denied.
+     *
+     * @param reportID The ID of the report to retrieve details for.
+     * @return A ResponseEntity containing the detailed information of the requested report if found,
+     *         or an error message if the report is not found in the database or access is restricted.
+     */
     @Override
     public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
@@ -130,6 +148,19 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
 
+    /**
+     * Retrieves reports filtered by status and paginates the results.
+     *
+     * This method fetches reports from the repository based on the provided status.
+     * If the status is null, all reports are fetched and paginated. Otherwise, reports are filtered by the given status.
+     * Pagination is applied to control the number of records per page.
+     *
+     * @param pageNumber The page number to retrieve.
+     * @param status     The status by which reports are filtered. If null, all reports are fetched.
+     * @return A ResponseEntity containing a paginated list of ReportSummaryDTO objects
+     *         representing reports filtered by status, along with total pages available.
+     *         If the status is invalid or not found, returns a bad request response with an error message.
+     */
     @Override
     public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
         Integer recordsPerPage = 3;
@@ -153,6 +184,18 @@ public class ReportServiceImpl implements ReportService {
         return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
     }
 
+    /**
+     * Accepts or denies a report by changing its state.
+     *
+     * This method modifies the status of a report identified by its ID based on the provided state.
+     * The status change is allowed unless the report's status change has already been granted.
+     *
+     * @param reportId The ID of the report to accept or deny.
+     * @param state    The State object representing the desired status change (acceptance or denial).
+     * @return A ResponseEntity indicating the success or failure of the status change.
+     *         If the report ID is invalid, returns a bad request response with an error message.
+     *         If the status change is disallowed due to a previously granted approval, returns a bad request response.
+     */
     @Override
     public ResponseEntity<?> acceptOrDenyReport(Long reportId, State state) {
         //no null/validity check on status, as inserted by controller endpoint logic, not manually
