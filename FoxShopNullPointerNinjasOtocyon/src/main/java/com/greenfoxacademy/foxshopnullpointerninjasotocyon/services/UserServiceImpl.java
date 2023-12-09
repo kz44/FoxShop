@@ -210,11 +210,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<?> verifyUserEmail(Long userId, String token) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid user id"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The user Id in your verification link is invalid. Try to register again."));
         }
         User user = userOpt.get();
         if (!passwordEncoder.matches(user.getUsername(), token)) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid token"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The token in your verification link is invalid. Try to register again."));
         }
         user.setVerified(true);
         userRepository.save(user);
