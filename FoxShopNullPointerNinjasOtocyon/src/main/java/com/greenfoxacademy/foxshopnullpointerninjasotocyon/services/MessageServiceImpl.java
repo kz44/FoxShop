@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +40,12 @@ public class MessageServiceImpl implements MessageService {
     public ResponseEntity<?> getConversationInfo() {
         User user = userService.getUserFromSecurityContextHolder();
         Set<User> otherUsers = messageRepository.findOtherUsers(user);
-
-        if (otherUsers == null || otherUsers.isEmpty()) {
+        if (otherUsers == null) {
+            return ResponseEntity.internalServerError().body(new ErrorMessageDTO(
+                    "Unable to retrieve conversations with other users at the moment. " +
+                            "This could be due to a connection issue with the database."));
+        }
+        if (otherUsers.isEmpty()) {
             return ResponseEntity.ok(new SuccessMessageDTO("You have no conversations with other users yet."));
         }
         List<ConversationDTO> conversations = new ArrayList<>();
