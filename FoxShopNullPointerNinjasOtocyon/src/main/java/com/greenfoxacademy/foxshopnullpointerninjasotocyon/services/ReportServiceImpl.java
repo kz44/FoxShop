@@ -161,29 +161,47 @@ public class ReportServiceImpl implements ReportService {
      *         representing reports filtered by status, along with total pages available.
      *         If the status is invalid or not found, returns a bad request response with an error message.
      */
+//    @Override
+//    public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
+//        Integer recordsPerPage = 3;
+//        if (status == null) {
+//            Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+//            List<Report> filteredEntityList = filteredPage.getContent();
+//            Integer pagesTotal = filteredPage.getTotalPages();
+//            List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+//            return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+//        }
+//
+//        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+//        if (reportStatusOptional.isEmpty()) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
+//        }
+//
+//        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
+//        List<Report> filteredEntityList = filteredPage.getContent();
+//        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+//        Integer pagesTotal = filteredPage.getTotalPages();
+//        return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+//    }
     @Override
     public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
-        Integer recordsPerPage = 3;
+        Integer recordsPerPage = 10;
+        Page<Report> filteredPage;
         if (status == null) {
-            Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
-            List<Report> filteredEntityList = filteredPage.getContent();
-            Integer pagesTotal = filteredPage.getTotalPages();
-            List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
-            return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+            filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+        } else {
+            Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+            if (reportStatusOptional.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
+            }
+            filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
         }
 
-        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
-        if (reportStatusOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
-        }
-
-        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
         List<Report> filteredEntityList = filteredPage.getContent();
-        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
         Integer pagesTotal = filteredPage.getTotalPages();
+        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
         return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
     }
-
     /**
      * Accepts or denies a report by changing its state.
      *

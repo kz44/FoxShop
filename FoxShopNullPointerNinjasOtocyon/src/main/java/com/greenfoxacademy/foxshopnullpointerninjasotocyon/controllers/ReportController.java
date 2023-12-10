@@ -31,7 +31,7 @@ public class ReportController {
 
     /**
      * Retrieves a list of reports specific to the currently authenticated user.
-     *
+     * <p>
      * This endpoint fetches reports associated with the authenticated user.
      * It returns a ResponseEntity containing the retrieved reports as per the user's access rights.
      *
@@ -44,13 +44,13 @@ public class ReportController {
 
     /**
      * Retrieves detailed information about a specific report identified by its ID.
-     *
+     * <p>
      * This endpoint fetches the detailed information of a report based on the provided report ID.
      * If the report ID is missing in the request path, it returns an error message.
      *
      * @param id The ID of the report to retrieve details for.
      * @return A ResponseEntity containing the detailed information of the requested report if found,
-     *         or an error message if the report ID is missing or the report is not accessible.
+     * or an error message if the report ID is missing or the report is not accessible.
      */
     @GetMapping(value = {"/{id}", "/"})
     public ResponseEntity<?> reportDetails(@PathVariable(required = false) Long id) {
@@ -62,16 +62,16 @@ public class ReportController {
 
     /**
      * Filters database records based on status and paginates the results.
-     *
+     * <p>
      * This endpoint is accessible only to users with the role of "ADMIN".
      * It allows filtering database records, specifically reports, based on status and pagination.
      *
      * @param status     Optional. The status by which reports are filtered. If null, all reports are fetched.
      * @param pageNumber Optional. The page number to retrieve. Should be a non-negative integer.
      * @return A ResponseEntity containing a paginated list of ReportSummaryDTO objects
-     *         representing reports filtered by status, along with total pages available.
-     *         If the user doesn't have the required authorization, returns a bad request response with an error message.
-     *         If the page number is invalid or missing, returns a bad request response with an error message.
+     * representing reports filtered by status, along with total pages available.
+     * If the user doesn't have the required authorization, returns a bad request response with an error message.
+     * If the page number is invalid or missing, returns a bad request response with an error message.
      */
     @GetMapping(value = {"/reports/{pageNumber}", "/reports/"})
     public ResponseEntity<?> filterDatabaseRecords(@RequestParam(required = false) String status,
@@ -79,7 +79,10 @@ public class ReportController {
         if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
-        if (pageNumber == null || pageNumber < 0) {
+        if (pageNumber == null) {
+            pageNumber = 0;
+        }
+        if (pageNumber < 0) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Please insert a valid number of pages for the displayed results"));
         }
         return reportService.browseReportsByStatus(pageNumber, status);
@@ -87,14 +90,14 @@ public class ReportController {
 
     /**
      * Accepts an advertisement report identified by its ID.
-     *
+     * <p>
      * This endpoint is accessible only to users with the role of "ADMIN".
      * It allows an administrator to accept an advertisement report by changing its state to accepted.
      *
      * @param id The ID of the advertisement report to accept.
      * @return A ResponseEntity indicating the success or failure of the acceptance operation.
-     *         If the user doesn't have the required authorization, returns a bad request response with an error message.
-     *         If the report ID is missing in the request path, returns a bad request response with an error message.
+     * If the user doesn't have the required authorization, returns a bad request response with an error message.
+     * If the report ID is missing in the request path, returns a bad request response with an error message.
      */
     //    URI path with double slash /reports//accept is not recognised as a valid URi by postman, the system returns message 400 Bad request
     @PostMapping(value = {"/reports/{id}/accept", "/reports/accept"})
@@ -110,14 +113,14 @@ public class ReportController {
 
     /**
      * Denies an advertisement report identified by its ID.
-     *
+     * <p>
      * This endpoint is accessible only to users with the role of "ADMIN".
      * It allows an administrator to deny an advertisement report by changing its state to denied.
      *
      * @param id The ID of the advertisement report to deny.
      * @return A ResponseEntity indicating the success or failure of the denial operation.
-     *         If the user doesn't have the required authorization, returns a bad request response with an error message.
-     *         If the report ID is missing in the request path, returns a bad request response with an error message.
+     * If the user doesn't have the required authorization, returns a bad request response with an error message.
+     * If the report ID is missing in the request path, returns a bad request response with an error message.
      */
     @PostMapping(value = {"/reports/{id}/deny", "/reports/deny"})
     public ResponseEntity<?> denyAdvertisementReport(@PathVariable(required = false) Long id) {
