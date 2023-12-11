@@ -28,8 +28,8 @@ public class RateController {
     private final RateService rateService;
     private final UserService userService;
 
-    @GetMapping("/{username}")
-    public ResponseEntity<?> checkPreviousRatings(@PathVariable String username){
+    @GetMapping(value = {"/{username}", "/"})
+    public ResponseEntity<?> checkPreviousRatings(@PathVariable (required = false) String username){
         if(username == null || username.isEmpty()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Username cannot be empty. Please provide a valid username."));
         }
