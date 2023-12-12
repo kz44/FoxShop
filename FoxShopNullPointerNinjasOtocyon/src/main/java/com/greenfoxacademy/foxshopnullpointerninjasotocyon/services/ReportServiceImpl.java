@@ -137,7 +137,10 @@ public class ReportServiceImpl implements ReportService {
     public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
-        if (!user.getRole().getRoleName().equals("ADMIN")) {
+        if (!(
+                user.getRole().getRoleName().equals("ADMIN") ||
+                user.getRole().getRoleName().equals("DEVELOPER")
+                )) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
                 return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
             }

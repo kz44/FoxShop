@@ -76,7 +76,10 @@ public class ReportController {
     @GetMapping(value = {"/reports/{pageNumber}", "/reports/"})
     public ResponseEntity<?> filterDatabaseRecords(@RequestParam(required = false) String status,
                                                    @PathVariable(required = false) Integer pageNumber) {
-        if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
+        if (!(
+                userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN") ||
+                        userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("DEVELOPER")
+        )) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (pageNumber == null) {
@@ -102,7 +105,10 @@ public class ReportController {
     //    URI path with double slash /reports//accept is not recognised as a valid URi by postman, the system returns message 400 Bad request
     @PostMapping(value = {"/reports/{id}/accept", "/reports/accept"})
     public ResponseEntity<?> acceptAdvertisementReport(@PathVariable(required = false) Long id) {
-        if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
+        if (!(
+                userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN") ||
+                        userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("DEVELOPER")
+        )) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (id == null) {
@@ -124,7 +130,10 @@ public class ReportController {
      */
     @PostMapping(value = {"/reports/{id}/deny", "/reports/deny"})
     public ResponseEntity<?> denyAdvertisementReport(@PathVariable(required = false) Long id) {
-        if (!userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN")) {
+        if (!(
+                userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("ADMIN") ||
+                        userService.getUserFromSecurityContextHolder().getRole().getRoleName().equals("DEVELOPER")
+        )) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Access not authorized."));
         }
         if (id == null) {
