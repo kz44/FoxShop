@@ -87,7 +87,7 @@ public class MessageController {
     public ResponseEntity<?> deleteMessage(@PathVariable(required = false) String receiverUsername) {
 
         if (receiverUsername == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username"));
         }
         return messageService.deleteLastMessage(receiverUsername);
     }
