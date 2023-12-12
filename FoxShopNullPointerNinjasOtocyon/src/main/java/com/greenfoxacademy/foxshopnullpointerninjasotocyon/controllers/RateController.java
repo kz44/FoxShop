@@ -45,7 +45,7 @@ public class RateController {
 
     @GetMapping(value = {"/{username}", "/"})
     public ResponseEntity<?> checkPreviousRatings(@PathVariable (required = false) String username){
-        if(username == null || username.isEmpty()){
+        if(username == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Username cannot be empty. Please provide a valid username."));
         }
 
