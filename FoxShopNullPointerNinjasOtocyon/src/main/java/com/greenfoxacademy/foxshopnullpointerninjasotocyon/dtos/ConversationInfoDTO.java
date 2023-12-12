@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ConversationInfoDTO {
     private LocalDateTime lastMessageTime;
-    private boolean isLastMessageAlreadyRead;
+    private boolean seen;
     private long numberOfMessages;
 }

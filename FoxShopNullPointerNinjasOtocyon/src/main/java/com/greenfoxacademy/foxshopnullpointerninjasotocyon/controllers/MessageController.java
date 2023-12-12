@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.MessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +17,13 @@ public class MessageController {
     private MessageService messageService;
 
     @GetMapping(value = {"/{otherUsername}/{pageNumber}", "/{otherUsername}", "/{otherUsername}/"})
-    protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable String otherUsername,
+    protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable(required = false) String otherUsername,
                                                           @PathVariable(required = false) Integer pageNumber) {
         if (pageNumber == null) {
             pageNumber = 0;
+        }
+        if (otherUsername == null || otherUsername.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Please provide a valid username."));
         }
         return messageService.getMessagesPagination(otherUsername, pageNumber);
     }
