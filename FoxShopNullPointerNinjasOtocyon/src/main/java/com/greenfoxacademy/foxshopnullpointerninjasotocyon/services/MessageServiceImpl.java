@@ -67,7 +67,7 @@ public class MessageServiceImpl implements MessageService {
         var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), timeThreshold);
 
         if (messageOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to edit within 10 minutes"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't new messages within last 10 minutes or they have already been read."));
         }
 
         var message = messageOpt.get();

@@ -56,11 +56,11 @@ public class MessageController {
                                          @RequestBody(required = false) MessageDTO newContent) {
 
         if (receiverUsername == null && (newContent == null || newContent.getContent().isEmpty())) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username and content"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username and content"));
         }
 
         if (receiverUsername == null) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username"));
         }
 
         if (newContent == null || newContent.getContent().isEmpty()) {
