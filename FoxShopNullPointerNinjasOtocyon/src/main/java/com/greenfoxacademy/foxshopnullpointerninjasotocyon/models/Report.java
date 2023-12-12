@@ -16,6 +16,9 @@ public class Report {
     private Long id;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne
@@ -25,4 +28,8 @@ public class Report {
     @ManyToOne
     @JoinColumn(name = "advertisement_id", nullable = false)
     private Advertisement receiver;
+
+    @ManyToOne
+    @JoinColumn(name = "reportStatus_id", nullable = false)
+    private ReportStatus reportStatus;
 }
