@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
-    private static final LocalDateTime TIME_THRESHOLD = LocalDateTime.now().minusMinutes(10);
     private final MessageRepository messageRepository;
     private final UserService userService;
 
@@ -59,12 +58,13 @@ public class MessageServiceImpl implements MessageService {
     public ResponseEntity<?> editMessage(String receiverUsername, MessageDTO newContent) {
         final var sender = userService.getUserFromSecurityContextHolder();
         final var receiver = userService.getUserByUsername(receiverUsername);
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
 
         if (receiver == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't user with the given username"));
         }
 
-        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), TIME_THRESHOLD);
+        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), timeThreshold);
 
         if (messageOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to edit within 10 minutes"));
@@ -93,15 +93,16 @@ public class MessageServiceImpl implements MessageService {
     public ResponseEntity<?> deleteLastMessage(String receiverUsername) {
         final var sender = userService.getUserFromSecurityContextHolder();
         final var receiver = userService.getUserByUsername(receiverUsername);
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
 
         if (receiver == null) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't user with the given username"));
         }
 
-        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), TIME_THRESHOLD);
+        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), timeThreshold);
 
         if (messageOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no message to delete within 10 minutes"));
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There are either no new messages within last 10 minutes or they have already been read."));
         }
 
         var message = messageOpt.get();
