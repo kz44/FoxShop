@@ -25,6 +25,7 @@ public class MessageController {
             pageNumber = 0;
         }
         return messageService.getMessagesPagination(otherUsername, pageNumber);
+    }
 
     /**
      * Endpoint for sending a message to a specified user.
