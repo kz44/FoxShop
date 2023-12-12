@@ -13,8 +13,11 @@ You need to set up these environment variables.
 
 There are scripts for filling database tables in the `resources/assets/databasesetup` directory:
 
+There are scripts for filling database tables in the `resources/assets/databasesetup` directory:
 * role_setup.sql
 * location_setup.sql
+* report_status_setup.sql
 
 
+You should implement it on your computer in the database.
 

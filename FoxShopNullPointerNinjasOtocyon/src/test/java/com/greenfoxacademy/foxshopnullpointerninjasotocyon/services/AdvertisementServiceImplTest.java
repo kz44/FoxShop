@@ -7,6 +7,7 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.AdvertisementM
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;

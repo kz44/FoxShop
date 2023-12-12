@@ -193,6 +193,18 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * Retrieves a user by their username from the repository.
+     *
+     * @param username The username of the user to retrieve.
+     * @return The user with the specified username, or null if not found.
+     */
+    @Override
+    public User getUserByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        return userOpt.orElse(null);
+    }
+
+    /**
      * Verifies a user's email based on the provided user ID and verification token.
      * <p>
      * This method attempts to verify a user's email by checking the validity of the user ID and verification
