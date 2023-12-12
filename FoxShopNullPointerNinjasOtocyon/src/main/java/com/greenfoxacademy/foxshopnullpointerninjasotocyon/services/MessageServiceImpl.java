@@ -100,6 +100,9 @@ public class MessageServiceImpl implements MessageService {
         if (!userService.checkUserRole().equals("ADMIN") && !userService.checkUserRole().equals("DEVELOPER")) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("You have no permission to the request."));
         }
+        if (user1 == null || user2 == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Both 'user1' and 'user2' are required."));
+        }
         ResponseEntity<?> pageValidationResponse = validatePageNumber(pageNumber);
         if (pageValidationResponse != null) {
             return pageValidationResponse;
