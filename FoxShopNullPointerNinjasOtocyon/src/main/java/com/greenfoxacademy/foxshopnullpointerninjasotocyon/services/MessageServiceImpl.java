@@ -145,6 +145,7 @@ public class MessageServiceImpl implements MessageService {
             return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
         }
         return ResponseEntity.ok().body(mapMessagesToDTO);
+    }
 
     /**
      * Sends a message to the specified user and persists the message in the repository.
