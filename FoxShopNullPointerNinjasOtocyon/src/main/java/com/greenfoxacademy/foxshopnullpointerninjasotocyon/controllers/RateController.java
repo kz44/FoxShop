@@ -28,6 +28,21 @@ public class RateController {
     private final RateService rateService;
     private final UserService userService;
 
+    /**
+     * Handles HTTP GET requests to check the previous ratings of a user.
+     * This endpoint allows clients to retrieve information about the previous ratings
+     * given by a user identified by their username. The method performs validation checks
+     * on the provided username and responds with either the user's ratings or appropriate
+     * error messages.
+     *
+     * @param username (optional) The username of the user whose previous ratings are to be checked.
+     * @return ResponseEntity representing the HTTP response, including status codes and response body.
+     *         - 200 OK: If the user has previous ratings, returns a list of RateDTO objects.
+     *         - 400 Bad Request: If the provided username is empty or null.
+     *         - 404 Not Found: If no user is found with the given username.
+     *         - 200 OK: If the user has no previous ratings, returns a success message.
+     */
+
     @GetMapping(value = {"/{username}", "/"})
     public ResponseEntity<?> checkPreviousRatings(@PathVariable (required = false) String username){
         if(username == null || username.isEmpty()){
