@@ -10,6 +10,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
     private static final int PAGE_SIZE = 10;
@@ -153,12 +158,11 @@ public class MessageServiceImpl implements MessageService {
      */
 
     private ResponseEntity<?> processMessages(User user1, User user2, int pageNumber) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "sent");
         Page<Message> messagePagedAndSorted =
                 messageRepository.findMessagesBetweenUsers(
                         user1,
                         user2,
-                        PageRequest.of(pageNumber, PAGE_SIZE, sort));
+                        PageRequest.of(pageNumber, PAGE_SIZE));
         if (userService.checkUserRole().equals("USER")) {
             User currentUser = userService.getUserFromSecurityContextHolder();
             messagePagedAndSorted.getContent().stream()
@@ -174,5 +178,33 @@ public class MessageServiceImpl implements MessageService {
             return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
         }
         return ResponseEntity.ok().body(mapMessagesToDTO);
+    }
+
+    /**
+     * Sends a message to the specified user and persists the message in the repository.
+     *
+     * @param receiverUsername The username of the message recipient.
+     * @param content          The content of the message.
+     * @return ResponseEntity containing information about the status of the message sending:
+     * - 200 OK and a success message in the response body for a successful request.
+     * - 400 Bad Request and an error message in the response body if the recipient is not registered.
+     */
+      
+    @Override
+    public ResponseEntity<?> sendMessageByUsername(String receiverUsername, MessageDTO content) {
+        final var receiver = userService.getUserByUsername(receiverUsername);
+
+        if (receiver == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The given receiver username is not registered"));
+        }
+
+        messageRepository.save(Message.builder()
+                .content(content.getContent())
+                .sender(userService.getUserFromSecurityContextHolder())
+                .receiver(receiver)
+                .sent(LocalDateTime.now())
+                .build());
+
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Message successfully send to " + receiver.getUsername()));
     }
 }
