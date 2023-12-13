@@ -1,14 +1,11 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RateDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Rate;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.RateRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,10 +19,6 @@ public class RateServiceImpl implements RateService{
 
     public final RateRepository rateRepository;
     public final UserRepository userRepository;
-    @Override
-    public List<Rate> getUserRatings(String username) {
-        return rateRepository.findBySenderUsername(username);
-    }
     @Override
     public List<RateDTO> findRates(String username){
         Optional<User> user = userRepository.findByUsername(username);
