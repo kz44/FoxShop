@@ -17,7 +17,7 @@ public class ConversationController {
         return messageService.getConversationInfo();
     }
 
-    @GetMapping(value = {"/{pageNumber}", "/{pageNumber}/"})
+    @GetMapping(value = {"/{pageNumber}", "/{pageNumber}/", "/"})
     public ResponseEntity<?> getConversationsBetweenUsers(@RequestParam(required = false) String user1,
                                                           @RequestParam(required = false) String user2,
                                                           @PathVariable(required = false) Integer pageNumber) {
