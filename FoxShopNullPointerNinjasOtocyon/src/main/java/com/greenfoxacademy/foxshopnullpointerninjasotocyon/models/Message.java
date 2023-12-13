@@ -1,8 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +8,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +21,10 @@ public class Message {
     @Column(nullable = false)
     private LocalDateTime sent;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean seen = false;
+
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
@@ -28,4 +32,5 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
+
 }

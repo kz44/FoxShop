@@ -31,7 +31,7 @@ public class ReportController {
 
     /**
      * Retrieves a list of reports specific to the currently authenticated user.
-     * <p>
+     *
      * This endpoint fetches reports associated with the authenticated user.
      * It returns a ResponseEntity containing the retrieved reports as per the user's access rights.
      *
@@ -50,7 +50,7 @@ public class ReportController {
      *
      * @param id The ID of the report to retrieve details for.
      * @return A ResponseEntity containing the detailed information of the requested report if found,
-     * or an error message if the report ID is missing or the report is not accessible.
+     *         or an error message if the report ID is missing or the report is not accessible.
      */
     @GetMapping(value = {"/{id}", "/"})
     public ResponseEntity<?> reportDetails(@PathVariable(required = false) Long id) {
