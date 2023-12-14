@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x -> x.requestMatchers("/api/auth/**", "/api/advertisement/advertisements", "/error/**").permitAll()
-                        .anyRequest().authenticated().requestMatchers(HttpMethod.GET, "/api/ratings/**").permitAll());
+                        .requestMatchers(HttpMethod.GET, "/api/ratings/**").permitAll().anyRequest().authenticated());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
