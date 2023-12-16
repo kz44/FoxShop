@@ -11,6 +11,9 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportRe
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportStatusRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -106,12 +109,12 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * Retrieves a list of report summaries for the reports sent by the authenticated user.
+     * Retrieves a summary list of reports specific to the currently authenticated user.
      *
-     * This method fetches reports from the report repository based on the currently authenticated user.
-     * The API endpoint utilizing this method is accessible only to authenticated users.
+     * This method fetches reports from the repository associated with the authenticated user.
+     * The API endpoint using this method is restricted to authenticated users only.
      *
-     * @return A list of ReportSummaryDTO objects representing summaries of reports sent by the user.
+     * @return A List of ReportSummaryDTO objects representing summaries of reports accessible to the authenticated user.
      */
     @Override
     public List<ReportSummaryDTO> browseReportsByUser() {
@@ -134,7 +137,10 @@ public class ReportServiceImpl implements ReportService {
     public ResponseEntity<?> reportDetails(Long reportID) {
         User user = userService.getUserFromSecurityContextHolder();
         Optional<Report> report = reportRepository.findById(reportID);
-        if (!(user.getRole().getRoleName().equals("ADMIN") || user.getRole().getRoleName().equals("DEVELOPER"))) {
+        if (!(
+                user.getRole().getRoleName().equals("ADMIN") ||
+                user.getRole().getRoleName().equals("DEVELOPER")
+                )) {
             if (report.isPresent() && !report.get().getSender().equals(user)) {
                 return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
             }
@@ -144,4 +150,88 @@ public class ReportServiceImpl implements ReportService {
         }
         return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
+
+    /**
+     * Retrieves reports filtered by status and paginates the results.
+     *
+     * This method fetches reports from the repository based on the provided status.
+     * If the status is null, all reports are fetched and paginated. Otherwise, reports are filtered by the given status.
+     * Pagination is applied to control the number of records per page.
+     *
+     * @param pageNumber The page number to retrieve.
+     * @param status     The status by which reports are filtered. If null, all reports are fetched.
+     * @return A ResponseEntity containing a paginated list of ReportSummaryDTO objects
+     *         representing reports filtered by status, along with total pages available.
+     *         If the status is invalid or not found, returns a bad request response with an error message.
+     */
+//    @Override
+//    public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
+//        Integer recordsPerPage = 3;
+//        if (status == null) {
+//            Page<Report> filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+//            List<Report> filteredEntityList = filteredPage.getContent();
+//            Integer pagesTotal = filteredPage.getTotalPages();
+//            List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+//            return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+//        }
+//
+//        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+//        if (reportStatusOptional.isEmpty()) {
+//            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
+//        }
+//
+//        Page<Report> filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
+//        List<Report> filteredEntityList = filteredPage.getContent();
+//        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+//        Integer pagesTotal = filteredPage.getTotalPages();
+//        return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+//    }
+    @Override
+    public ResponseEntity<?> browseReportsByStatus(Integer pageNumber, String status) {
+        Integer recordsPerPage = 10;
+        Page<Report> filteredPage;
+        if (status == null) {
+            filteredPage = reportRepository.findAll(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")));
+        } else {
+            Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(status);
+            if (reportStatusOptional.isEmpty()) {
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report status inserted."));
+            }
+            filteredPage = reportRepository.findAllByReportStatus(PageRequest.of(pageNumber, recordsPerPage, Sort.by("reportStatus")), reportStatusOptional.get());
+        }
+
+        List<Report> filteredEntityList = filteredPage.getContent();
+        Integer pagesTotal = filteredPage.getTotalPages();
+        List<ReportSummaryDTO> filteredDTOs = filteredEntityList.stream().map(ReportSummaryDTO::new).toList();
+        return ResponseEntity.ok(new ReportFilteredDTO(filteredDTOs, pagesTotal));
+    }
+    /**
+     * Accepts or denies a report by changing its state.
+     *
+     * This method modifies the status of a report identified by its ID based on the provided state.
+     * The status change is allowed unless the report's status change has already been granted.
+     *
+     * @param reportId The ID of the report to accept or deny.
+     * @param state    The State object representing the desired status change (acceptance or denial).
+     * @return A ResponseEntity indicating the success or failure of the status change.
+     *         If the report ID is invalid, returns a bad request response with an error message.
+     *         If the status change is disallowed due to a previously granted approval, returns a bad request response.
+     */
+    @Override
+    public ResponseEntity<?> acceptOrDenyReport(Long reportId, State state) {
+        //no null/validity check on status, as inserted by controller endpoint logic, not manually
+        Optional<Report> reportOptional = reportRepository.findById(reportId);
+        if (reportOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid report id inserted."));
+        }
+        if (reportOptional.get().getStatusChange()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Approval decisions cannot be modified once granted."));
+        }
+        Optional<ReportStatus> reportStatusOptional = reportStatusRepository.findDistinctByState(state.getStatusValue());
+        reportOptional.get().setReportStatus(reportStatusOptional.get());
+        reportOptional.get().setStatusChange(true);
+        reportRepository.save(reportOptional.get());
+        return ResponseEntity.ok(new SuccessMessageDTO("Report successfully " + state.getStatusValue() + "."));
+    }
+
 }
