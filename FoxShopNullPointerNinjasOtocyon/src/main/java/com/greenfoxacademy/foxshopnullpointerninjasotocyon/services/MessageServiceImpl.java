@@ -92,6 +92,39 @@ public class MessageServiceImpl implements MessageService {
     }
 
     /**
+     * Retrieves paginated messages between two specified users.
+     * <p>
+     * This method is restricted to users with the "ADMIN" or "DEVELOPER" role.
+     * It validates the provided page number and the existence of both users,
+     * then retrieves paginated and sorted messages between the specified users.
+     *
+     * @param user1      The username of the first user.
+     * @param user2      The username of the second user.
+     * @param pageNumber The page number for pagination.
+     * @return ResponseEntity with paginated and sorted messages or an error message if validation fails.
+     */
+
+    @Override
+    public ResponseEntity<?> getConversationBetweenTwoUsers(String user1, String user2, Integer pageNumber) {
+        if (!userService.checkUserRole().equals("ADMIN") && !userService.checkUserRole().equals("DEVELOPER")) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("You have no permission to the request."));
+        }
+        if (user1 == null || user2 == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Both 'user1' and 'user2' are required."));
+        }
+        ResponseEntity<?> pageValidationResponse = validatePageNumber(pageNumber);
+        if (pageValidationResponse != null) {
+            return pageValidationResponse;
+        }
+        Optional<User> userOpt1 = userRepository.findByUsername(user1);
+        Optional<User> userOpt2 = userRepository.findByUsername(user2);
+        if (!userOpt1.isPresent() || !userOpt2.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("At least one of the users or both does not exist."));
+        }
+        return processMessages(userOpt1.get(), userOpt2.get(), pageNumber);
+    }
+
+    /**
      * Validates the provided page number for pagination.
      * <p>
      * This method checks whether the provided page number is non-negative.
