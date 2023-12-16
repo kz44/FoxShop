@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ErrorMessageDTO {
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp timestamp = Timestamp.valueOf(LocalDateTime.now());
-    private String message;
+    private String error;
 
-    public ErrorMessageDTO(String message) {
-        this.message = message;
+    public ErrorMessageDTO(String error) {
+        this.error = error;
     }
 }

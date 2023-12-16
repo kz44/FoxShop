@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ReportCreationDTO {
-    private String title;
-    private String description;
-    private Long receiver;
+@NoArgsConstructor
+public class ConversationDTO {
+    private String username;
+    private ConversationInfoDTO details;
 }

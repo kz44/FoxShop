@@ -1,13 +1,15 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ReportCreationDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.enums.State;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.ReportStatus;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.AdvertisementRepository;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportRepository;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.ReportStatusRepository;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class ReportServiceImpl implements ReportService {
     private ReportRepository reportRepository;
     private UserService userService;
     private AdvertisementRepository advertisementRepository;
+    private UserRepository userRepository;
+    private ReportStatusRepository reportStatusRepository;
 
     /**
      * Checks for null values in the provided ReportCreationDTO and returns an appropriate ResponseEntity.
@@ -40,12 +44,16 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ResponseEntity<?> nullCheckReport(ReportCreationDTO reportCreationDTO) {
         List<String> missingData = new ArrayList<>();
+        if (reportCreationDTO.getTitle() == null) {
+            missingData.add("title");
+        }
         if (reportCreationDTO.getDescription() == null) {
             missingData.add("description");
         }
         if (reportCreationDTO.getReceiver() == null) {
             missingData.add("receiver");
         }
+        //report status: default is "pending", so status field does not have to be defined
         if (!missingData.isEmpty()) {
             String message = "There are missing some data in your request: ".concat(String.join(", ", missingData)).concat(".");
             return ResponseEntity.badRequest().body(new ErrorMessageDTO(message));
@@ -69,6 +77,7 @@ public class ReportServiceImpl implements ReportService {
         Report report = new Report();
         User user = userService.getUserFromSecurityContextHolder();
         report.setSender(user);
+        report.setReportStatus(reportStatusRepository.findDistinctByState(State.PENDING.getStatusValue()).get());
         return dataValidationAndSaveReport(reportCreationDTO, report);
     }
 
@@ -77,13 +86,14 @@ public class ReportServiceImpl implements ReportService {
      * If validation passes, the updated Report is saved to the repository.
      *
      * @param reportCreationDTO The ReportCreationDTO containing the updated information for the report.
-     * @param report    The Report entity to be updated.
+     * @param report            The Report entity to be updated.
      * @return ResponseEntity<?> A ResponseEntity containing either a success message or an error message,
      * wrapped in the appropriate HTTP status code.
      */
 
     private ResponseEntity<?> dataValidationAndSaveReport(ReportCreationDTO reportCreationDTO, Report report) {
         List<String> errors = new ArrayList<>();
+        report.setTitle(reportCreationDTO.getTitle());
         report.setDescription(reportCreationDTO.getDescription());
         Optional<Advertisement> advertisement = advertisementRepository.findById(reportCreationDTO.getReceiver());
         advertisement.ifPresentOrElse(report::setReceiver, () -> errors.add("Wrong advertisement id."));
@@ -93,5 +103,45 @@ public class ReportServiceImpl implements ReportService {
         }
         reportRepository.save(report);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Report sent successfully."));
+    }
+
+    /**
+     * Retrieves a list of report summaries for the reports sent by the authenticated user.
+     *
+     * This method fetches reports from the report repository based on the currently authenticated user.
+     * The API endpoint utilizing this method is accessible only to authenticated users.
+     *
+     * @return A list of ReportSummaryDTO objects representing summaries of reports sent by the user.
+     */
+    @Override
+    public List<ReportSummaryDTO> browseReportsByUser() {
+        //the api/reports endpoint using this method is being accessible only to authenticated users:
+        List<Report> reports = reportRepository.findAllBySender(userService.getUserFromSecurityContextHolder());
+        return reports.stream().map(ReportSummaryDTO::new).toList();
+    }
+
+    /**
+     * Retrieves detailed information about a specific report identified by its ID.
+     *
+     * This method fetches the report details based on the provided report ID and the current user's authentication.
+     * If the user is not an ADMIN and is not the creator of the report, access to the report details is denied.
+     *
+     * @param reportID The ID of the report to retrieve details for.
+     * @return A ResponseEntity containing the detailed information of the requested report if found,
+     *         or an error message if the report is not found in the database or access is restricted.
+     */
+    @Override
+    public ResponseEntity<?> reportDetails(Long reportID) {
+        User user = userService.getUserFromSecurityContextHolder();
+        Optional<Report> report = reportRepository.findById(reportID);
+        if (!(user.getRole().getRoleName().equals("ADMIN") || user.getRole().getRoleName().equals("DEVELOPER"))) {
+            if (report.isPresent() && !report.get().getSender().equals(user)) {
+                return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report details can be displayed only to its creator."));
+            }
+        }
+        if (report.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The report id is not located in database"));
+        }
+        return ResponseEntity.ok(new ReportDetailDTO(report.get()));
     }
 }

@@ -3,10 +3,8 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import org.springframework.http.ResponseEntity;
-import java.util.Map;
-import org.springframework.http.ResponseEntity;
+
 import java.util.Optional;
 
 public interface UserService {
@@ -35,4 +33,5 @@ public interface UserService {
 
     User getUserByUsername(String username);
 
+    ResponseEntity<?> verifyUserEmail(Long userId, String token);
 }
