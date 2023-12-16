@@ -21,6 +21,8 @@ public class Report {
     @Column(nullable = false)
     private String description;
 
+    private boolean statusChange = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User sender;
@@ -32,4 +34,8 @@ public class Report {
     @ManyToOne
     @JoinColumn(name = "reportStatus_id", nullable = false)
     private ReportStatus reportStatus;
+
+    public boolean getStatusChange(){
+        return statusChange;
+    }
 }
