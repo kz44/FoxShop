@@ -1,5 +1,5 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.CustomHandlerExceptionResolver;
-
+//package com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.CustomHandlerExceptionResolver;
+//
 //import jakarta.servlet.http.HttpServletRequest;
 //import jakarta.servlet.http.HttpServletResponse;
 //import org.springframework.http.HttpHeaders;
@@ -8,6 +8,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.CustomHandler
 //import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 //
 //import java.io.IOException;
+//import java.util.Map;
 //
 //@Component
 //public class RestResponseStatusExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -32,6 +33,6 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.config.CustomHandler
 ////        String accept = request.getHeader(HttpHeaders.ACCEPT);
 ////        response.setHeader(accept, HttpHeaders.CONTENT_TYPE);
 //
-//        return new ModelAndView();
+//        return new ModelAndView("error", Map.of("error", "We could not find the cause of this problem."));
 //    }
 //}
