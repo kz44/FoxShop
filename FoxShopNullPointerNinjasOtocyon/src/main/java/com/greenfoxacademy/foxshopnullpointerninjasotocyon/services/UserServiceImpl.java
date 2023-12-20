@@ -129,6 +129,7 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+
         user.setRole(roleRepository.findByRoleName("USER").get());
         userRepository.save(user);
         sendGridService.sendVerificationEmail(user);

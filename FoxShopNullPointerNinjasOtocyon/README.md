@@ -13,8 +13,6 @@ variable: `jdbc:mysql://localhost/foxshop`)
 You need to set up these environment variables.
 
 
-There are scripts for filling database tables in the `resources/assets/databasesetup` directory:
-
 * role_setup.sql
 * location_setup.sql
 * report_status_setup.sql
