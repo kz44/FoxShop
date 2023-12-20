@@ -5,12 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ReportCreationDTO {
-    private String title;
-    private String description;
-    private Long receiver;
+@NoArgsConstructor
+public class ConversationInfoDTO {
+    private LocalDateTime lastMessageTime;
+    private boolean seen;
+    private long numberOfMessages;
 }

@@ -3,6 +3,7 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Role;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
@@ -12,6 +13,8 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.SendGridService;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.UnverifiedUserRemove;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -39,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private final HttpServletResponse httpServletResponse;
     private final TokenBlacklistRepository tokenBlacklistRepository;
     private final DeleteExpiredToken deleteExpiredToken;
+    private final SendGridService sendGridService;
+    private final UnverifiedUserRemove unverifiedUserRemove;
 
     @Override
     public Optional<User> findByUsername(String name) {
@@ -124,9 +129,11 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(LocalDateTime.now());
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setRole(roleRepository.findByRoleName("USER").get());
 
+        user.setRole(roleRepository.findByRoleName("USER").get());
         userRepository.save(user);
+        sendGridService.sendVerificationEmail(user);
+        unverifiedUserRemove.deleteUnverifiedUser(user);
     }
 
     /**
@@ -165,8 +172,8 @@ public class UserServiceImpl implements UserService {
      * Checks the role of the currently authenticated user.
      *
      * @return The roleName of the user, or null if the user is not authenticated
-     *         or if an error occurs while retrieving the role.
-     *         If the user is not authenticated, sets the role to "VISITOR" and returns it.
+     * or if an error occurs while retrieving the role.
+     * If the user is not authenticated, sets the role to "VISITOR" and returns it.
      */
     public String checkUserRole() {
         var user = (FoxUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -186,11 +193,44 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Retrieves a user by their username from the repository.
+     *
+     * @param username The username of the user to retrieve.
+     * @return The user with the specified username, or null if not found.
+     */
     @Override
     public User getUserByUsername(String username) {
-        if (userRepository.existsByUsername(username)){
-            return userRepository.findByUsername(username).get();
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        return userOpt.orElse(null);
+    }
+
+    /**
+     * Verifies a user's email based on the provided user ID and verification token.
+     * <p>
+     * This method attempts to verify a user's email by checking the validity of the user ID and verification
+     * token. If the user is found and the token is valid, the user's account is marked as verified in the
+     * repository. A success response is returned if the verification is successful; otherwise, an error
+     * response is returned with appropriate details.
+     *
+     * @param userId The unique identifier of the user whose email is to be verified.
+     * @param token  The verification token associated with the user's email verification process.
+     * @return A ResponseEntity representing the result of the email verification process.
+     * If successful, returns an OK response with a success message.
+     * If unsuccessful, returns a bad request response with an error message indicating the reason.
+     */
+    @Override
+    public ResponseEntity<?> verifyUserEmail(Long userId, String token) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The user Id in your verification link is invalid. Try to register again."));
         }
-        return null;
+        User user = userOpt.get();
+        if (!passwordEncoder.matches(user.getUsername(), token)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The token in your verification link is invalid. Try to register again."));
+        }
+        user.setVerified(true);
+        userRepository.save(user);
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Your user account was successfully activated."));
     }
 }

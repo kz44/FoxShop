@@ -8,11 +8,8 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +34,9 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("User not found."));
         }
         User user = userOpt.get();
+        if (!user.isVerified()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("This user account is not active yet, because email verification is missing. Please check your mailbox and verify your email."));
+        }
         if (!userService.checkPassword(user, loginDTO.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("Wrong credentials."));
         }
@@ -72,5 +72,25 @@ public class AuthController {
     public ResponseEntity<?> logout() {
         userService.handleSecurityContextAndBlacklistToken();
         return ResponseEntity.ok("Logout successful");
+    }
+
+    /**
+     * Handles a GET request to verify a user's email.
+     * <p>
+     * This method is mapped to the endpoint "/verify" using the GET method. It expects two query parameters,
+     * userId and token, to identify the user and the verification token. The user's email verification is
+     * triggered by invoking the corresponding service method.
+     *
+     * @param userId The unique identifier of the user whose email is to be verified.
+     * @param token  The verification token associated with the user's email verification process.
+     * @return A ResponseEntity representing the result of the email verification process.
+     * The response status and body may vary depending on the success or failure of the verification.
+     */
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyUserEmail(@RequestParam(required = false) Long userId, @RequestParam(required = false) String token) {
+        if (userId == null || token == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid verification link."));
+        }
+        return userService.verifyUserEmail(userId, token);
     }
 }
