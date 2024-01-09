@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'commons-io:commons-io:2.15.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: '3.2.1'
     compileOnly 'org.projectlombok:lombok'
     implementation 'com.sendgrid:sendgrid-java:4.9.3'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
