@@ -189,7 +189,7 @@ public class MessageServiceImpl implements MessageService {
      * - 200 OK and a success message in the response body for a successful request.
      * - 400 Bad Request and an error message in the response body if the recipient is not registered.
      */
-      
+
     @Override
     public ResponseEntity<?> sendMessageByUsername(String receiverUsername, MessageDTO content) {
         final var receiver = userService.getUserByUsername(receiverUsername);
@@ -206,5 +206,38 @@ public class MessageServiceImpl implements MessageService {
                 .build());
 
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message successfully send to " + receiver.getUsername()));
+    }
+
+    /**
+     * Edits the content of the latest unseen message sent by the authenticated user within the last 10 minutes.
+     *
+     * @param receiverUsername The receiver username
+     * @param newContent The new content to set for the message.
+     * @return ResponseEntity, the status of the edit operation:
+     * - 200 OK and a success message in the response body for a successful edit.
+     * - 400 Bad Request and an error message in the response body if there is no eligible message within 10 minutes.
+     */
+    @Override
+    public ResponseEntity<?> editMessage(String receiverUsername, MessageDTO newContent) {
+        final var sender = userService.getUserFromSecurityContextHolder();
+        final var receiver = userService.getUserByUsername(receiverUsername);
+        LocalDateTime timeThreshold = LocalDateTime.now().minusMinutes(10);
+
+        if (receiver == null){
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't user with the given username"));
+        }
+
+        var messageOpt = messageRepository.findUnseenMessageWithinMinutesDescLimit1(sender.getId(), receiver.getId(), timeThreshold);
+
+        if (messageOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There isn't new messages within last 10 minutes or they have already been read."));
+        }
+
+        var message = messageOpt.get();
+        message.setContent(newContent.getContent());
+        message.setSent(LocalDateTime.now());
+
+        messageRepository.save(message);
+        return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully edited"));
     }
 }

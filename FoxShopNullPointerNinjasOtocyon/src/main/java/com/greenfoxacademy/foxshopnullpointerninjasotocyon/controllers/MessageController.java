@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class MessageController {
 
     private final MessageService messageService;
-  
+
     @GetMapping(value = {"/{otherUsername}/{pageNumber}", "/{otherUsername}", "/{otherUsername}/"})
     protected ResponseEntity<?> showMessagesWithOtherUser(@PathVariable(required = false) String otherUsername,
                                                           @PathVariable(required = false) Integer pageNumber) {
@@ -57,5 +57,33 @@ public class MessageController {
         }
 
         return messageService.sendMessageByUsername(receiverUsername, content);
+    }
+
+    /**
+     * Endpoint for editing a message
+     *
+     * @param receiverUsername The username of the recipient.
+     * @param newContent the new content.
+     * @return ResponseEntity containing information about the status of the message sending:
+     * - 200 OK and successful message in the response body for a successful request.
+     * - 400 Bad Request and an error message in the response body for a failed request.
+     */
+    @PutMapping(value = {"/edit/{receiverUsername}", "/edit/", "/edit"})
+    public ResponseEntity<?> editMessage(@PathVariable (required = false) String receiverUsername,
+                                         @RequestBody(required = false) MessageDTO newContent) {
+
+        if (receiverUsername == null && (newContent == null || newContent.getContent().isEmpty())) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username and content"));
+        }
+
+        if (receiverUsername == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username"));
+        }
+
+        if (newContent == null || newContent.getContent().isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing content for editing the message"));
+        }
+
+        return messageService.editMessage(receiverUsername, newContent);
     }
 }
