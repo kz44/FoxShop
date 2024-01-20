@@ -18,10 +18,20 @@ import java.util.Map;
 public class RestResponseEntityExceptionHandler
         extends ResponseEntityExceptionHandler {
 
-    //   all runtime(method level) exceptions display this message instead of whitelabel:
-    // spring servlet exceptions, like NoResourceFoundException, are not intercepted through this, they need overriding their respective method (from ResponseEntityExceptionHandler class): handleNoResourceFoundException()
-    @ExceptionHandler(value
-            = {Exception.class})
+    //   Runtime exceptions display a custom message instead of whitelabel error page using the method below.
+    // However, spring servlet exceptions, like NoResourceFoundException, are not handled through this, they need extra overriding their respective method (from ResponseEntityExceptionHandler class): see method override: handleNoResourceFoundException()
+    /**
+     * Exception handler for handling generic exceptions.
+     *
+     * This method is annotated with {@code @ExceptionHandler} to handle exceptions of type Exception.
+     * It returns a ResponseEntity with a response body containing a message indicating that the requested
+     * page does not exist, and sets the HTTP status to NOT_FOUND (404).
+     *
+     * @param ex      The Exception that was thrown.
+     * @param request The WebRequest associated with the request.
+     * @return A ResponseEntity containing an error message and the specified HTTP status.
+     */
+    @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<Object> handleConflict(
             Exception ex, WebRequest request) {
         Map<String, String> bodyOfResponse = new HashMap<>();
@@ -30,11 +40,24 @@ public class RestResponseEntityExceptionHandler
                 new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
-    // the spring servlet NoResourceFoundException displays the custom text:
+    // The spring servlet's NoResourceFoundException displays a custom message via the below method override. Useful sources:
     // https://stackoverflow.com/questions/51991992/getting-ambiguous-exceptionhandler-method-mapped-for-methodargumentnotvalidexce
     // https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/ResponseEntityExceptionHandler.html
-     @Override
-    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    /**
+     * Overrides the default handling for NoResourceFoundException.
+     *
+     * This method is called when a NoResourceFoundException is thrown. It returns a ResponseEntity
+     * with a message indicating that the requested page does not exist, and sets the HTTP status to NOT_FOUND (404).
+     *
+     * @param ex       The NoResourceFoundException that was thrown.
+     * @param headers  HttpHeaders to be included in the response.
+     * @param status   The desired HTTP status for the response.
+     * @param request  The WebRequest associated with the request.
+     * @return A ResponseEntity containing an error message and the specified HTTP status.
+     */
+    @Override
+    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers,
+                                                                    HttpStatusCode status, WebRequest request) {
         return new ResponseEntity<>("The page you are looking for does not exist.", HttpStatus.NOT_FOUND);
     }
 }

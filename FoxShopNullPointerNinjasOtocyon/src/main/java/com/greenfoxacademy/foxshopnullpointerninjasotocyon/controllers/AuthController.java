@@ -47,25 +47,24 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody(required = false) RegisterDto registerDto) {
-       throw new RuntimeException("");
-//        if (registerDto == null) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Registration data missing"));
-//        }
-//
-//        ResponseEntity<?> nullChecksResult = userService.registrationNullCheck(registerDto);
-//        if (nullChecksResult.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
-//            return nullChecksResult;
-//        }
-//
-//        if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This username is already being used."));
-//        }
-//        if (userService.doesEmailAlreadyExist(registerDto.getEmail())) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This email is already being used."));
-//        }
-//
-//        userService.constructAndSaveUser(registerDto);
-//        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getEmail()));
+        if (registerDto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("Registration data missing"));
+        }
+
+        ResponseEntity<?> nullChecksResult = userService.registrationNullCheck(registerDto);
+        if (nullChecksResult.getStatusCode().equals(HttpStatus.BAD_REQUEST)) {
+            return nullChecksResult;
+        }
+
+        if (userService.doesUsernameAlreadyExist(registerDto.getUsername())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This username is already being used."));
+        }
+        if (userService.doesEmailAlreadyExist(registerDto.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessageDTO("This email is already being used."));
+        }
+
+        userService.constructAndSaveUser(registerDto);
+        return ResponseEntity.ok(new RegisterSuccessDto(registerDto.getUsername(), registerDto.getEmail()));
     }
 
     //  using custom logout endpoint instead of the pre-defined one from the security filter chain:
