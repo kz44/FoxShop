@@ -10,6 +10,8 @@ variable: `jdbc:mysql://localhost/foxshop`)
 `SENDGRID_API_KEY` for the Send Grid API for sending verification mails
 `expiration-time-minutes` for the expiration time in minutes
 
+`expiration-time-minutes` for the expiration time in minutes
+
 You need to set up these environment variables.
 
 

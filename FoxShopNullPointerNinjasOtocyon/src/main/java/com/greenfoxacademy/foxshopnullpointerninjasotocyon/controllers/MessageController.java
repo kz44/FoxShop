@@ -1,6 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.MessageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,5 +86,26 @@ public class MessageController {
         }
 
         return messageService.editMessage(receiverUsername, newContent);
+    }
+
+    /**
+     * Endpoint for delete Message
+     *
+     * Deletes the last unseen message sent by the authenticated user to the specified receiver
+     * if the message was sent within the last 10 minutes.
+     * If the receiver username is not provided, a bad request response is returned with an error message.
+     *
+     * @param receiverUsername The username of the message receiver (optional).
+     * @return ResponseEntity containing either a success message if the message
+     * was successfully deleted or an error message if there was no message to delete, if
+     * the specified receiver does not exist, or if the username is missing.
+     */
+    @DeleteMapping(value = {"/delete/{receiverUsername}", "/delete/", "/delete"})
+    public ResponseEntity<?> deleteMessage(@PathVariable(required = false) String receiverUsername) {
+
+        if (receiverUsername == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing receiver username"));
+        }
+        return messageService.deleteLastMessage(receiverUsername);
     }
 }
