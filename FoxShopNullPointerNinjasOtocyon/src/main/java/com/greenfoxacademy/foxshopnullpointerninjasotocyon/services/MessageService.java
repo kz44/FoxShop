@@ -11,4 +11,5 @@ public interface MessageService {
     ResponseEntity<?> sendMessageByUsername(String receiverUsername, MessageDTO content);
     ResponseEntity<?> editMessage(String receiverUsername, MessageDTO newContent);
     ResponseEntity<?> deleteLastMessage(String receiverUsername);
+
 }

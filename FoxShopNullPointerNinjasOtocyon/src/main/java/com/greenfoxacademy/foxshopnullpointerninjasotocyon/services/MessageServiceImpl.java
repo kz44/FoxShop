@@ -215,7 +215,7 @@ public class MessageServiceImpl implements MessageService {
      * Edits the content of the latest unseen message sent by the authenticated user within the last 10 minutes.
      *
      * @param receiverUsername The receiver username
-     * @param newContent       The new content to set for the message.
+     * @param newContent The new content to set for the message.
      * @return ResponseEntity, the status of the edit operation:
      * - 200 OK and a success message in the response body for a successful edit.
      * - 400 Bad Request and an error message in the response body if there is no eligible message within 10 minutes.
@@ -243,7 +243,6 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully edited"));
     }
-
 
     /**
      * Deletes the last unseen message sent by the authenticated user to the specified receiver
