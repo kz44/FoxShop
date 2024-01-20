@@ -28,12 +28,20 @@ public class LoggingAspect {
     }
 
     /**
+     * Pointcut that matches all Spring beans in the application's main packages.
+     */
+    @Pointcut("within(com.greenfoxacademy.foxshopnullpointerninjasotocyon..*)")
+    public void applicationPackagePointcut() {
+        // Method is empty as this is just a Pointcut, the implementations are in the advices.
+    }
+
+    /**
      * Advice that logs methods throwing exceptions.
      *
      * @param joinPoint join point for advice
      * @param e         exception
      */
-    @AfterThrowing(pointcut = "springBeanPointcut()", throwing = "e")
+    @AfterThrowing(pointcut = "applicationPackagePointcut() && springBeanPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
         log.error("Exception in {}.{}() with cause = {}", joinPoint.getSignature().getDeclaringTypeName(),
                 joinPoint.getSignature().getName(), e.getCause() != null ? e.getCause() : "NULL");
@@ -46,7 +54,7 @@ public class LoggingAspect {
      * @return result
      * @throws Throwable throws IllegalArgumentException
      */
-    @Around("springBeanPointcut()")
+    @Around("applicationPackagePointcut() && springBeanPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         if (log.isDebugEnabled()) {
             log.debug("Enter: {}.{}() with argument[s] = {}", joinPoint.getSignature().getDeclaringTypeName(),
