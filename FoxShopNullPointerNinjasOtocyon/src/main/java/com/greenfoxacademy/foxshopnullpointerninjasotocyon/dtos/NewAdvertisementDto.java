@@ -1,14 +1,12 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class NewAdvertisementDto {
     private String title;
     private String description;

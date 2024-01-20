@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.aot.generate.GenerationContext;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -14,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class ImagePath {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
@@ -24,7 +21,7 @@ public class ImagePath {
     @JoinColumn(name = "advertisement_id", nullable = false)
     private Advertisement advertisement;
 
-    public ImagePath(String url){
+    public ImagePath(String url) {
         this.url = url;
     }
 }

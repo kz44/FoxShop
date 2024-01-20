@@ -2,10 +2,12 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 
 @Builder
 @Data
+@ToString
 public class AdvertisementPageableDTO {
     private String title;
 

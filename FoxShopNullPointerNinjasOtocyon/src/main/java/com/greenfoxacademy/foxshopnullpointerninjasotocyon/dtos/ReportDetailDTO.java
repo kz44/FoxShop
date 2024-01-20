@@ -3,9 +3,11 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Report;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @Getter
+@ToString
 public class ReportDetailDTO {
     private String reportTitle;
     private String description;

@@ -35,7 +35,7 @@ public class Report {
     @JoinColumn(name = "reportStatus_id", nullable = false)
     private ReportStatus reportStatus;
 
-    public boolean getStatusChange(){
+    public boolean getStatusChange() {
         return statusChange;
     }
 }

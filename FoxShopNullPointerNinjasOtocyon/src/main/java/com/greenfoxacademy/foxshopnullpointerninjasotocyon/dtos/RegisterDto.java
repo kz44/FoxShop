@@ -3,14 +3,14 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 public class RegisterDto {
     private String username;
     private String firstName;
@@ -20,7 +20,8 @@ public class RegisterDto {
     /**
      * default LocalDate format: yyyy-mm-dd: "2023-11-03"
      * custom:
-     *  @DateTimeFormat(pattern = "dd/MM/yyyy")
+     *
+     * @DateTimeFormat(pattern = "dd/MM/yyyy")
      */
     private LocalDate dateOfBirth;
 

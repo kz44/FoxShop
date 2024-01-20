@@ -1,15 +1,12 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
 @Setter
-
+@ToString
 public class PostImageDTO {
     private String imageBase64Encoded;
 }
