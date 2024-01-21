@@ -34,4 +34,15 @@ public class Message {
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", sent=" + sent +
+                ", seen=" + seen +
+                ", sender=" + sender.getUsername() +
+                ", receiver=" + receiver.getUsername() +
+                '}';
+    }
 }

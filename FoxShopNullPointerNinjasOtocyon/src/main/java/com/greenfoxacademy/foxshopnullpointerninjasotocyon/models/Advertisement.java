@@ -57,4 +57,23 @@ public class Advertisement {
     @Column(nullable = false)
     @OneToMany
     private Set<Rate> rating;
+
+    @Override
+    public String toString() {
+        return "Advertisement{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", closed=" + closed +
+                ", location=" + location +
+                ", user=" + user.getUsername() +
+                ", deliveryMethod=" + deliveryMethod +
+                ", category=" + category +
+                ", condition=" + condition +
+                ", imagePaths=" + imagePaths +
+                ", reports=" + reports +
+                ", rating=" + rating +
+                '}';
+    }
 }

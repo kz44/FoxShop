@@ -3,10 +3,12 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @NoArgsConstructor
 @Getter
+@ToString
 public class BlacklistedJWTToken {
 
     @Id

@@ -28,4 +28,12 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private Set<Advertisement> advertisements;
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -38,4 +38,17 @@ public class Report {
     public boolean getStatusChange() {
         return statusChange;
     }
+
+    @Override
+    public String toString() {
+        return "Report{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", statusChange=" + statusChange +
+                ", sender=" + sender.getUsername() +
+                ", receiver=" + receiver.getId() +
+                ", reportStatus=" + reportStatus +
+                '}';
+    }
 }

@@ -28,4 +28,11 @@ public class ReportStatus {
         this.state = state.getStatusValue();
     }
 
+    @Override
+    public String toString() {
+        return "ReportStatus{" +
+                "id=" + id +
+                ", state='" + state + '\'' +
+                '}';
+    }
 }

@@ -24,4 +24,13 @@ public class ImagePath {
     public ImagePath(String url) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "ImagePath{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", advertisement=" + advertisement.getId() +
+                '}';
+    }
 }

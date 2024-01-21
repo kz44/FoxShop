@@ -1,7 +1,10 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +15,6 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class User {
 
     @Id
@@ -62,5 +64,22 @@ public class User {
 
     @Column(nullable = false)
     private boolean verified = false;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", lastLogin=" + lastLogin +
+                ", role=" + role +
+                ", verified=" + verified +
+                '}';
+    }
 }
 

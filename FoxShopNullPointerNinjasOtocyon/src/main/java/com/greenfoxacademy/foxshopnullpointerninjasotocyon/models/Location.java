@@ -22,4 +22,12 @@ public class Location {
 
     @OneToMany(mappedBy = "location")
     private Set<Advertisement> advertisements;
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
