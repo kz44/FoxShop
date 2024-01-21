@@ -3,14 +3,14 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString
+@Setter
 public class RegisterDto {
     private String username;
     private String firstName;
@@ -25,4 +25,15 @@ public class RegisterDto {
      */
     private LocalDate dateOfBirth;
 
+    @Override
+    public String toString() {
+        return "RegisterDto{" +
+                "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='*****'" +
+                ", dateOfBirth=" + dateOfBirth +
+                '}';
+    }
 }
