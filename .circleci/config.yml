@@ -55,7 +55,7 @@ jobs:
           at: .
       - run:
           name: "build image"
-          command: docker build -t $DOCKER_REPO --pull --build-arg JAR_FILE=build/libs/noty_web-*.jar -f Dockerfile .
+          command: docker build -t $DOCKER_REPO --pull --build-arg JAR_FILE=build/libs/FoxShopNullPointerNinjasOtocyon-*.jar -f Dockerfile .
       - run:
           name: "dockerhub login"
           command: echo "$DOCKER_PAT" | docker login -u $DOCKER_USER --password-stdin
