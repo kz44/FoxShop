@@ -46,6 +46,9 @@ public class User {
     @Column(nullable = false)
     private boolean isBanned = false;
 
+    @Column
+    private String bannedMessage;
+
     @OneToMany(mappedBy = "user")
     private Set<Advertisement> advertisements;
 
