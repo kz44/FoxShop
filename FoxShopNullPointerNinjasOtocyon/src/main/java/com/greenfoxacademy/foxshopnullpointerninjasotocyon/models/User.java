@@ -43,6 +43,9 @@ public class User {
     @Column
     private LocalDateTime lastLogin;
 
+    @Column(nullable = false)
+    private boolean isBanned = false;
+
     @OneToMany(mappedBy = "user")
     private Set<Advertisement> advertisements;
 
