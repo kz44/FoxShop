@@ -233,4 +233,47 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Your user account was successfully activated."));
     }
+
+    /**
+     * Bans a user identified by the provided user ID.
+     * <p>
+     * This method performs the following steps:
+     * 1. Checks if the provided user ID is missing or invalid.
+     * 2. Verifies that the user performing the ban has the necessary role (ADMIN or DEVELOPER).
+     * 3. Ensures that the target user is not already banned.
+     * 4. Sets the role of the banned user to "VISITOR" to limit his access.
+     * 5. Marks the user as banned.
+     * 6. Saves the updated user information in the database.
+     *
+     * @param id The user ID to be banned.
+     * @return ResponseEntity with a SuccessMessageDTO if the ban is successful,
+     *         or an ErrorMessageDTO if there are issues with the provided user ID,
+     *         user role, or if the user is already banned.
+     */
+
+    @Override
+    public ResponseEntity<?> banUserById(Long id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorMessageDTO("User ID missing. Please provide a valid user ID to perform the ban action."));
+        }
+        User user = userOpt.get();
+        if (user.isBanned()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("User is already banned."));
+        }
+        if (!user.getRole().getRoleName().equals("USER") ||
+                (!checkUserRole().equals("ADMIN") && !checkUserRole().equals("DEVELOPER"))) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid user role or insufficient privileges to perform the ban action."));
+        }
+
+        user.setRole(roleRepository.findByRoleName("VISITOR").get());
+        user.setBanned(true);
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(new SuccessMessageDTO(
+                        "User banned successfully by a(n) " + getUserFromSecurityContextHolder().getRole().getRoleName()
+                        + " with ID: " + getUserFromSecurityContextHolder().getId()
+                        + ", username: " + getUserFromSecurityContextHolder().getUsername() + "."));
+    }
 }
