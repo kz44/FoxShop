@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.BanRequestDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -29,8 +30,9 @@ public class UserController {
         }
     }
 
-    @PostMapping("/ban/{id}")
-    public ResponseEntity<?> banUser(@PathVariable(required = false) Long id) {
-        return userService.banUserById(id);
+    @PostMapping("/ban/{username}")
+    public ResponseEntity<?> banUser(@PathVariable(required = false) String username,
+                                     @RequestBody(required = false) BanRequestDTO banRequestDTO) {
+        return userService.banUserById(username, banRequestDTO);
     }
 }
