@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
     private static final int PAGE_SIZE = 10;
@@ -33,6 +33,7 @@ public class MessageServiceImpl implements MessageService {
     private UserRepository userRepository;
     private UserService userService;
     private MessageMapper messageMapper;
+
 
     /**
      * Retrieves information about conversations for the current user.
