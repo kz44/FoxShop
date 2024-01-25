@@ -32,7 +32,6 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
     private UserRepository userRepository;
     private UserService userService;
-    private MessageMapper messageMapper;
 
 
     /**
@@ -176,7 +175,7 @@ public class MessageServiceImpl implements MessageService {
         }
         List<MessagePageableDTO> mapMessagesToDTO = messagePagedAndSorted
                 .stream()
-                .map(messageMapper::toDTO)
+                .map(MessageMapper::toDTO)
                 .toList();
         if (mapMessagesToDTO.isEmpty()) {
             return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
