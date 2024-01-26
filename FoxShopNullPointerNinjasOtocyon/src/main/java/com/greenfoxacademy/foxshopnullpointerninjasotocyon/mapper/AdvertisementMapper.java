@@ -22,6 +22,7 @@ public class AdvertisementMapper {
      */
     public AdvertisementPageableDTO toDTO(Advertisement entity) {
         return AdvertisementPageableDTO.builder()
+                .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
                 .price(entity.getPrice())

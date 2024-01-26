@@ -7,6 +7,8 @@ import lombok.Data;
 @Builder
 @Data
 public class AdvertisementPageableDTO {
+    private Long id;
+
     private String title;
 
     private String description;

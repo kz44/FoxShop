@@ -2,9 +2,6 @@ package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.mapper.MessageMapper;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Message;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.MessageRepository;
@@ -12,20 +9,17 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.MessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
     private static final int PAGE_SIZE = 10;
@@ -215,7 +209,7 @@ public class MessageServiceImpl implements MessageService {
      * Edits the content of the latest unseen message sent by the authenticated user within the last 10 minutes.
      *
      * @param receiverUsername The receiver username
-     * @param newContent The new content to set for the message.
+     * @param newContent       The new content to set for the message.
      * @return ResponseEntity, the status of the edit operation:
      * - 200 OK and a success message in the response body for a successful edit.
      * - 400 Bad Request and an error message in the response body if there is no eligible message within 10 minutes.
