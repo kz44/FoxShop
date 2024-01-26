@@ -127,8 +127,11 @@ public class AdvertisementController {
         return advertisementService.closeAdvertisementById(advertisementId);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getAdvertisementById(@PathVariable Long id) {
-        return null;
+    @GetMapping(value = {"/{id}", "/"})
+    public ResponseEntity<?> getAdvertisementById(@PathVariable(required = false) Long id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Please provide the ID of the advertisement."));
+        }
+        return advertisementService.getAdvertisementById(id);
     }
 }

@@ -382,4 +382,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
     }
 
+    @Override
+    public ResponseEntity<?> getAdvertisementById(Long id) {
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+        if (advertisementOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with provided id."));
+        }
+        AdvertisementWithImageDTO advertisementWithImageDTO = new AdvertisementWithImageDTO(advertisementOptional.get());
+        return ResponseEntity.ok().body(advertisementWithImageDTO);
+    }
+
 }
