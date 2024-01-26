@@ -274,4 +274,6 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.delete(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully deleted"));
     }
+
+
 }

@@ -25,16 +25,26 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MessageServiceImplTest {
     private static final int PAGE_SIZE = 10;
     private static final LocalDateTime MOCKED_NOW = LocalDateTime.of(2024, 1, 25, 21, 45);
     private static MockedStatic<LocalDateTime> mockDateTime = Mockito.mockStatic(LocalDateTime.class);
     private static User testUser;
+    private static User receiver;
+    private static User sender;
 
     static {
         testUser = new User();
+        receiver = new User();
+        sender = new User();
         testUser.setUsername("testUser");
+        receiver.setUsername("receiver");
+        sender.setUsername("sender");
+        testUser.setId(1L);
+        receiver.setId(2L);
+        sender.setId(3L);
     }
 
     @MockBean
@@ -48,12 +58,12 @@ class MessageServiceImplTest {
     @BeforeAll
     static void mockUniversalUser() {
         Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(testUser);
+        Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
     }
 
     @Test
     void getConversationInfoParameterOtherUsersReturnsNull() {
         Set<User> otherUsers = null;
-//        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(testUser);
         Mockito.when(messageRepository.findOtherUsers(testUser)).thenReturn(otherUsers);
         ResponseEntity<?> resultResponse = messageService.getConversationInfo();
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, resultResponse.getStatusCode());
@@ -67,9 +77,9 @@ class MessageServiceImplTest {
 
     @Test
     void getConversationInfoParameterOtherUsersReturnsEmpty() {
-        Set<User> otherUsers = new HashSet<>();
-//        Mockito.when(userService.getUserFromSecurityContextHolder()).thenReturn(testUser);
-        Mockito.when(messageRepository.findOtherUsers(testUser)).thenReturn(otherUsers);
+        Set<User> emptyUsers = new HashSet<>();
+        Mockito.when(messageRepository.findOtherUsers(testUser)).thenReturn(emptyUsers);
+        mockDateTime.when(LocalDateTime::now).thenReturn(MOCKED_NOW);
         ResponseEntity<?> resultResponse = messageService.getConversationInfo();
         assertEquals(HttpStatus.OK, resultResponse.getStatusCode());
         assertInstanceOf(SuccessMessageDTO.class, resultResponse.getBody());
@@ -81,7 +91,7 @@ class MessageServiceImplTest {
     @Test
     void getConversationBetweenTwoUsersWithUnauthorizedUserRoleReturnsBadRequest() {
         Mockito.when(userService.checkUserRole()).thenReturn("USER");
-        ResponseEntity<?> resultResponse = messageService.getConversationBetweenTwoUsers("testUser", "u2", 0);
+        ResponseEntity<?> resultResponse = messageService.getConversationBetweenTwoUsers("notCheckedUsername1", "notCheckedUsername2", 0);
         assertNotNull(resultResponse.getBody());
         assertEquals(resultResponse.getStatusCode(), HttpStatus.BAD_REQUEST);
         assertInstanceOf(ErrorMessageDTO.class, resultResponse.getBody());
@@ -92,18 +102,13 @@ class MessageServiceImplTest {
     @Test
     void getConversationBetweenTwoUsersReturnsListOfMessageDTOs() {
         int pageNumber = 0;
-        User sender = new User();
-        sender.setUsername("mySender");
-        User receiver = new User();
-        receiver.setUsername("myReceiver");
         Message message = new Message(1L, "Hello", LocalDateTime.of(2024, 01, 24, 15, 59), true, sender, receiver);
-//        messageRepository.save(message);
         Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         Page<Message> page = new PageImpl(List.of(message), pageable, 0);
         Mockito.when(userService.checkUserRole()).thenReturn("ADMIN");
         Mockito.when(messageRepository.findMessagesBetweenUsers(sender, receiver, PageRequest.of(pageNumber, PAGE_SIZE))).thenReturn(page);
-        Mockito.when(userRepository.findByUsername("mySender")).thenReturn(Optional.of(sender));
-        Mockito.when(userRepository.findByUsername("myReceiver")).thenReturn(Optional.of(receiver));
+        Mockito.when(userRepository.findByUsername("sender")).thenReturn(Optional.of(sender));
+        Mockito.when(userRepository.findByUsername("receiver")).thenReturn(Optional.of(receiver));
 
         List<MessagePageableDTO> mapMessagesToDTO = new ArrayList<>();
         mapMessagesToDTO.add(MessageMapper.toDTO(message));
@@ -125,7 +130,7 @@ class MessageServiceImplTest {
     @Test
     void getMessagesPaginationUsingInvalidPageNumberReturnsBadRequest() {
         int invalidPageNumber = -1;
-        ResponseEntity<?> errorResponse = messageService.getMessagesPagination("myReceiver", invalidPageNumber);
+        ResponseEntity<?> errorResponse = messageService.getMessagesPagination("notCheckedUsername", invalidPageNumber);
         assertNotNull(errorResponse.getBody());
         assertInstanceOf(ErrorMessageDTO.class, errorResponse.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
@@ -137,18 +142,15 @@ class MessageServiceImplTest {
     void getMessagesPaginationReturnsOK() {
         int pageNumber = 0;
         int pageSize = 10;
-        User otherUser = new User();
-        otherUser.setUsername("user2");
-        Mockito.when(userRepository.findByUsername("user2")).thenReturn(Optional.of(otherUser));
+        Mockito.when(userRepository.findByUsername("sender")).thenReturn(Optional.of(sender));
         Mockito.when(userService.checkUserRole()).thenReturn("USER");
-        Message message = new Message(1L, "Hello", LocalDateTime.of(2024, 01, 24, 15, 59), true, otherUser, testUser);
-//        messageRepository.save(message);
+        Message message = new Message(1L, "Hello", LocalDateTime.of(2024, 01, 24, 15, 59), true, sender, testUser);
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Message> page = new PageImpl(List.of(message), pageable, 0);
-        Mockito.when(messageRepository.findMessagesBetweenUsers(testUser, otherUser, PageRequest.of(pageNumber, pageSize))).thenReturn(page);
+        Mockito.when(messageRepository.findMessagesBetweenUsers(testUser, sender, PageRequest.of(pageNumber, pageSize))).thenReturn(page);
         List<MessagePageableDTO> mapMessagesToDTO = new ArrayList<>();
         mapMessagesToDTO.add(MessageMapper.toDTO(message));
-        ResponseEntity<?> successResponse = messageService.getMessagesPagination("user2", 0);
+        ResponseEntity<?> successResponse = messageService.getMessagesPagination("sender", 0);
         assertNotNull(successResponse.getBody());
         assertInstanceOf(List.class, successResponse.getBody());
         List<MessagePageableDTO> responseDTOs = (List<MessagePageableDTO>) successResponse.getBody();
@@ -158,8 +160,6 @@ class MessageServiceImplTest {
 
     @Test
     void sendMessageByUsernameReturnsOK() {
-        User receiver = new User();
-        receiver.setUsername("receiver");
         Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
         MessageDTO messageDTO = new MessageDTO();
         messageDTO.setContent("hi!");
@@ -184,10 +184,6 @@ class MessageServiceImplTest {
 
     @Test
     void editMessageReturnsOK() {
-        User receiver = new User();
-        receiver.setUsername("receiver");
-        receiver.setId(2L);
-        testUser.setId(1L);
         Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
         Optional<Message> messageOptional = Optional.of(new Message(1L, "Hello", MOCKED_NOW.minusMinutes(3), true, receiver, testUser));
         mockDateTime.when(LocalDateTime::now).thenReturn(MOCKED_NOW);
@@ -204,11 +200,7 @@ class MessageServiceImplTest {
     }
 
     @Test
-    void editMessageReturnsOK() {
-        User receiver = new User();
-        receiver.setUsername("receiver");
-        receiver.setId(2L);
-        testUser.setId(1L);
+    void editMessageReturnsEmptyAndBadRequest() {
         Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
         mockDateTime.when(LocalDateTime::now).thenReturn(MOCKED_NOW);
         LocalDateTime timeThreshold = MOCKED_NOW.minusMinutes(10);
@@ -223,7 +215,34 @@ class MessageServiceImplTest {
         assertEquals("There is no message to edit within 10 minutes", errorMessageDTO.getError());
     }
 
-//    @Test
-//    void deleteLastMessage() {
-//    }
+    @Test
+    void deleteLastMessageReturnsOK() {
+        Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
+        mockDateTime.when(LocalDateTime::now).thenReturn(MOCKED_NOW);
+        LocalDateTime timeThreshold = MOCKED_NOW.minusMinutes(10);
+        Mockito.when(messageRepository.findUnseenMessageWithinMinutesDescLimit1(testUser.getId(), receiver.getId(), timeThreshold)).thenReturn(Optional.empty());
+        ResponseEntity<?> errorResponse = messageService.deleteLastMessage("receiver");
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponse.getStatusCode());
+        assertNotNull(errorResponse.getBody());
+        assertInstanceOf(ErrorMessageDTO.class,errorResponse.getBody());
+        ErrorMessageDTO errorMessageDTO = (ErrorMessageDTO) errorResponse.getBody();
+        assertEquals("There are either no new messages within last 10 minutes or they have already been read.", errorMessageDTO.getError());
+    }
+
+    @Test
+    void deleteMessageReturnsOK() {
+        Optional<Message> messageOptional = Optional.of(new Message(1L, "Hello", MOCKED_NOW.minusMinutes(3), true, receiver, testUser));
+        Mockito.when(userService.getUserByUsername("receiver")).thenReturn(receiver);
+        mockDateTime.when(LocalDateTime::now).thenReturn(MOCKED_NOW);
+        LocalDateTime timeThreshold = MOCKED_NOW.minusMinutes(10);
+        Mockito.when(messageRepository.findUnseenMessageWithinMinutesDescLimit1(testUser.getId(), receiver.getId(), timeThreshold)).thenReturn(messageOptional);
+        ResponseEntity<?> successResponse = messageService.deleteLastMessage("receiver");
+        assertNotNull(successResponse.getBody());
+        assertInstanceOf(SuccessMessageDTO.class,successResponse.getBody());
+        assertEquals(HttpStatus.OK, successResponse.getStatusCode());
+        SuccessMessageDTO successMessageDTO = (SuccessMessageDTO) successResponse.getBody();
+        assertEquals("Message was successfully deleted", successMessageDTO.getSuccess());
+
+    }
+
 }
