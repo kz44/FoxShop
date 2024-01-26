@@ -1,20 +1,13 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementCreationDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.AdvertisementPageableDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.PostImageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RemoveImageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.AdvertisementService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 @AllArgsConstructor
@@ -63,7 +56,7 @@ public class AdvertisementController {
    https://codebeautify.org/image-to-base64-converter
    */
     @PostMapping(value = {
-            "/base64encoded/image","/base64encoded/image/",
+            "/base64encoded/image", "/base64encoded/image/",
             "/base64encoded/image/{advertisementId}"})
 
     public ResponseEntity<?> addImageBase64(@RequestBody(required = false) PostImageDTO postImageDTO,
@@ -78,7 +71,7 @@ public class AdvertisementController {
     }
 
     @PostMapping(value = {
-            "/binaryDataUpload/image","/binaryDataUpload/image/",
+            "/binaryDataUpload/image", "/binaryDataUpload/image/",
             "/binaryDataUpload/image/{advertisementId}"})
     public ResponseEntity<?> uploadImageFromBinary(HttpServletRequest httpServletRequest,
                                                    @PathVariable(required = false) Long advertisementId) {
@@ -117,21 +110,25 @@ public class AdvertisementController {
 
     /**
      * This endpoint close the advertisement by id
-     * @param advertisementId id of the advertisement want to close
      *
-     * @return
-     *      - success message: if the advertisement closed
-     *      - success message: if tha advertisement closed by ADMIN
-     *      - error message: if the advertisement is already closed
-     *      - error message: if the user don't have permission to close the advertisement
-     *      - error message: if the something went wrong during the changing advertisement status
+     * @param advertisementId id of the advertisement want to close
+     * @return - success message: if the advertisement closed
+     * - success message: if tha advertisement closed by ADMIN
+     * - error message: if the advertisement is already closed
+     * - error message: if the user don't have permission to close the advertisement
+     * - error message: if the something went wrong during the changing advertisement status
      */
     @PostMapping(value = {
             "/closeAdvertisement/{advertisementId}",
             "/closeAdvertisement/",
             "/closeAdvertisement"
     })
-    public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
+    public ResponseEntity<?> closeAdvertisement(@PathVariable(required = false) Long advertisementId) {
         return advertisementService.closeAdvertisementById(advertisementId);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAdvertisementById(@PathVariable Long id) {
+        return null;
     }
 }
