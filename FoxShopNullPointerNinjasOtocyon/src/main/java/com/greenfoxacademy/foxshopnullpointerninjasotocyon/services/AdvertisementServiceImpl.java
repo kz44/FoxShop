@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -256,7 +258,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
         }
 //      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+        String pathForSaving = "src/main/resources/static/assets/advertisementImages/"
                 + username + "/"
                 + advertisementEntity.getId().toString() + "/"
                 + numberForNewImageEntity + ".png";
@@ -390,6 +392,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
         AdvertisementWithImageDTO advertisementWithImageDTO = new AdvertisementWithImageDTO(advertisementOptional.get());
         return ResponseEntity.ok().body(advertisementWithImageDTO);
+    }
+
+    @Override
+    public byte[] getImage(String imagePathString) throws IOException {
+        Path imagePath = Path.of(imagePathString);
+        if (Files.exists(imagePath)) {
+            return Files.readAllBytes(imagePath);
+        }
+        return null;
     }
 
 }

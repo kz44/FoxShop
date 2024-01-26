@@ -38,7 +38,7 @@ public class AdvertisementWithImageDTO {
         this.categoryName = advertisement.getCategory().getName();
         this.conditionName = advertisement.getCondition().getName();
         for (ImagePath imagePath : advertisement.getImagePaths()) {
-            images.add(imagePath.getUrl());
+            images.add("http://localhost:8080/api/advertisement/getImage?path=".concat(imagePath.getUrl()));
         }
     }
 }

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface AdvertisementService {
@@ -26,4 +27,6 @@ public interface AdvertisementService {
     ResponseEntity<?> closeAdvertisementById(Long advertisementId);
 
     ResponseEntity<?> getAdvertisementById(Long id);
+
+    byte[] getImage(String imagePath) throws IOException;
 }

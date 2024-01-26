@@ -5,9 +5,13 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.Advertisemen
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @AllArgsConstructor
@@ -133,5 +137,14 @@ public class AdvertisementController {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Please provide the ID of the advertisement."));
         }
         return advertisementService.getAdvertisementById(id);
+    }
+
+    @GetMapping("/getImage")
+    public ResponseEntity<?> getImage(@RequestParam String path) throws IOException {
+        Path imagePath = Path.of(path);
+        if (!Files.exists(imagePath)) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no picture on provided path."));
+        }
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(Files.readAllBytes(imagePath));
     }
 }
