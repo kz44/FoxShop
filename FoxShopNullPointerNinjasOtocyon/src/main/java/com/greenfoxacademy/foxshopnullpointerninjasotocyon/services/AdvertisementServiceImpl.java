@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -384,23 +382,19 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
     }
 
+    /**
+     * Retrieves an advertisement by its unique identifier.
+     *
+     * @param id The identifier of the advertisement to be retrieved.
+     * @return ResponseEntity containing the advertisement if found, or a ResponseEntity with an error message if not found.
+     */
     @Override
     public ResponseEntity<?> getAdvertisementById(Long id) {
         Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
         if (advertisementOptional.isEmpty()) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with provided id."));
         }
-        AdvertisementWithImageDTO advertisementWithImageDTO = new AdvertisementWithImageDTO(advertisementOptional.get());
+        AdvertisementWithImageDTO advertisementWithImageDTO = new AdvertisementMapper().advertisementToDtoWithImage(advertisementOptional.get());
         return ResponseEntity.ok().body(advertisementWithImageDTO);
     }
-
-    @Override
-    public byte[] getImage(String imagePathString) throws IOException {
-        Path imagePath = Path.of(imagePathString);
-        if (Files.exists(imagePath)) {
-            return Files.readAllBytes(imagePath);
-        }
-        return null;
-    }
-
 }

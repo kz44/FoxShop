@@ -1,7 +1,5 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Advertisement;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.ImagePath;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -28,17 +26,4 @@ public class AdvertisementWithImageDTO {
 
     private List<String> images = new ArrayList<>();
 
-    public AdvertisementWithImageDTO(Advertisement advertisement) {
-        this.id = advertisement.getId();
-        this.title = advertisement.getTitle();
-        this.description = advertisement.getDescription();
-        this.price = advertisement.getPrice();
-        this.locationName = advertisement.getLocation().getName();
-        this.deliveryMethodName = advertisement.getDeliveryMethod().getName();
-        this.categoryName = advertisement.getCategory().getName();
-        this.conditionName = advertisement.getCondition().getName();
-        for (ImagePath imagePath : advertisement.getImagePaths()) {
-            images.add("http://localhost:8080/api/advertisement/getImage?path=".concat(imagePath.getUrl()));
-        }
-    }
 }
