@@ -140,7 +140,10 @@ public class AdvertisementController {
     }
 
     @GetMapping("/getImage")
-    public ResponseEntity<?> getImage(@RequestParam String path) throws IOException {
+    public ResponseEntity<?> getImage(@RequestParam(required = false) String path) throws IOException {
+        if (path == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("The path of the image is missing."));
+        }
         Path imagePath = Path.of(path);
         if (!Files.exists(imagePath)) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no picture on provided path."));
