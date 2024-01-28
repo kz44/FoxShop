@@ -30,9 +30,12 @@ public class UserController {
         }
     }
 
-    @PostMapping("/ban/{username}")
+    @PostMapping(value = {"/ban/{username}", "/ban/", "ban"})
     public ResponseEntity<?> banUser(@PathVariable(required = false) String username,
                                      @RequestBody(required = false) BanRequestDTO banRequestDTO) {
-        return userService.banUserById(username, banRequestDTO);
+        if (username == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username."));
+        }
+        return userService.banUserByUsername(username, banRequestDTO);
     }
 }

@@ -239,16 +239,16 @@ public class UserServiceImpl implements UserService {
      * the role of the user invoking the action, and the current ban status of the target user before
      * proceeding with the ban operation.
      *
-     * @param username The username of the user to be banned. Must be a valid and existing username.
-     * @param banRequestDTO  A message providing context or a reason for the ban. This message will be stored
-     *                 for reference and can be later retrieved if needed.
+     * @param username      The username of the user to be banned. Must be a valid and existing username.
+     * @param banRequestDTO A message providing context or a reason for the ban. This message will be stored
+     *                      for reference and can be later retrieved if needed.
      * @return ResponseEntity with a SuccessMessageDTO if the ban is successful,
-     *         or an ErrorMessageDTO if there are issues with the provided user ID,
-     *         user role, or if the user is already banned.
+     * or an ErrorMessageDTO if there are issues with the provided user ID,
+     * user role, or if the user is already banned.
      */
 
     @Override
-    public ResponseEntity<?> banUserById(String username, BanRequestDTO banRequestDTO) {
+    public ResponseEntity<?> banUserByUsername(String username, BanRequestDTO banRequestDTO) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body(
@@ -264,7 +264,9 @@ public class UserServiceImpl implements UserService {
         if (!user.getRole().getRoleName().equals("USER")) {
             return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid user role to perform the ban action."));
         }
-        user.setBannedMessage(banRequestDTO.getMessage());
+        if (banRequestDTO != null) {
+            user.setBannedMessage(banRequestDTO.getMessage());
+        }
         user.setBanned(true);
         userRepository.save(user);
         return ResponseEntity.ok().body(new SuccessMessageDTO(

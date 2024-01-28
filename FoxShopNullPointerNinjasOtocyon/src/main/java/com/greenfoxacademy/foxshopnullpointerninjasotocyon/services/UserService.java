@@ -36,5 +36,5 @@ public interface UserService {
 
     ResponseEntity<?> verifyUserEmail(Long userId, String token);
 
-    ResponseEntity<?> banUserById(String username, BanRequestDTO banRequestDTO);
+    ResponseEntity<?> banUserByUsername(String username, BanRequestDTO banRequestDTO);
 }
