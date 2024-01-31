@@ -326,7 +326,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     private Long extractAdvertisementIdFromUrl(String url) {
         String[] urlParts = url.split("/");
-        int beginIndex = url.indexOf(urlParts[6]);
+        int beginIndex = url.indexOf(urlParts[7]);
         int endIndex = url.lastIndexOf("/");
         String imageNumberString = url.substring(beginIndex, endIndex);
         return Long.parseLong(imageNumberString);
