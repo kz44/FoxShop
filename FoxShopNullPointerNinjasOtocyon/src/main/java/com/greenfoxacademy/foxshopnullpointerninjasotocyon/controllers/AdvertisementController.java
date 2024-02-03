@@ -134,4 +134,5 @@ public class AdvertisementController {
     public ResponseEntity<?> closeAdvertisement(@PathVariable (required = false) Long advertisementId) {
         return advertisementService.closeAdvertisementById(advertisementId);
     }
+
 }
