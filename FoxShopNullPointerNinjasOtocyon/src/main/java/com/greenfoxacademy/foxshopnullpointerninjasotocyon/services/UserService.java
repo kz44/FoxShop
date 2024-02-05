@@ -36,5 +36,7 @@ public interface UserService {
 
     String checkUserRole();
 
+    User getUserByUsername(String username);
+
     ResponseEntity<?> verifyUserEmail(Long userId, String token);
 }
