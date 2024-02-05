@@ -35,4 +35,6 @@ public interface UserService {
     User getUserFromSecurityContextHolder();
 
     String checkUserRole();
+
+    ResponseEntity<?> verifyUserEmail(Long userId, String token);
 }
