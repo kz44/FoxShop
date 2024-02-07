@@ -23,10 +23,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(x ->
-                        x.requestMatchers("/api/auth/**", "/error/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/advertisement/**").permitAll()
-                                .anyRequest().authenticated());
+                .authorizeHttpRequests(x -> x.requestMatchers("/api/auth/**",  "/error/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ratings/**", "/api/advertisement/**" ).permitAll().anyRequest().authenticated());
         http.httpBasic(Customizer.withDefaults());
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();

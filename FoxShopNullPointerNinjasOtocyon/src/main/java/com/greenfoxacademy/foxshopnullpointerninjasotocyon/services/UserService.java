@@ -1,10 +1,15 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RateDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 public interface UserService {
