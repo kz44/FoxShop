@@ -63,10 +63,10 @@ class AdvertisementControllerTest {
         final String imageUrl = "src/test/test/static/assets/advertisementImages/testUsername/1/1.png";
         FileUtils.touch(new File(imageUrl));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/advertisement/getImage")
-                        .param("path", "src/test/test/static/assets/advertisementImages/testUsername/1/1.png"))
+                        .param("path", imageUrl))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_PNG));
-        Files.delete(Path.of("src/test/test/static/assets/advertisementImages/testUsername/1/1.png"));
+        Files.delete(Path.of(imageUrl));
         FileUtils.deleteDirectory(new File("src/test/test/"));
     }
 
