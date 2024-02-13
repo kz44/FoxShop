@@ -1,12 +1,12 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.controllers;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.BanRequestDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,13 +22,20 @@ public class UserController {
 
     @GetMapping("/role")
     public ResponseEntity<?> getUserRoles() {
-        Map<String, Object> response = new HashMap<>();
-        String result = userService.checkUserRole();
-        if (result != null) {
-            response.put("role", result);
-            return ResponseEntity.ok(response);
+        String userRole = userService.checkUserRole();
+        if (userRole != null) {
+            return ResponseEntity.ok(Map.of("role", userRole));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("Authentication failed."));
         }
+    }
+
+    @PostMapping(value = {"/ban/{username}", "/ban/", "ban"})
+    public ResponseEntity<?> banUser(@PathVariable(required = false) String username,
+                                     @RequestBody(required = false) BanRequestDTO banRequestDTO) {
+        if (username == null) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Missing username."));
+        }
+        return userService.banUserByUsername(username, banRequestDTO);
     }
 }

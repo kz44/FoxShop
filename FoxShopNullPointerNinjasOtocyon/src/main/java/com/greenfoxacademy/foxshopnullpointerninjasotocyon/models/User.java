@@ -43,6 +43,12 @@ public class User {
     @Column
     private LocalDateTime lastLogin;
 
+    @Column(nullable = false)
+    private boolean isBanned = false;
+
+    @Column
+    private String bannedMessage;
+
     @OneToMany(mappedBy = "user")
     private Set<Advertisement> advertisements;
 

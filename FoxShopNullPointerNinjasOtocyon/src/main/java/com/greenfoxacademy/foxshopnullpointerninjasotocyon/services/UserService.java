@@ -1,5 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.BanRequestDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RateDTO;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
@@ -39,4 +40,6 @@ public interface UserService {
     User getUserByUsername(String username);
 
     ResponseEntity<?> verifyUserEmail(Long userId, String token);
+
+    ResponseEntity<?> banUserByUsername(String username, BanRequestDTO banRequestDTO);
 }
