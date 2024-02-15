@@ -1,9 +1,6 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.ErrorMessageDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.LoginDTO;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.RegisterDto;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.SuccessMessageDTO;
+import com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos.*;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.BlacklistedJWTToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.Role;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
@@ -231,5 +228,49 @@ public class UserServiceImpl implements UserService {
         user.setVerified(true);
         userRepository.save(user);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Your user account was successfully activated."));
+    }
+
+    /**
+     * Bans a user based on the provided username, updating the user's ban status and storing a ban message.
+     *
+     * <p>This method is designed to be used by administrators or developers with the necessary privileges
+     * to perform user banning actions. It checks various conditions, such as the existence of the user,
+     * the role of the user invoking the action, and the current ban status of the target user before
+     * proceeding with the ban operation.
+     *
+     * @param username      The username of the user to be banned. Must be a valid and existing username.
+     * @param banRequestDTO A message providing context or a reason for the ban. This message will be stored
+     *                      for reference and can be later retrieved if needed.
+     * @return ResponseEntity with a SuccessMessageDTO if the ban is successful,
+     * or an ErrorMessageDTO if there are issues with the provided user ID,
+     * user role, or if the user is already banned.
+     */
+
+    @Override
+    public ResponseEntity<?> banUserByUsername(String username, BanRequestDTO banRequestDTO) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ErrorMessageDTO("Username missing. Please provide a valid username to perform the ban action."));
+        }
+        User user = userOpt.get();
+        if (!checkUserRole().equals("ADMIN") && !checkUserRole().equals("DEVELOPER")) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Insufficient privileges to perform the ban action."));
+        }
+        if (user.isBanned()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("User is already banned."));
+        }
+        if (!user.getRole().getRoleName().equals("USER")) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("Invalid user role to perform the ban action."));
+        }
+        if (banRequestDTO != null) {
+            user.setBannedMessage(banRequestDTO.getMessage());
+        }
+        user.setBanned(true);
+        userRepository.save(user);
+        return ResponseEntity.ok().body(new SuccessMessageDTO(
+                        "User with the username " + username + " is banned successfully by a(n) " + getUserFromSecurityContextHolder().getRole().getRoleName()
+                        + " with ID: " + getUserFromSecurityContextHolder().getId()
+                        + ", username: " + getUserFromSecurityContextHolder().getUsername() + "."));
     }
 }

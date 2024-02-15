@@ -1,11 +1,11 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 @ToString
 public class MessageDTO {
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class MessageMapper {
-    public MessagePageableDTO toDTO(Message messageEntity) {
+    public static MessagePageableDTO toDTO(Message messageEntity) {
         return MessagePageableDTO.builder()
                 .content(messageEntity.getContent())
                 .sent(messageEntity.getSent())

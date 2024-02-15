@@ -34,6 +34,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("User not found."));
         }
         User user = userOpt.get();
+        if (user.isBanned()) {
+            String banMessage = "User with username " + user.getUsername() + " is banned.";
+            if (user.getBannedMessage() != null && !user.getBannedMessage().isEmpty()) {
+                banMessage += " Cause: " + user.getBannedMessage();
+            }
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO(banMessage));
+        }
         if (!user.isVerified()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessageDTO("This user account is not active yet, because email verification is missing. Please check your mailbox and verify your email."));
         }

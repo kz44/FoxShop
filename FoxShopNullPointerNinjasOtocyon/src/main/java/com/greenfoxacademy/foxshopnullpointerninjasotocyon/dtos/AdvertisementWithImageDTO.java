@@ -1,14 +1,13 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.dtos;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
 
-@Builder
 @Data
-@ToString
-public class AdvertisementPageableDTO {
+public class AdvertisementWithImageDTO {
+
     private Long id;
 
     private String title;
@@ -24,4 +23,7 @@ public class AdvertisementPageableDTO {
     private String categoryName;
 
     private String conditionName;
+
+    private List<String> images = new ArrayList<>();
+
 }

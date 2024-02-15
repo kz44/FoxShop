@@ -256,7 +256,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             numberForNewImageEntity = (advertisementMaximumImageNumber.get().intValue() + 1);
         }
 //      src/main/resources/assets/advertisementImages/<username>/<advertisement_id>/<image number>
-        String pathForSaving = "src/main/resources/assets/advertisementImages/"
+        String pathForSaving = "src/main/resources/static/assets/advertisementImages/"
                 + username + "/"
                 + advertisementEntity.getId().toString() + "/"
                 + numberForNewImageEntity + ".png";
@@ -326,7 +326,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     private Long extractAdvertisementIdFromUrl(String url) {
         String[] urlParts = url.split("/");
-        int beginIndex = url.indexOf(urlParts[6]);
+        int beginIndex = url.indexOf(urlParts[7]);
         int endIndex = url.lastIndexOf("/");
         String imageNumberString = url.substring(beginIndex, endIndex);
         return Long.parseLong(imageNumberString);
@@ -382,4 +382,19 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         }
     }
 
+    /**
+     * Retrieves an advertisement by its unique identifier.
+     *
+     * @param id The identifier of the advertisement to be retrieved.
+     * @return ResponseEntity containing the advertisement if found, or a ResponseEntity with an error message if not found.
+     */
+    @Override
+    public ResponseEntity<?> getAdvertisementById(Long id) {
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+        if (advertisementOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body(new ErrorMessageDTO("There is no advertisement with provided id."));
+        }
+        AdvertisementWithImageDTO advertisementWithImageDTO = new AdvertisementMapper().advertisementToDtoWithImage(advertisementOptional.get());
+        return ResponseEntity.ok().body(advertisementWithImageDTO);
+    }
 }
