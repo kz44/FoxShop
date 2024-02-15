@@ -26,7 +26,7 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
     private UserRepository userRepository;
     private UserService userService;
-    private MessageMapper messageMapper;
+
 
     /**
      * Retrieves information about conversations for the current user.
@@ -169,7 +169,7 @@ public class MessageServiceImpl implements MessageService {
         }
         List<MessagePageableDTO> mapMessagesToDTO = messagePagedAndSorted
                 .stream()
-                .map(messageMapper::toDTO)
+                .map(MessageMapper::toDTO)
                 .toList();
         if (mapMessagesToDTO.isEmpty()) {
             return ResponseEntity.ok().body(new SuccessMessageDTO("You have no messages with other users yet."));
@@ -268,4 +268,6 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.delete(message);
         return ResponseEntity.ok().body(new SuccessMessageDTO("Message was successfully deleted"));
     }
+
+
 }
