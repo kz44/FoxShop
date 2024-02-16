@@ -22,4 +22,12 @@ public class DeliveryMethod {
 
     @OneToMany(mappedBy = "deliveryMethod")
     private Set<Advertisement> advertisements;
+
+    @Override
+    public String toString() {
+        return "DeliveryMethod{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

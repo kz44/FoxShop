@@ -23,4 +23,12 @@ public class Condition {
 
     @OneToMany(mappedBy = "condition")
     private Set<Advertisement> advertisements;
+
+    @Override
+    public String toString() {
+        return "Condition{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

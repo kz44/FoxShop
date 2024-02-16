@@ -35,4 +35,15 @@ public class Rate {
             throw new IllegalArgumentException("Rating must be 1, 0, or -1.");
         }
     }
+
+    @Override
+    public String toString() {
+        return "Rate{" +
+                "id=" + id +
+                ", rating=" + rating +
+                ", description='" + description + '\'' +
+                ", sender=" + sender.getUsername() +
+                ", advertisement=" + advertisement.getId() +
+                '}';
+    }
 }

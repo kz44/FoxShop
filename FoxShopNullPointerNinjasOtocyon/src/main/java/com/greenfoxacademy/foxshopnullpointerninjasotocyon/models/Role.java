@@ -1,9 +1,7 @@
 package com.greenfoxacademy.foxshopnullpointerninjasotocyon.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
@@ -22,4 +20,12 @@ public class Role {
 
     @OneToMany(mappedBy = "role")
     private Set<User> users;
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "id=" + id +
+                ", roleName='" + roleName + '\'' +
+                '}';
+    }
 }

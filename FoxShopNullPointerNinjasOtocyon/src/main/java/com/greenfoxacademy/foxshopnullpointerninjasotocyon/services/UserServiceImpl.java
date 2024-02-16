@@ -10,7 +10,6 @@ import com.greenfoxacademy.foxshopnullpointerninjasotocyon.repositories.UserRepo
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.DeleteExpiredToken;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.FoxUserDetails;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.security.JwtTokenService;
-import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.SendGridService;
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils.UnverifiedUserRemove;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,4 +1,4 @@
-package com.greenfoxacademy.foxshopnullpointerninjasotocyon.utils;
+package com.greenfoxacademy.foxshopnullpointerninjasotocyon.services;
 
 import com.greenfoxacademy.foxshopnullpointerninjasotocyon.models.User;
 import com.sendgrid.Method;
@@ -9,6 +9,8 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Email;
 import com.sendgrid.helpers.mail.objects.Personalization;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ public class SendGridService {
     // In the template are two variables: `name` and `link`.
     private static final String TEMPLATE_ID = "d-18fb635d86fe4c48bea95781d72c34e0";
     private final PasswordEncoder passwordEncoder;
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Sends a verification email to the specified user using the SendGrid API.
@@ -59,9 +62,9 @@ public class SendGridService {
         try {
             request.setBody(mail.build());
             Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
+            if (log.isDebugEnabled()) {
+                log.debug("SendGridService response status code: {}, body: {}, header: {}", response.getStatusCode(), response.getBody(), response.getHeaders());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

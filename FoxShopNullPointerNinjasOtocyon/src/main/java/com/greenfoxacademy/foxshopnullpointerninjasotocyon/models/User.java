@@ -70,5 +70,22 @@ public class User {
 
     @Column(nullable = false)
     private boolean verified = false;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", lastLogin=" + lastLogin +
+                ", role=" + role +
+                ", verified=" + verified +
+                '}';
+    }
 }
 

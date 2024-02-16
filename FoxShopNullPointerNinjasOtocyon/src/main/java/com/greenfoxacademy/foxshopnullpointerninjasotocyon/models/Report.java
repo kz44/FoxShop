@@ -35,7 +35,20 @@ public class Report {
     @JoinColumn(name = "reportStatus_id", nullable = false)
     private ReportStatus reportStatus;
 
-    public boolean getStatusChange(){
+    public boolean getStatusChange() {
         return statusChange;
+    }
+
+    @Override
+    public String toString() {
+        return "Report{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", statusChange=" + statusChange +
+                ", sender=" + sender.getUsername() +
+                ", receiver=" + receiver.getId() +
+                ", reportStatus=" + reportStatus +
+                '}';
     }
 }
